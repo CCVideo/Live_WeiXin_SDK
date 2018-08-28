@@ -1,0 +1,2 @@
+<cclive-publisher bindSetCamera="setCamera" bindSetSound="setSound" bindSetBeauty="setBeauty" bindClose="close"
+                  header="visible" chat="visible" control="visible" muted="{{sound}}"/>

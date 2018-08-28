@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: live/event.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: live/event.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
+  事件模块
+  io.emit 发送到服务器
+  io.on 监听服务器
+  observer.emit 发送给用户
+  observer.on 用户监听sdk
+  observer.sub sdk内部监听
+  observer.pub 发送给sdk内部
+*/
+
+//公用方法模块
+var util = require('../module/util');
+var CONFIG = require('../module/config').LIVE;
+
+exports.ListenerEvent = function (loginData, io, stateMachine, observer) {
+
+    if (!checkout(io, stateMachine)) {
+        util.log('ListenerEvent', '参数错误或状态不满足');
+        return false;
+    }
+
+    setTimeout(function () {
+        io.emit('room_teachers');
+        io.emit('room_user_count');
+    }, CONFIG.TIME.ROOM_INFO_MIN_TIME);
+    setInterval(function () {
+        io.emit('room_teachers');
+        io.emit('room_user_count');
+    }, CONFIG.TIME.ROOM_INFO_MAX_TIME);
+
+    /**
+     * @event room_teachers
+     * @description 获取讲师列表
+     * @example
+     * ccsdk.live.on('room_teachers',function(data){
+   *    //console.log(data);
+   * })
+     */
+
+    io.on('room_teachers', function (data) {
+        util.log('room_teachers', data);
+        observer.emit('room_teachers', data);
+    });
+
+    /**
+     * @event room_user_count
+     * @description 获得在线人数
+     * @example
+     * ccsdk.live.on('room_user_count',function(data){
+   *    //console.log(data);
+   * })
+     */
+
+    io.on('room_user_count', function (data) {
+        util.log('room_user_count', data);
+        observer.emit('room_user_count', data);
+    });
+
+
+    /**
+     * @event publish_stream
+     * @description 开始推流
+     * @example
+     * ccsdk.live.on('publish_stream',function(data){
+   *    //console.log(data);
+   * })
+     */
+
+    io.on('publish_stream', function (j) {
+        var data = JSON.parse(j);
+        setTimeout(function () {
+            util.log('publish_stream', data);
+            observer.emit('publish_stream', data);
+        }, CONFIG.TIME.LIVE_DELAY);
+    });
+
+    /**
+     * @event end_stream
+     * @description 结束推流
+     * @example
+     * ccsdk.live.on('end_stream',function(data){
+   *    //console.log(data);
+   * })
+     */
+
+    io.on('end_stream', function (j) {
+        var data = JSON.parse(j);
+        setTimeout(function () {
+            util.log('end_stream', data);
+            observer.emit('end_stream', data);
+        }, CONFIG.TIME.LIVE_DELAY);
+    });
+
+    /**
+     * @event announcement
+     * @description 公告
+     * @example
+     * ccsdk.live.on('announcement',function(data){
+   *    //console.log(data);
+   * })
+     */
+
+    io.on('announcement', function (j) {
+        var data = JSON.parse(j);
+        util.log('announcement', data);
+        observer.emit('announcement', data);
+    });
+
+    /**
+     * @event page_change
+     * @description 文档翻页
+     * @example
+     * ccsdk.live.on('page_change',function(data){
+   *    //console.log(data);
+   *    // 返回值说明
+   *    // {
+   *    //    action: 'page_change',//翻页事件
+   *    //    time: 0,
+   *    //    value: {
+   *    //      docid: 'A9524880AA7F67B49C33DC5901307461',//文档id
+   *    //      fileName: '7第七章-马原.pdf',//文档名称
+   *    //      height: 675,//文档高
+   *    //      page: 2,//当前页数
+   *    //      pageTitle: '',//文档标题
+   *    //      totalPage: 16,//总页数
+   *    //      url: 'http://image.csslcloud.netimage/3115C441D8B66A719C33DC5901307461A9524880AA7F67B49C33DC5901307461/2.jpg',//文档地址
+   *    //      useSDK: false,
+   *    //      width: 1200//文档宽
+   *    //    }
+   *    //  }
+   * })
+     */
+
+    io.on('page_change', function (j) {
+        var data = JSON.parse(j);
+        setTimeout(function () {
+            observer.emit('page_change', data);
+            observer.pub('draw_board_page_change', data);
+        }, getDeltaTime(loginData));
+    });
+
+    /**
+     * @event draw
+     * @description 画板信息
+     * @example
+     * ccsdk.live.on('draw',function(data){
+   *    //console.log(data);
+   * })
+     */
+
+    io.on('draw', function (j) {
+        var data = JSON.parse(j);
+        setTimeout(function () {
+            observer.emit('draw', data);
+            observer.pub('draw_board_draw', data);
+        }, getDeltaTime(loginData));
+    });
+
+    /**
+     * @event chat_message
+     * @description 收到公聊信息
+     * @example
+     * ccsdk.live.on('chat_message',function(data){
+   *    //console.log(data);
+   *    //返回值说明
+   *    //{
+   *    //  "userid":"4ccd73b2fb1a4b63be1043b6c4c225dc", // 发送者id
+   *    //  "username":"name",   // 发送者名字
+   *    //  "userrole":"student",   // 发送者身份
+   *    //  "useravatar":"img",   // 发送者头像
+   *    //  "msg":"rrr",   // 消息内容
+   *    //  "time":"16:45:08",   // 发送时间
+   *    //  "usercustommark": ""  // 聊天自定义参数
+   *    //}
+   * })
+     */
+
+    io.on('chat_message', function (data) {
+        util.log('chat_message', data);
+        observer.emit('chat_message', data);
+    });
+
+    /**
+     * @event private_chat
+     * @description 接收私聊
+     * @example
+     * ccsdk.live.on('private_chat',function(data){
+   *    //console.log(data);
+   *    //返回值说明
+   *    //{
+   *    //  "fromuserid":"33ed40d2d7b746919219789733b5bdd4",  // 发送者id
+   *    //  "fromusername":"第三方士夫",  // 发送者名字
+   *    //  "fromuserrole":"student",   // 发送者身份
+   *    //  "touserid":"7a4715874d504b8db78cb5b77d66b8c8",  // 接收者id
+   *    //  "tousername":"name",   // 接收者名字
+   *    //  "msg":"阿斯蒂芬",   // 消息内容
+   *    //  "time":"17:26:24"  // 发送时间
+   *    //}
+   * })
+     */
+
+    io.on('private_chat', function (data) {
+        util.log('private_chat', data);
+        observer.emit('private_chat', data);
+    });
+
+    /**
+     * @event private_chat_self
+     * @description 接收我发送的私聊
+     * @example
+     * ccsdk.live.on('private_chat_self',function(data){
+   *    //console.log(data);
+   *    //返回值说明
+   *    //{
+   *    //  "fromuserid":"7a4715874d504b8db78cb5b77d66b8c8",  // 发送者id
+   *    //  "fromusername":"name",   // 发送者名字
+   *    //  "touserid":"33ed40d2d7b746919219789733b5bdd4",  // 接收者id
+   *    //  "tousername":"第三方士大夫",   // 接收者名字
+   *    //  "msg":"发反反复复",   // 消息内容
+   *    //  "time":"17:22:15"   // 发送时间
+   *    //}
+   * })
+     */
+
+    io.on('private_chat_self', function (data) {
+        util.log('private_chat_self', data);
+        observer.emit('private_chat_self', data);
+    });
+
+    /**
+     * @event question
+     * @description 收到问题
+     * @example
+     * ccsdk.live.on('question',function(data){
+   *    //console.log(data);
+   *    //返回值说明
+   *    //{
+   *    //  "action":"question",  // 提问
+   *    //  "time":-1,
+   *    //  "value":
+   *    //  {
+   *    //    "userId":"C783F0F7CB77E1F3",  // 提问者id
+   *    //    "userName":"name",   // 提问者名字
+   *    //    "content":"123145",  // 提问内容
+   *    //    "userAvatar":"img",     // 提问者头像
+   *    //    "id":"1B5BBA4826FFE337"   // 问题id
+   *    //  }
+   *    //}
+   * })
+     */
+
+    io.on('question', function (contant) {
+        util.log('question', contant);
+        observer.emit('question', contant);
+    });
+
+    /**
+     * @event publish_question
+     * @description 发布问答
+     * @example
+     * ccsdk.live.on('publish_question',function(data){
+   *    //console.log(data);
+   * })
+     */
+
+    io.on('publish_question', function (contant) {
+        util.log('publish_question', contant);
+        observer.emit('publish_question', contant);
+    });
+
+    /**
+     * @event answer
+     * @description 收到回答
+     * @example
+     * ccsdk.live.on('answer',function(data){
+   *    //console.log(data);
+   *    //返回值说明
+   *    //{
+   *    //  "action":"answer",   // 回答
+   *    //  "time":-1,
+   *    //  "value":
+   *    //  {
+   *    //    "content":"ghghjgug",   // 回答内容
+   *    //    "isPrivate":0,    // 是否仅提问者可见
+   *    //    "questionId":"1B5BBA4826FFE337",   // 问题id
+   *    //    "questionUserId":"C783F0F7CB77E1F3",   // 提问者id
+   *    //    "userId":"ebadb3d414c3471786d095c93bab8cb5",  // 回答者id
+   *    //    "userName":"www",   // 回答者名字
+   *    //    "userAvatar":"img",    // 回答者头像
+   *    //    "userRole":"publisher"   // 回答者身份
+   *    //  }
+   *    //}
+   * })
+     */
+
+    io.on('answer', function (contant) {
+        util.log('answer', contant);
+        observer.emit('answer', contant);
+    });
+
+    /**
+     * @event information
+     * @description 全体禁言
+     * @example
+     * ccsdk.live.on('information',function(data){
+   *    //console.log(data);
+   * })
+     */
+
+    //全体禁言
+    io.on('information', function (contant) {
+        util.log('information', contant);
+        observer.emit('information', contant);
+    });
+
+    /**
+     * @event silence_user_chat_message
+     * @description 禁言
+     * @example
+     * ccsdk.live.on('silence_user_chat_message',function(data){
+  *    //console.log(data);
+  * })
+     */
+
+    //禁言
+    io.on('silence_user_chat_message', function (contant) {
+        util.log('silence_user_chat_message', contant);
+        observer.emit('silence_user_chat_message', contant);
+    });
+
+    observer.sub('send_chat_message', function (msg) {
+        //发送聊天
+        util.log('send_chat_message', msg);
+        io.emit('chat_message', msg);
+    });
+
+    observer.sub('send_private_chat', function (msg) {
+        //发送聊天
+        util.log('send_private_chat', msg);
+        io.emit('private_chat', msg);
+    });
+
+    //提问
+    observer.sub('send_question', function (contant) {
+        util.log('send_question', contant);
+        io.emit('question', contant);
+    });
+
+    //历史消息
+    observer.sub('historyData', function (data) {
+
+        util.log('event_historyData', data);
+
+        observer.sub('drawingboard_init', function () {
+            observer.pub('draw_board_history', data.datas.meta);
+        });
+        observer.pub('draw_board_history', data.datas.meta);
+
+        /**
+         * @event isPublishing_log
+         * @description 是否开始直播
+         * @example
+         * ccsdk.live.on('isPublishing_log',function(data){
+     *    //console.log(data);
+     * })
+         */
+
+            //直播是否开始 isPublishing 0、1
+        var isPublishingMeta = data.datas.meta.isPublishing;
+        observer.emit('isPublishing_log', isPublishingMeta);
+
+        /**
+         * @event page_change_log
+         * @description 文档翻页历史信息
+         * @example
+         * ccsdk.live.on('page_change_log',function(data){
+     *    //console.log(data);
+     * })
+         */
+
+            //文档翻页
+        var pageMeta = getPageMeta(data);
+        if (pageMeta) {
+            observer.emit('page_change_log', pageMeta);
+        }
+
+        /**
+         * @event draw_log
+         * @description 画板历史信息
+         * @example
+         * ccsdk.live.on('draw_log',function(data){
+     *    //console.log(data);
+     * })
+         */
+
+            //画笔信息
+        var drawMeta = data.datas.meta.draw;
+        observer.emit('draw_log', drawMeta);
+
+        /**
+         * @event question_log
+         * @description 提问历史信息
+         * @example
+         * ccsdk.live.on('question_log',function(data){
+     *    //console.log(data);
+     * })
+         */
+
+            //提问
+        var questionMeta = data.datas.meta.question;
+        observer.emit('question_log', questionMeta);
+
+        /**
+         * @event answer_log
+         * @description 答案历史信息
+         * @example
+         * ccsdk.live.on('answer_log',function(data){
+     *    //console.log(data);
+     * })
+         */
+
+            //回答
+        var answerMeta = data.datas.meta.answer;
+        observer.emit('answer_log', answerMeta);
+
+        /**
+         * @event chat_log
+         * @description 聊天历史信息
+         * @example
+         * ccsdk.live.on('chat_log',function(data){
+     *    //console.log(data);
+     * })
+         */
+
+            //聊天
+        var chatLogMeta = data.datas.meta.chatLog;
+        observer.emit('chat_log', chatLogMeta);
+
+    });
+
+    //登陆信息
+    util.log('event_loginData', loginData);
+
+    /**
+     * @event template_info
+     * @description 模版信息
+     * @example
+     * ccsdk.live.on('template_info',function(data){
+   *    //console.log(data);
+   * })
+     */
+
+        //模版信息
+    var templateData = loginData.datas.template;
+    observer.emit('template_info', templateData);
+
+    /**
+     * @event room_info
+     * @description 简介
+     * @example
+     * ccsdk.live.on('room_info',function(data){
+   *    //console.log(data);
+   * })
+     */
+
+        //简介
+    var roomData = loginData.datas.room;
+    observer.emit('room_info', roomData);
+
+    /**
+     * @event announcement_info
+     * @description 公告信息
+     * @example
+     * ccsdk.live.on('announcement_info',function(data){
+   *    //console.log(data);
+   * })
+     */
+
+        //公告信息
+    var announcement = loginData.datas.announcement;
+    observer.emit('announcement_info', announcement || '');
+
+    /**
+     * @event viewer_info
+     * @description 观看者信息
+     * @example
+     * ccsdk.live.on('viewer_info',function(data){
+   *    //console.log(data);
+   * })
+     */
+
+        //viewer
+    var viewerData = loginData.datas.viewer;
+    observer.emit('viewer_info', viewerData);
+};
+
+var getDeltaTime = function (loginData) {
+    var b = loginData.datas.room.delayTime;
+    if (isNaN(b) || b &lt; 0) {
+        b = 0;
+    }
+    b = b * 1000;
+    if (b === 0) {
+        return 1300;
+    } else {
+        return 3000;
+    }
+};
+
+var getPageMeta = function (data) {
+    var meta = data.datas.meta;
+    var pageChange = meta.pageChange;
+    if (pageChange &amp;&amp; pageChange.length) {
+        pageChange.sort(function (p1, p2) {
+            return parseInt(p1.time) - parseInt(p2.time);
+        });
+        var lastPage = pageChange[pageChange.length - 1];
+        return lastPage;
+    }
+};
+
+var checkout = function (io, stateMachine) {
+    if (!stateMachine.isLoginState() ||
+        !stateMachine.isIoConnectState() ||
+        !io
+    ) {
+        return false;
+    }
+    return true;
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:announcement">announcement</a></li><li><a href="global.html#event:announcement_info">announcement_info</a></li><li><a href="global.html#event:answer">answer</a></li><li><a href="global.html#event:answer_log">answer_log</a></li><li><a href="global.html#event:chat_log">chat_log</a></li><li><a href="global.html#event:chat_message">chat_message</a></li><li><a href="global.html#event:draw">draw</a></li><li><a href="global.html#event:draw_log">draw_log</a></li><li><a href="global.html#event:end_stream">end_stream</a></li><li><a href="global.html#event:information">information</a></li><li><a href="global.html#event:isPublishing_log">isPublishing_log</a></li><li><a href="global.html#event:page_change">page_change</a></li><li><a href="global.html#event:page_change_log">page_change_log</a></li><li><a href="global.html#event:private_chat">private_chat</a></li><li><a href="global.html#event:private_chat_self">private_chat_self</a></li><li><a href="global.html#event:publish_question">publish_question</a></li><li><a href="global.html#event:publish_stream">publish_stream</a></li><li><a href="global.html#event:question">question</a></li><li><a href="global.html#event:question_log">question_log</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:room_teachers">room_teachers</a></li><li><a href="global.html#event:room_user_count">room_user_count</a></li><li><a href="global.html#event:silence_user_chat_message">silence_user_chat_message</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:viewer_info">viewer_info</a></li></ul><h3>Global</h3><ul><li><a href="global.html#configLivePlayer">configLivePlayer</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#sendPrivateChatMsg">sendPrivateChatMsg</a></li><li><a href="global.html#sendPublicChatMsg">sendPublicChatMsg</a></li><li><a href="global.html#sendQuestionMsg">sendQuestionMsg</a></li><li><a href="global.html#setDebug">setDebug</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#streamMode">streamMode</a></li><li><a href="global.html#streamRoute">streamRoute</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Jul 30 2018 17:01:14 GMT+0800 (GMT+08:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

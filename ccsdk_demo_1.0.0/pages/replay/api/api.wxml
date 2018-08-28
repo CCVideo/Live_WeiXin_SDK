@@ -1,0 +1,12 @@
+<player autoplay="{{autoplay}}" duration="{{duration}}" controls="{{controls}}" bindwaiting="bindWaiting"
+        bindplay="onPlay" bindpause="onPause" bindended="onEnded" bindtimeupdate="onTimeupdate"
+        bindwaiting="onWaiting" bindfullscreenchange="onFullscreenchange" binderror="onError"></player>
+<drawingBoard></drawingBoard>
+<slider bindchange="bindChange" min="{{min}}" max="{{max}}"></slider>
+<button bindtap="bindInit">登录</button>
+<button bindtap="bindQuit">退出</button>
+<button bindtap="bindPlay">播放</button>
+<button bindtap="bindPause">暂停</button>
+<button bindtap="bindRequestFullScreen">全屏</button>
+<button bindtap="bindExitFullScreen">退出全屏</button>
+<picker bindchange="bindPlaybackRate" range="{{range}}">倍速播放</picker>

@@ -1,0 +1,19 @@
+<view class="container">
+    <view class="logo">
+        <image src="../../components/img/index/logo.png"></image>
+    </view>
+    <view class="btn-group">
+        <view class="btn" bindtap="bindPublisher">
+            <text>推流端</text>
+            <image src="../../components/img/index/arrow.png"></image>
+        </view>
+        <view class="btn" bindtap="bindPlayer">
+            <text>观看直播</text>
+            <image src="../../components/img/index/arrow.png"></image>
+        </view>
+        <view class="btn" bindtap="bindReplayer">
+            <text>观看回放</text>
+            <image src="../../components/img/index/arrow.png"></image>
+        </view>
+    </view>
+</view>

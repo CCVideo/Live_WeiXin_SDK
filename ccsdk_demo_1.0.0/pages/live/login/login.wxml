@@ -1,0 +1,54 @@
+<view class="container">
+
+    <view class="header">
+        <text class="title">直播间信息</text>
+        <image class="scancode" src="../../../components/img/publisher/login/nav_ic_code@3x.png"></image>
+        <view class="big-area" bindtap="scancode">
+        </view>
+    </view>
+
+    <view class="body">
+        <view class="form">
+            <view class="form-cell">
+                <text>CC账号ID</text>
+                <input disabled="{{loading}}" placeholder="16位账号ID" value="{{userId}}" bindinput="setUserId"></input>
+            </view>
+            <view class="form-cell">
+                <text>直播间ID</text>
+                <input disabled="{{loading}}" placeholder="32位直播间ID" value="{{roomId}}" bindinput="setRoomId"></input>
+            </view>
+            <view class="form-cell">
+                <text>昵称</text>
+                <input disabled="{{loading}}" placeholder="聊天中显示的名字" value="{{userName}}"
+                       bindinput="setUserName"></input>
+            </view>
+            <view class="form-cell last">
+                <text>密码</text>
+                <input disabled="{{loading}}" type="password" placeholder="观看密码" value="{{password}}"
+                       bindinput="setPassword"></input>
+            </view>
+        </view>
+    </view>
+
+    <view class="footer">
+        <view class="login-btn-{{btnType}}">
+            <button class="login-btn" bindtap="login">
+                <text>登录</text>
+            </button>
+        </view>
+    </view>
+
+    <view class="error-hint" wx:if="{{hint}}">
+        <text>{{errorHintText}}</text>
+    </view>
+
+    <view class="loading" wx:if="{{loading}}">
+        <view class="loading-background">
+            <view class="loading-hint">
+                <view class="loading-circle"></view>
+                <text class="loading-text">正在登录...</text>
+            </view>
+        </view>
+    </view>
+
+</view>

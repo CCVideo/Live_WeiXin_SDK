@@ -1,0 +1,12 @@
+{
+  "usingComponents": {
+    "player": "../../../components/replay/player/player",
+    "drawingBoard": "plugin://ccsdk/drawingBoardReplay",
+    "control": "../../../components/replay/control/control",
+    "swiper": "../../../components/replay/swiper/swiper",
+    "chat": "../../../components/replay/chat/chat",
+    "intro": "../../../components/replay/intro/intro",
+    "qa": "../../../components/replay/qa/qa"
+  },
+  "disableScroll": false
+}

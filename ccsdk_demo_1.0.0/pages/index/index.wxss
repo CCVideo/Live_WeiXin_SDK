@@ -1,0 +1,47 @@
+/* 背景 */
+
+.container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #f8f8f8;
+}
+
+/* logo */
+
+.container .logo {
+    width: 532rpx;
+    height: 367rpx;
+    margin: 92rpx auto 150rpx;
+}
+
+.container .logo image {
+    width: 532rpx;
+    height: 367rpx;
+}
+
+/* 按钮组 */
+
+.container .btn-group .btn {
+    background-image: linear-gradient(90deg, #ff8e00 0%, #ff5301 100%);
+    border-radius: 100rpx;
+    width: 500rpx;
+    height: 100rpx;
+    text-align: center;
+    line-height: 100rpx;
+    margin: 0 auto;
+    margin-bottom: 52rpx;
+}
+
+.container .btn-group .btn text {
+    font-size: 32rpx;
+    color: #fff;
+    margin-right: 11rpx;
+    vertical-align: middle;
+}
+
+.container .btn-group .btn image {
+    width: 17rpx;
+    height: 30rpx;
+    vertical-align: middle;
+}

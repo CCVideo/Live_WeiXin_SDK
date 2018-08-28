@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: publisher/manager.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: publisher/manager.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
+  方法模块
+*/
+var util = require('../module/util');
+var CONFIG = require('../module/config').PUBLISHER;
+
+var Manager = function (stateMachine, observer) {
+
+    var _io = {};
+    var _loginData = {};
+
+    this.init = function (loginData, io) {
+        _io = io;
+        _loginData = loginData;
+    };
+
+    /**
+     * @description 开启开发者调试功能
+     * @param {Boolean} b 是否开启debug调试功能
+     * @default false
+     * @return {Boolean} 返回true调用成功，false调用失败
+     * @example ccsdk.publisher.setDebug(true);
+     */
+
+    this.setDebug = function (b) {
+        if (typeof b !== 'boolean') {
+            return false;
+        }
+        CONFIG.CONSOLE_LOG = b;
+        return true;
+    };
+
+    var checkout = function () {
+        if (!stateMachine.isLoginState() || !stateMachine.isIoConnectState()) {
+            return false;
+        }
+        return true;
+    };
+
+    /**
+     * @description 退出登录
+     * @return {Boolean} 返回true调用成功，返回false发送失败
+     * @example ccsdk.publisher.quit();
+     */
+
+    this.quit = function () {
+
+        if (!checkout()) {
+            util.log('quit', '状态不满足');
+            return false;
+        }
+        stateMachine.setLoginState(false);
+        stateMachine.setIoConnectState(false);
+        _io.close();
+        return true;
+    };
+
+    /**
+     * @description 发送公聊
+     * @param {String} msg 聊天信息，聊天信息必须是字符串并小于140字且不能为空
+     * @return {Boolean} 返回true调用成功，返回false发送失败
+     * @example ccsdk.publisher.sendPublicChatMsg('hello world');
+     */
+
+    //发送公聊
+    this.sendPublicChatMsg = function (msg) {
+
+        if (!checkout()) {
+            util.log('sendPublicChatMsg', '状态不满足');
+            return false;
+        }
+
+        //参数校验
+        if (typeof msg !== 'string' || msg.length > 140 || !msg) {
+            util.log('聊天信息必须是字符串并小于140字且不能为空');
+            return false;
+        }
+
+        //发送聊天
+        observer.pub('send_chat_message', msg);
+
+        return true;
+    };
+
+    /**
+     * @description 发送私聊
+     * @param {String} touserId 接收者的viewerid
+     * @param {String} touserName 接收者的viewername
+     * @param {String} msg 消息内容
+     * @return {Boolean} 返回true调用成功，返回false发送失败
+     * @example ccsdk.publisher.sendPrivateChatMsg('33ed40d2d7b746919219789733b5bdd4','name','hello world');
+     */
+
+    //发送私聊
+    this.sendPrivateChatMsg = function (touserId, touserName, msg) {
+        if (!checkout()) {
+            util.log('sendPrivateChatMsg', '状态不满足');
+            return false;
+        }
+
+        //参数校验
+        if (typeof touserId !== 'string' || typeof touserName !== 'string' || typeof msg !== 'string' || msg.length > 300 || !msg) {
+            util.log('参数错误或聊天信息必须是字符串并小于300字且不能为空');
+            return false;
+        }
+
+        var json = {
+            'fromuserid': _loginData.user.id,
+            'fromusername': _loginData.user.name,
+            'touserid': touserId,
+            'tousername': touserName,
+            'msg': msg.trim(),
+            'time': util.formatTime(new Date())
+        };
+
+        observer.pub('send_private_chat', JSON.stringify(json));
+
+        return true;
+    };
+
+    /**
+     * @description 切换前置后置摄像头
+     * @return {Boolean} 返回true调用成功，false调用失败
+     * @example ccsdk.publisher.setSwitchCamera();
+     */
+
+    //切换摄像头
+    this.setSwitchCamera = function () {
+        var that = this;
+        //判断是否已登录
+        if (!checkout()) {
+            return false;
+        }
+        setTimeout(function () {
+            observer.emit('switchCamera');
+        }, 500);
+        return true;
+    };
+
+    /**
+     * @description 宽高比
+     * @param {String} aspect 宽高比，可选值有 3:4, 9:16
+     * @default 3:4
+     * @return {Boolean} 返回true调用成功，false调用失败
+     * @example ccsdk.publisher.setAspect('3:4');
+     */
+
+    //宽高比
+    this.setAspect = function (aspect) {
+        var that = this;
+        //判断是否已登录
+        if (!checkout()) {
+            return false;
+        }
+
+        if (aspect === CONFIG.METHOD_ASPECT_34) {
+            util.log('宽高比', aspect);
+        } else if (aspect === CONFIG.METHOD_ASPECT_916) {
+            util.log('宽高比', aspect);
+        } else {
+            return false;
+        }
+        observer.emit('aspect', aspect);
+        return true;
+    };
+
+    /**
+     * @description 分辨率
+     * @param {String} mode SD（标清）, HD（高清）
+     * @default SD
+     * @return {Boolean} 返回true调用成功，false调用失败
+     * @example ccsdk.publisher.setResolution('HD');
+     */
+
+    //分辨率
+    this.setResolution = function (mode) {
+        var that = this;
+        //判断是否已登录
+        if (!checkout()) {
+            return false;
+        }
+        if (mode === CONFIG.METHOD_MODE_SD) {
+            util.log('分辨率', mode);
+        } else if (mode === CONFIG.METHOD_MODE_HD) {
+            util.log('分辨率', mode);
+        } else {
+            return false;
+        }
+        observer.emit('resolution', mode);
+        return true;
+    };
+
+    /**
+     * @description 横竖屏
+     * @param {String} orientation vertical，horizontal
+     * @default vertical
+     * @return {Boolean} 返回true调用成功，false调用失败
+     * @example ccsdk.publisher.setOrientation('horizontal');
+     */
+
+    //横竖屏
+    this.setOrientation = function (orientation) {
+        var that = this;
+        //判断是否已登录
+        if (!checkout()) {
+            return false;
+        }
+        if (orientation === CONFIG.METHOD_ORIENTATION_VERTICAL) {
+            util.log('横竖屏', orientation);
+        } else if (orientation === CONFIG.METHOD_ORIENTATION_HORIZONTAL) {
+            util.log('横竖屏', orientation);
+        } else {
+            return false;
+        }
+        observer.emit('orientation', orientation);
+        return true;
+    };
+
+
+    /**
+     * @description 静音
+     * @param {Boolean} muted false非静音,true静音
+     * @default false
+     * @return {Boolean} 返回true调用成功，false调用失败
+     * @example ccsdk.publisher.setMuted(true);
+     */
+
+    //静音
+    this.setMuted = function (muted) {
+        var that = this;
+        //判断是否已登录
+        if (!checkout()) {
+            return false;
+        }
+        if (muted == CONFIG.METHOD_MUTED_TRUE) {
+            util.log('静音', muted);
+        } else if (muted == CONFIG.METHOD_MUTED_FALSE) {
+            util.log('静音', muted);
+        } else {
+            return false;
+        }
+        observer.emit('muted', muted);
+        return true;
+    };
+
+    /**
+     * @description 美颜
+     * @param {Number} beauty 美颜，可选值0-10正整数
+     * @default 0
+     * @return {Boolean} 返回true调用成功，false调用失败
+     * @example ccsdk.publisher.setBeauty(8);
+     */
+
+    //美颜
+    this.setBeauty = function (beauty) {
+        var that = this;
+
+        //判断是否已登录
+        if (!checkout()) {
+            return false;
+        }
+        if (typeof beauty !== 'number' || beauty &lt; 0 || beauty > 10) {
+            return false;
+        }
+        observer.emit('beauty', beauty);
+        return true;
+    };
+
+    /**
+     * @description 美白
+     * @param {Number} whiteness 美白，可选值0-10正整数
+     * @default 0
+     * @return {Boolean} 返回true调用成功，false调用失败
+     * @example ccsdk.publisher.setWhiteness(8);
+     */
+
+    //美白
+    this.setWhiteness = function (whiteness) {
+        var that = this;
+
+        //判断是否已登录
+        if (!checkout()) {
+            return false;
+        }
+        if (typeof whiteness !== 'number' || whiteness &lt; 0 || whiteness > 10) {
+            return false;
+        }
+        observer.emit('whiteness', whiteness);
+        return true;
+    };
+
+};
+
+module.exports = Manager;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:chat_message">chat_message</a></li><li><a href="global.html#event:kick_out">kick_out</a></li><li><a href="global.html#event:private_chat">private_chat</a></li><li><a href="global.html#event:private_chat_self">private_chat_self</a></li><li><a href="global.html#event:room_context">room_context</a></li><li><a href="global.html#event:room_user_count">room_user_count</a></li><li><a href="global.html#event:user_info">user_info</a></li></ul><h3>Global</h3><ul><li><a href="global.html#configLivePublisher">configLivePublisher</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#liveStart">liveStart</a></li><li><a href="global.html#liveStop">liveStop</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#sendPrivateChatMsg">sendPrivateChatMsg</a></li><li><a href="global.html#sendPublicChatMsg">sendPublicChatMsg</a></li><li><a href="global.html#setAspect">setAspect</a></li><li><a href="global.html#setBeauty">setBeauty</a></li><li><a href="global.html#setDebug">setDebug</a></li><li><a href="global.html#setMuted">setMuted</a></li><li><a href="global.html#setOrientation">setOrientation</a></li><li><a href="global.html#setResolution">setResolution</a></li><li><a href="global.html#setSwitchCamera">setSwitchCamera</a></li><li><a href="global.html#setWhiteness">setWhiteness</a></li><li><a href="global.html#showEm">showEm</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Jul 30 2018 16:58:43 GMT+0800 (GMT+08:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

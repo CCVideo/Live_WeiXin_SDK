@@ -1,0 +1,52 @@
+<view class="container" style="position:{{ccpostion}}">
+
+    <live-pusher id="publisher" url="{{publisherUrl}}" mode="HD" enable-camera="{{cameraBoolean}}" aspect="{{aspect}}"
+                 mode="{{mode}}" orientation="{{orientation}}" background-mute="{{muted}}" muted="{{muted}}"
+                 beauty="{{beauty}}" whiteness="{{whiteness}}" min-bitrate="{{minBitrate}}"
+                 max-bitrate="{{maxBitrate}}" waiting-image="{{waitingImage}}" bindstatechange="statechange"
+                 bindnetstatus="netstatus" binderror="error" style="width: {{ccwidth}}; height: {{ccheight}};">
+
+        <cover-view class="cover-view">
+
+            <cover-view class="header" style="visibility:{{header}}">
+                <cover-view class="info">
+                    <cover-view class="name">主播：{{name}}</cover-view>
+                    <cover-view class="number">在线人数：{{number}}</cover-view>
+                </cover-view>
+            </cover-view>
+
+            <cover-view class="body" style="visibility:{{chat}}">
+
+                <cover-view class="chat-content" scroll-top="{{scrollHeight}}">
+
+                    <cover-view class="chat-cell" wx:for="{{chatData}}" wx:key="">
+                        <!--({{item.time}})-->
+                        <cover-view class="message"> {{item.fromusername?item.fromusername+'对'+item.tousername+'说':item.username}}：{{item.msg}}
+                        </cover-view>
+                    </cover-view>
+
+                </cover-view>
+
+                <cover-view class="footer" style="visibility:{{control}}">
+                    <cover-view class="left">
+                        <cover-image src="../../img/publisher/live/home_ic_camera_nor@3x.png"
+                                     bindtap="setCamera"></cover-image>
+                        <cover-image src="../../img/publisher/live/home_ic_sound_{{muted?'ban_nor@3x':'nor@3x'}}.png"
+                                     bindtap="setSound"></cover-image>
+                        <cover-image
+                                src="../../img/publisher/live/home_ic_beauty_{{beauty||whiteness?'nor@3x':'ban_nor@3x'}}.png"
+                                bindtap="setBeauty"></cover-image>
+                    </cover-view>
+                    <cover-view class="right">
+                        <cover-image src="../../img/publisher/live/home_ic_close_nor@3x.png"
+                                     bindtap="close"></cover-image>
+                    </cover-view>
+                </cover-view>
+
+            </cover-view>
+
+        </cover-view>
+
+    </live-pusher>
+
+</view>

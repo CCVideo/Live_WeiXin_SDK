@@ -1,0 +1,13 @@
+<view class="container">
+    <view class="tab">
+        <view class="option" wx:for="{{initData}}" wx:key="*this" data-index="{{index}}" bindtap="_bindTab">
+            <text class="text">{{item.content}}</text>
+            <view class="border {{tabOptionSelected===index?'active':''}}"></view>
+        </view>
+    </view>
+    <swiper class="swiper" current="{{tabOptionSelected}}" bindchange="_bindSwiperChange">
+        <swiper-item class="item" wx:for="{{initData}}" wx:key="*this">
+            <slot name="{{item.name}}"></slot>
+        </swiper-item>
+    </swiper>
+</view>

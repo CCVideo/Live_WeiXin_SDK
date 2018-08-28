@@ -1,0 +1,5 @@
+<view class="container">
+    <live-player>
+        <slot></slot>
+    </live-player>
+</view>

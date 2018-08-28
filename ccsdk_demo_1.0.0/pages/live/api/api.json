@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+      "drawingBoard": "../../../plugin/components/live/drawingBoard/drawingBoard"
+  }
+}

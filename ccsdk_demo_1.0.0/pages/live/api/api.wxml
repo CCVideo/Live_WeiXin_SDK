@@ -1,0 +1,26 @@
+<live-player id="player" src="{{playerUrl}}" mode="live" autoplay="{{autoplay}}" muted="{{muted}}"
+             background-mute="{{muted}}" orientation="{{orientation}}" object-fit="{{objectFit}}"
+             min-cache="{{minCache}}" max-cache="{{maxCache}}" bindstatechange="statechange"
+             bindfullscreenchange="fullscreenchange" bindnetstatus="netstatus" binderror="error"/>
+
+<drawingBoard></drawingBoard>
+
+<!-- <image src="{{pageUrl}}"></image> -->
+
+<button bindtap="bindInit">登陆</button>
+<button bindtap="bindMuted">静音</button>
+<button bindtap="bindOrientation">画面方向</button>
+<button bindtap="bindObjectFit">填充模式</button>
+<button bindtap="bindPlay">播放</button>
+<button bindtap="bindPause">暂停</button>
+<button bindtap="bindStop">停止</button>
+<button bindtap="bindResume">恢复</button>
+<button bindtap="bindMute">静音</button>
+<button bindtap="bindRequestFullScreen">进入全屏</button>
+<button bindtap="bindRxitFullScreen">退出全屏</button>
+<button bindtap="bindStreamRoute">切换线路</button>
+<button bindtap="bindStreamMode">切换视频音频模式</button>
+<input type="text" bindblur="input" value="{{msg}}"></input>
+<button bindtap="sendPublicChatMsg">发送公聊</button>
+<button bindtap="sendPrivateChatMsg">发送私聊</button>
+<button bindtap="sendQuestionMsg">发布问题</button>

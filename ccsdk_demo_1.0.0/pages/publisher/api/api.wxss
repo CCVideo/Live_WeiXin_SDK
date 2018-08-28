@@ -1,0 +1,22 @@
+.cclive-chat {
+    display: block;
+    background-color: #eee;
+    /* width:200px; */
+}
+
+.chat {
+    margin: 5px;
+}
+
+.chat input {
+    float: left;
+    border: 1px black solid;
+    border-radius: 5px;
+}
+
+.chat button {
+    float: left;
+    height: 24px;
+    font-size: 12px;
+    margin-left: 5px;
+}

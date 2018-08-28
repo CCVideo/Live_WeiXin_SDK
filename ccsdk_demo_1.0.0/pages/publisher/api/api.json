@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "cclive-chat": "../../../components/publisher/cclive-chat/cclive-chat",
+    "cclive-publisher": "../../../components/publisher/cclive-publisher/cclive-publisher"
+  }
+}

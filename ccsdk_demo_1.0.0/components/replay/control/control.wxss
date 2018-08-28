@@ -1,0 +1,179 @@
+/* components/replay/control/control.wxss */
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.container .top {
+    align-self: flex-end;
+}
+
+.container .top .replay-box {
+    background:rgba(0,0,0,0.3);
+    border-radius:100rpx;
+    width:115rpx;
+    height:52rpx;
+    margin: 20rpx 30rpx 0rpx 0rpx;
+    padding: 13rpx 22rpx;
+    box-sizing: border-box;
+}
+
+.container .top .circle {
+    float: left;
+    background:#26bb52;
+    box-shadow:1rpx 1rpx 1rpx 0rpx rgba(0,0,0,0.50);
+    width:12rpx;
+    height:12rpx;
+    border-radius:100%;
+    margin-right: 5rpx;
+    margin-top:9rpx;
+}
+
+.container .top .replay {
+    float: left;
+    font-size:26rpx;
+    color:#ffffff;
+    text-shadow:1rpx 1px 0rpx rgba(102,102,102,0.50);
+}
+
+.container .center {
+    align-self: flex-end;
+}
+
+.container .center .btn-group {
+    /*margin-right: 15rpx;*/
+}
+
+.container .center .btn-group .btn {
+    width: 130rpx;
+    height: 100rpx;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.container .center .btn-group .btn cover-image{
+    width: 70rpx;
+    height: 70rpx;
+}
+
+.container .center .btn-group .btn .show-hide {
+
+}
+
+.container .center .btn-group .btn .switch {
+
+}
+
+.container .bottom {
+    display: flex;
+    background:rgba(0,0,0,0.5);
+    height:70rpx;
+    align-items: center;
+    padding: 5rpx 20rpx;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.container .bottom cover-image{
+    width: 60rpx;
+    height: 60rpx;
+}
+
+/*播放*/
+.container .bottom .playBtn-box {
+    flex:1.1;
+    margin-right: 10rpx;
+}
+
+.container .bottom .playBtn-box .playBtn{
+
+}
+
+/*时间*/
+.container .bottom .time-box{
+    flex:4;
+    display: flex;
+    justify-content: center;
+    margin-right: 10rpx;
+    width: 164rpx;
+    height: 24rpx;
+    margin-right: 10rpx;
+}
+
+.container .bottom .time-box .time-current{
+    font-size:24rpx;
+    color:#fff;
+}
+
+.container .bottom .time-box .time-duration{
+    font-size:24rpx;
+    color:rgba(255,255,255,0.6);
+}
+
+/*进度条*/
+.container .bottom .loadingbar-box{
+    flex:10;
+    display: flex;
+    align-items: center;
+    margin-right: 10rpx;
+}
+
+.container .bottom .loadingbar-box .loadingbar{
+    height: 32rpx;
+    /*width: 395rpx;*/
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.container .bottom .loadingbar-box .loadingbar .background{
+    height: 6rpx;
+    width: 100%;
+    background:#999999;
+    margin-left: -16rpx;
+}
+
+.container .bottom .loadingbar-box .loadingbar .background .progress{
+    background:#ff6633;
+    width:0%;
+    height:100%;
+}
+
+.container .bottom .loadingbar-box .loadingbar .circle-box{
+    /*background:rgba(0,0,0,0.3);*/
+    /*width:32rpx;*/
+    /*height:32rpx;*/
+    /*border-radius:100%;*/
+    /*padding: 6rpx;*/
+    /*box-sizing: border-box;*/
+    position: relative;
+    left:0rpx;
+    /*z-index: 1;*/
+    width:32rpx;
+    height:32rpx;
+}
+
+.container .bottom .loadingbar-box .loadingbar .circle{
+    /*background:#ffffff;*/
+    /*border:2rpx solid #ff6633;*/
+    /*width:18rpx;*/
+    /*height:18rpx;*/
+    /*border-radius:100%;*/
+    width:32rpx;
+    height:32rpx;
+}
+
+/*全屏*/
+.container .bottom .fullscreenBtn-box {
+    flex:1.5;
+}
+
+.container .bottom .fullscreenBtn-box .fullScreenBtn{
+
+}
+
+

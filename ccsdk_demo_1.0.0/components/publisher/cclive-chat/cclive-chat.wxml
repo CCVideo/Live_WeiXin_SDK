@@ -1,0 +1,7 @@
+<scroll-view scroll-y style="height:{{ccheight}};" scroll-top="{{scrollTop}}" bindtouchstart="touchstart"
+             lower-threshold="50" bindscrolltolower="scrolltolower">
+    <view class="content" style="color:{{ccmsgColor}};font-size:{{ccfontSize}}" wx:for="{{msg}}" wx:key="key">
+        <text class="username" style="color:{{ccusernameColor}}">{{msg[index].username}}：</text>
+        <text>{{msg[index].msg}}</text>
+    </view>
+</scroll-view>

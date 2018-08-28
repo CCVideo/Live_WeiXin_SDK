@@ -1,0 +1,97 @@
+/* components/replay/qa/qa.wxss */
+.container {
+    width: 100%;
+    height: 100%;
+    background: #f3f3f3;
+}
+
+.container .scroll-view {
+    height: 100%;
+}
+
+.container .scroll-view .catechism-box {
+    display: flex;
+    padding: 30rpx 0rpx 20rpx 30rpx;
+    background-color: #fff;
+    border-bottom: 20rpx solid #f3f3f3;
+}
+
+.container .scroll-view .catechism-box:last-child {
+    border-bottom: none;
+}
+
+.container .scroll-view .catechism-box .left {
+    margin-right: 22rpx;
+}
+
+.container .scroll-view .catechism-box .left .image-box {
+
+}
+
+.container .scroll-view .catechism-box .left .image-box image {
+    border: 2rpx solid #fff;
+    width: 76rpx;
+    height: 76rpx;
+    border-radius: 100%;
+}
+
+.container .scroll-view .catechism-box .right {
+
+}
+
+.container .scroll-view .catechism-box .right .name-box {
+    margin-bottom: 16rpx;
+    line-height: 24rpx;
+}
+
+.container .scroll-view .catechism-box .right .name-box .name {
+    font-size: 24rpx;
+    color: #666;
+    margin-right: 19rpx;
+}
+
+.container .scroll-view .catechism-box .right .name-box .time {
+    font-size: 24rpx;
+    color: #999;
+    line-height: 24rpx;
+}
+
+.container .scroll-view .catechism-box .right .question-box {
+    width: 100%;
+    max-width: 590rpx;
+    margin-bottom: 16rpx;
+    line-height: 36rpx;
+}
+
+.container .scroll-view .catechism-box .right .question-box text {
+    font-size: 26rpx;
+    color: #333;
+    word-wrap: break-word;
+}
+
+.container .scroll-view .catechism-box .right .answers {
+    background: #fafafa;
+    width: 590rpx;
+}
+
+.container .scroll-view .catechism-box .right .answers .answer-box {
+    padding: 20rpx;
+    border-bottom: 1rpx solid #e8e8e8;
+}
+
+.container .scroll-view .catechism-box .right .answers .answer-box:last-child {
+    border-bottom: none;
+}
+
+.container .scroll-view .catechism-box .right .answers .answer-box .name {
+    font-size: 24rpx;
+    color: #666;
+}
+
+.container .scroll-view .catechism-box .right .answers .answer-box .answer {
+    font-size: 24rpx;
+    color: #333;
+    word-wrap: break-word;
+}
+
+

@@ -1,0 +1,47 @@
+<view class="container">
+
+    <view class="header">
+        <text class="title">直播设置</text>
+    </view>
+
+    <view class="body">
+        <view class="form">
+            <view class="form-cell">
+                <text>美颜</text>
+                <view>
+                    <switch bindchange="setBeauty" checked="{{beauty}}"></switch>
+                </view>
+            </view>
+            <view class="form-cell" bindtap="setSwitchCamera">
+                <text>摄像头</text>
+                <view>
+                    <text>{{camera.position==='pre'?"前置摄像头":"后置摄像头"}}</text>
+                    <image src="../../../components/img/publisher/setting/set_ic_go_nor@3x.png"></image>
+                </view>
+            </view>
+            <view class="form-cell" bindtap="setResolution">
+                <text>清晰度</text>
+                <view>
+                    <text>{{resolution.resolution==='SD'?'流畅':'清晰'}}</text>
+                    <image src="../../../components/img/publisher/setting/set_ic_go_nor@3x.png"></image>
+                </view>
+            </view>
+            <view class="form-cell last">
+                <text>服务器</text>
+                <view>
+                    <text>北京多线1</text>
+                    <!-- <image src="../../../components/img/publisher/setting/set_ic_go_nor@3x.png"></image> -->
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <view class="foot">
+        <view class="start-live" bindtap="startLive">
+            <button class="start-live-btn">
+                <text>开始直播</text>
+            </button>
+        </view>
+    </view>
+
+</view>

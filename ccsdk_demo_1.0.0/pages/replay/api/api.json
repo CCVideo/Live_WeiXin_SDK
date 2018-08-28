@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "player": "../../../components/replay/player/player",
+    "drawingBoard": "../../../plugin/components/replay/drawingBoard/drawingBoard"
+  }
+}

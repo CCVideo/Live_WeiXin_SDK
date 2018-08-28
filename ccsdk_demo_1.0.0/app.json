@@ -1,0 +1,28 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/replay/login/login",
+    "pages/replay/replay/replay",
+    "pages/replay/api/api",
+    "pages/publisher/api/api",
+    "pages/live/api/api",
+    "pages/live/login/login",
+    "pages/live/player/player",
+    "pages/publisher/login/login",
+    "pages/publisher/live/live",
+    "pages/publisher/setting/setting",
+    "pages/publisher/camera/camera",
+    "pages/publisher/resolution/resolution",
+    "pages/publisher/server/server"
+  ],
+  "networkTimeout": {
+    "request": 10000,
+    "connectSocket": 10000
+  },
+  "plugins": {
+    "ccsdk": {
+      "version": "1.0.0",
+      "provider": "wxf7200395f7f6b071"
+    }
+  }
+}

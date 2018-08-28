@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "直播间",
+  "usingComponents": {
+    "cclive-publisher": "../../../components/publisher/cclive-publisher/cclive-publisher"
+  },
+  "disableScroll": true
+}

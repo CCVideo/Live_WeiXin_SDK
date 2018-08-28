@@ -1,0 +1,96 @@
+.container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.container .min-windows{
+    position: absolute;
+    top:504rpx;
+    right: 0;
+    width: 240rpx !important;
+    height: 180rpx !important;
+    z-index: 1;
+}
+
+.container .full-document{
+    position: absolute;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1;
+    top:0;
+}
+
+/*-------------文档画板组件-----------------*/
+.container .drawingBoard-box {
+    width:750rpx;
+    height:422rpx;
+    background-color: #fff;
+    margin-bottom:3rpx;
+}
+
+.container .drawingBoard-box .drawingBoard{
+    width: 100%;
+    height: 100%;
+}
+
+.container .drawingBoard-box .drawingBoard .control{
+    height: 100%;
+}
+
+/*-------------播放器组件-----------------*/
+.container .player-box {
+    width:750rpx;
+    height:422rpx;
+    margin-bottom:3rpx;
+}
+
+.container .player-box .player{
+    width: 100%;
+    height: 100%;
+}
+
+.container .player-box .player .control{
+    height: 100%;
+}
+
+/*-------------swiper组件------------------*/
+.container .swiper-box {
+    flex: 1;
+    height: 64%;
+}
+
+.container .swiper-box .swiper{
+    height: 100%;
+}
+
+/*简介*/
+.container .swiper-box .swiper .intro-box{
+    height: 100%;
+}
+
+.container .swiper-box .swiper .intro{
+    height: 100%;
+}
+
+/*问答*/
+.container .swiper-box .swiper .qa-box{
+    height: 100%;
+}
+
+.container .swiper-box .swiper .qa{
+    height: 100%;
+}
+
+/*聊天*/
+.container .swiper-box .swiper .chat-box{
+    height: 100%;
+}
+
+.container .swiper-box .swiper .chat{
+    height: 100%;
+}
+
+

@@ -1,0 +1,60 @@
+/* components/replay/chat/chat.wxss */
+.container {
+    width: 100%;
+    height: 100%;
+    background: #f3f3f3;
+}
+
+.container .scroll-view {
+    height: 100%;
+}
+
+.container .scroll-view .message-box {
+    display: flex;
+    margin: 20rpx 0rpx 30rpx 30rpx;
+    line-height: 36rpx;
+}
+
+.container .scroll-view .message-box .left {
+
+}
+
+.container .scroll-view .message-box .left .image-box {
+    margin-right: 22rpx;
+}
+
+.container .scroll-view .message-box .left .image-box image {
+    width: 70rpx;
+    height: 70rpx;
+}
+
+.container .scroll-view .message-box .right {
+
+}
+
+.container .scroll-view .message-box .right .name-box {
+    margin-bottom: 16rpx;
+    line-height: 24rpx;
+}
+
+.container .scroll-view .message-box .right .name-box text{
+    font-size: 24rpx;
+    color: #666;
+}
+
+.container .scroll-view .message-box .right .msg-box {
+    background: #fff;
+    box-shadow: inset 0rpx 2rpx 1rpx 0rpx rgba(255, 255, 255, 0.50);
+    border-radius: 4rpx;
+    width: 100%;
+    max-width: 489rpx;
+    box-sizing: border-box;
+    padding: 20rpx;
+    padding-left: 25rpx;
+}
+
+.container .scroll-view .message-box .right .msg-box rich-text{
+    font-size: 26rpx;
+    color: #333;
+    word-wrap: break-word;
+}

@@ -1,0 +1,21 @@
+<view class="container">
+    <scroll-view class="scroll-view" scroll-y bindscroll="_bindChatScroll" bindscrolltolower="_bindChatScrollTolower"
+                 lower-threshold="10" scroll-into-view="{{toChatMsg}}">
+        <view class="message-box" wx:for="{{chatMsg}}" wx:for-index="index" wx:key=""
+              id="{{index==(chatMsgLength-1)?'lastChat':''}}">
+            <view class="left">
+                <view class="image-box">
+                    <image src="../../../components/img/replay/replay/header.png"></image>
+                </view>
+            </view>
+            <view class="right">
+                <view class="name-box">
+                    <text>{{item.name}}</text>
+                </view>
+                <view class="msg-box">
+                    <rich-text nodes="{{item.msg}}"></rich-text>
+                </view>
+            </view>
+        </view>
+    </scroll-view>
+</view>

@@ -1,0 +1,48 @@
+/* components/replay/player/swiper.wxss */
+.container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/*tab*/
+.container .tab {
+    width: 100%;
+    height: 80rpx;
+    display: flex;
+    background-color: #fff;
+    box-shadow:0rpx 1rpx 3rpx 0rpx rgba(0,0,0,0.09);
+    margin-bottom:3rpx;
+}
+
+.container .tab .option {
+    flex:1;
+    line-height: 80rpx;
+    text-align: center;
+}
+
+.container .tab .option .text{
+    font-size:30rpx;
+    color:#333333;
+}
+
+.container .tab .option .border{
+    width:130rpx;
+    height:4rpx;
+    margin: -6rpx auto 0rpx;
+}
+
+.container .tab .option .active{
+    background:#ff7d00;
+}
+
+/*swiper*/
+.container .swiper {
+    height: 90%;
+}
+
+.container .swiper .item{
+
+}
+
+

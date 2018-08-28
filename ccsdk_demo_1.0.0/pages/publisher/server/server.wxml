@@ -1,0 +1,39 @@
+<view class="container">
+    <view class="header">
+        <text class="title">选择服务器</text>
+    </view>
+    <view class="body">
+        <view class="form">
+            <view class="form-cell">
+                <text>北京多线1</text>
+                <view class="radio-frame-{{radio[0]}}">
+                    <view class="radio"></view>
+                </view>
+            </view>
+            <view class="form-cell">
+                <text>北京多线2</text>
+                <view class="radio-frame-{{radio[1]}}">
+                    <view class="radio"></view>
+                </view>
+            </view>
+            <view class="form-cell">
+                <text>上海多线</text>
+                <view class="radio-frame-{{radio[1]}}">
+                    <view class="radio"></view>
+                </view>
+            </view>
+            <view class="form-cell">
+                <text>青岛多线</text>
+                <view class="radio-frame-{{radio[1]}}">
+                    <view class="radio"></view>
+                </view>
+            </view>
+            <view class="form-cell last">
+                <text>深圳多线</text>
+                <view class="radio-frame-{{radio[1]}}">
+                    <view class="radio"></view>
+                </view>
+            </view>
+        </view>
+    </view>
+</view>

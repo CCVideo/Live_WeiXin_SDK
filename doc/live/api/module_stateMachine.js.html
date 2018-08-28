@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: module/stateMachine.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: module/stateMachine.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>
+/*
+  全局状态模块
+*/
+
+var util = require('./util');
+
+var stateMachine = function () {
+
+  var loginRequestState = false;
+  this.isLoginRequestState = function () {
+    return loginRequestState;
+  };
+  this.setLoginRequestState = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    loginRequestState = b;
+  };
+
+  var loginState = false;
+  this.isLoginState = function () {
+    return loginState;
+  };
+  this.setLoginState = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    loginState = b;
+  };
+
+  var ioConnectState = false;
+  this.isIoConnectState = function () {
+    return ioConnectState;
+  };
+  this.setIoConnectState = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    ioConnectState = b;
+  };
+
+  var playerRequestState = false;
+  this.isPlayerRequestState = function () {
+    return playerRequestState;
+  };
+  this.setPlayerRequestState = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    playerRequestState = b;
+  };
+
+  var playerDataState = false;
+  this.isPlayerDataState = function () {
+    return playerDataState;
+  };
+  this.setPlayerDataState = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    playerDataState = b;
+  };
+
+  var historyRequestState = false;
+  this.isHistoryRequestState = function () {
+    return historyRequestState;
+  };
+  this.setHistoryRequestState = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    historyRequestState = b;
+  };
+
+  var historyDataState = false;
+  this.isHistoryDataState = function () {
+    return historyDataState;
+  };
+  this.setHistoryDataState = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    historyDataState = b;
+  };
+
+  //live
+  var liveStopRequestState = false;
+  this.isLiveStopRequestState = function () {
+    return liveStopRequestState;
+  };
+  this.setLiveStopRequestState = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    liveStopRequestState = b;
+  };
+
+  var liveStartRequestState = false;
+  this.isLiveStartRequestState = function () {
+    return liveStartRequestState;
+  };
+  this.setLiveStartRequestState = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    liveStartRequestState = b;
+  };
+
+  var toggleLiveState = false;
+  this.isToggleLiveState = function () {
+    return toggleLiveState;
+  };
+  this.setToggleLiveState = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    toggleLiveState = b;
+  };
+
+  var liveState = false;
+  this.isLiveState = function () {
+    return liveState;
+  };
+  this.setLiveState = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    liveState = b;
+  };
+
+  var onNetworkStatusChange = true;
+  this.isOnNetworkStatusChange = function () {
+    return onNetworkStatusChange;
+  };
+  /**
+   * @description 是否监听网络状态变化
+   * @param {Booblean} b true监听网络状态变化，false停止监听网络状态变化
+   * @example cc.live.setOnNetworkStatusChange(true);
+   */
+  this.setOnNetworkStatusChange = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    onNetworkStatusChange = b;
+  };
+
+  var firstOnNetworkStatusChange = true;
+  this.isFirstOnNetworkStatusChange = function () {
+    return firstOnNetworkStatusChange;
+  };
+  this.setFirstOnNetworkStatusChange = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    firstOnNetworkStatusChange = b;
+  };
+
+  var reconnect = false;
+  this.isReconnect = function () {
+    return reconnect;
+  };
+  this.setReconnect = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    reconnect = b;
+  };
+
+  var firstListenerEvents = true;
+  this.isFirstListenerEvents = function () {
+    return firstListenerEvents;
+  };
+  this.setFirstListenerEvents = function (b) {
+    if (typeof b !== 'boolean') {
+      return;
+    }
+    firstListenerEvents = b;
+  };
+
+  this.state = {
+
+    loginRequestState: loginRequestState,
+
+    loginState: loginState,
+
+    IoConnectState: ioConnectState,
+
+    playerRequestState: playerRequestState,
+
+    playerDataState: playerDataState,
+
+    historyRequestState: historyRequestState,
+
+    historyDataState: historyDataState,
+
+    liveStopRequestState: liveStopRequestState,
+
+    liveStartRequestState: liveStartRequestState,
+
+    toggleLiveState: toggleLiveState,
+
+    liveState: liveState,
+
+    onNetworkStatusChange: onNetworkStatusChange,
+
+    reconnect: reconnect,
+
+    firstOnNetworkStatusChange: firstOnNetworkStatusChange,
+
+    firstListenerEvents: firstListenerEvents
+
+  };
+
+};
+
+module.exports = stateMachine;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:announcement">announcement</a></li><li><a href="global.html#event:announcement_info">announcement_info</a></li><li><a href="global.html#event:answer">answer</a></li><li><a href="global.html#event:answer_log">answer_log</a></li><li><a href="global.html#event:chat_log">chat_log</a></li><li><a href="global.html#event:chat_message">chat_message</a></li><li><a href="global.html#event:draw">draw</a></li><li><a href="global.html#event:draw_log">draw_log</a></li><li><a href="global.html#event:end_stream">end_stream</a></li><li><a href="global.html#event:information">information</a></li><li><a href="global.html#event:isPublishing_log">isPublishing_log</a></li><li><a href="global.html#event:page_change">page_change</a></li><li><a href="global.html#event:page_change_log">page_change_log</a></li><li><a href="global.html#event:private_chat">private_chat</a></li><li><a href="global.html#event:private_chat_self">private_chat_self</a></li><li><a href="global.html#event:publish_question">publish_question</a></li><li><a href="global.html#event:publish_stream">publish_stream</a></li><li><a href="global.html#event:question">question</a></li><li><a href="global.html#event:question_log">question_log</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:room_teachers">room_teachers</a></li><li><a href="global.html#event:room_user_count">room_user_count</a></li><li><a href="global.html#event:silence_user_chat_message">silence_user_chat_message</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:viewer_info">viewer_info</a></li></ul><h3>Global</h3><ul><li><a href="global.html#configLivePlayer">configLivePlayer</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#sendPrivateChatMsg">sendPrivateChatMsg</a></li><li><a href="global.html#sendPublicChatMsg">sendPublicChatMsg</a></li><li><a href="global.html#sendQuestionMsg">sendQuestionMsg</a></li><li><a href="global.html#setDebug">setDebug</a></li><li><a href="global.html#setOnNetworkStatusChange">setOnNetworkStatusChange</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#streamMode">streamMode</a></li><li><a href="global.html#streamRoute">streamRoute</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Jun 27 2018 11:01:01 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

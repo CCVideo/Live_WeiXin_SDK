@@ -1,0 +1,196 @@
+/* 背景 */
+
+.container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #fafafa;
+}
+
+/* 头部样式 */
+
+.container .header {
+    height: 88rpx;
+    box-sizing: border-box;
+    padding: 0 30rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.container .header .title {
+    font-size: 26rpx;
+    color: #666;
+}
+
+.container .header .scancode {
+    width: 44rpx;
+    height: 44rpx;
+}
+
+.container .header .big-area {
+    position: absolute;
+    width: 100rpx;
+    height: 100rpx;
+    right: 0rpx;
+    top: 0rpx;
+}
+
+/* 表单样式 */
+
+.container .body {
+    background-color: #fff;
+    border: 1rpx solid #e8e8e8;
+    border-left: none;
+    border-right: none;
+    margin-bottom: 70rpx;
+}
+
+.container .body .form {
+    width: 670rpx;
+    margin: 0 auto;
+}
+
+.container .body .form .form-cell {
+    border-bottom: 1rpx solid #e8e8e8;
+    height: 88rpx;
+    display: flex;
+    align-items: center;
+}
+
+.container .body .form .last {
+    border-bottom: none;
+}
+
+.container .body .form .form-cell text {
+    flex: 2.2;
+    font-family: PingFangSC-Regular;
+    font-size: 28rpx;
+    color: #333;
+}
+
+.container .body .form .form-cell input {
+    flex: 7.8;
+    font-family: PingFangSC-Regular;
+    font-size: 28rpx;
+    color: #333;
+    text-overflow: ellipsis;
+}
+
+/* 底部样式 */
+
+.container .footer {
+    margin-bottom: 60rpx;
+}
+
+.container .footer .login-btn-ban .login-btn {
+    opacity: 0.6;
+    background-image: linear-gradient(-90deg, #ff5301 0%, #ff8e00 100%);
+    border-radius: 100rpx;
+    width: 620rpx;
+    height: 80rpx;
+    line-height: 80rpx;
+}
+
+.container .footer .login-btn-ban .login-btn text {
+    opacity: 0.5;
+    font-family: PingFangSC-Regular;
+    font-size: 36rpx;
+    color: #fff;
+    letter-spacing: 25rpx;
+    margin-left: 12.5rpx;
+}
+
+.container .footer .login-btn-allow .login-btn {
+    background-image: linear-gradient(-90deg, #ff5301 0%, #ff8e00 100%);
+    border-radius: 100rpx;
+    width: 620rpx;
+    height: 80rpx;
+    line-height: 80rpx;
+}
+
+.container .footer .login-btn-allow .login-btn text {
+    font-family: PingFangSC-Regular;
+    font-size: 36rpx;
+    color: #fff;
+    letter-spacing: 25rpx;
+    margin-left: 12.5rpx;
+}
+
+/* 提示信息 */
+
+.container .error-hint {
+    background-color: rgba(20, 20, 20, 0.89);
+    box-shadow: 0rpx 5rpx 15rpx 0rpx rgba(102, 102, 102, 0.50);
+    border-radius: 10px;
+    width: 500rpx;
+    height: 110rpx;
+    line-height: 110rpx;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.container .error-hint text {
+    font-family: PingFangSC-Regular;
+    font-size: 28rpx;
+    color: #fff;
+}
+
+/* 登录loading */
+
+.container .loading .loading-background {
+    background-color: rgba(0, 0, 0, 0.2);
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container .loading .loading-background .loading-hint {
+    background-color: rgba(20, 20, 20, 0.89);
+    box-shadow: 0rpx 5rpx 15rpx 0rpx rgba(102, 102, 102, 0.50);
+    border-radius: 10rpx;
+    width: 358rpx;
+    height: 120rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container .loading .loading-background .loading-hint .loading-circle {
+    opacity: 0.69;
+    border: 2rpx solid #fff;
+    width: 48rpx;
+    height: 48rpx;
+    border-radius: 100%;
+    margin-right: 29rpx;
+    border-right-color: transparent;
+    animation: rotate 2s linear 0s infinite normal;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotateZ(0deg);
+    }
+
+    50% {
+        transform: rotateZ(180deg);
+    }
+
+    100% {
+        transform: rotateZ(360deg);
+    }
+}
+
+.container .loading .loading-background .loading-hint .loading-text {
+    opacity: 0.69;
+    font-family: PingFangSC-Regular;
+    font-size: 28rpx;
+    color: #fff;
+    line-height: 28rpx;
+    text-align: center;
+}

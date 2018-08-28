@@ -1,0 +1,26 @@
+<view class="container">
+
+    <view class="header">
+        <text class="title">选择分辨率</text>
+    </view>
+
+    <view class="body">
+        <view class="form">
+
+            <view class="form-cell" bindtap="setSD">
+                <text>流畅</text>
+                <view class="radio-frame-{{resolution.radio[0]}}">
+                    <view class="radio"></view>
+                </view>
+            </view>
+            <view class="form-cell last" bindtap="setHD">
+                <text>清晰</text>
+                <view class="radio-frame-{{resolution.radio[1]}}">
+                    <view class="radio"></view>
+                </view>
+            </view>
+
+        </view>
+    </view>
+
+</view>

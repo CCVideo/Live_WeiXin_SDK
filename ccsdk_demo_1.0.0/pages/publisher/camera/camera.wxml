@@ -1,0 +1,26 @@
+<view class="container">
+
+    <view class="header">
+        <text class="title">切换摄像头</text>
+    </view>
+
+    <view class="body">
+        <view class="form">
+
+            <view class="form-cell" bindtap="preposition">
+                <text>前置摄像头</text>
+                <view class="radio-frame-{{camera.radio[0]}}">
+                    <view class="radio"></view>
+                </view>
+            </view>
+            <view class="form-cell last" bindtap="postposition">
+                <text>后置摄像头</text>
+                <view class="radio-frame-{{camera.radio[1]}}">
+                    <view class="radio"></view>
+                </view>
+            </view>
+
+        </view>
+    </view>
+
+</view>

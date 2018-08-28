@@ -1,0 +1,11 @@
+.content {
+    margin: 16px;
+}
+
+.content view {
+    float: left;
+}
+
+.content .username {
+    clear: both;
+}

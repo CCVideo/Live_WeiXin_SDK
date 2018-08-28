@@ -1,0 +1,111 @@
+/* 背景 */
+
+.container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #fafafa;
+}
+
+/* 头部样式 */
+
+.container .header {
+    height: 88rpx;
+    box-sizing: border-box;
+    padding: 0 30rpx;
+    display: flex;
+    align-items: center;
+}
+
+.container .header .title {
+    font-size: 26rpx;
+    color: #666;
+}
+
+/* 表单样式 */
+
+.container .body {
+    background-color: #fff;
+    border: 1rpx solid #e8e8e8;
+    border-left: none;
+    border-right: none;
+    margin-bottom: 70rpx;
+}
+
+.container .body .form {
+    width: 670rpx;
+    margin: 0 auto;
+}
+
+.container .body .form .form-cell {
+    border-bottom: 1rpx solid #e8e8e8;
+    height: 88rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.container .body .form .last {
+    border-bottom: none;
+}
+
+.container .body .form .form-cell text {
+    font-family: PingFangSC-Regular;
+    font-size: 28rpx;
+    color: #333;
+}
+
+.wx-switch-input {
+    width: 80rpx !important;
+    height: 40rpx !important;
+    border: none !important;
+    background-image: linear-gradient(-90deg, #ff5301 0%, #ff8e00 100%) !important;
+}
+
+.wx-switch-input::before {
+    width: 82rpx !important;
+    height: 40rpx !important;
+    border: none !important;
+    background-image: linear-gradient(-90deg, #949494 0%, #b7b7b7 100%) !important;
+}
+
+/* switch 球的样式 */
+
+.wx-switch-input::after {
+    width: 36rpx !important;
+    height: 36rpx !important;
+}
+
+.container .body .form .form-cell view text {
+    font-family: PingFangSC-Regular;
+    font-size: 28rpx;
+    color: #666;
+    margin-right: 14rpx;
+}
+
+.container .body .form .form-cell view image {
+    width: 17rpx;
+    height: 30rpx;
+    vertical-align: middle;
+}
+
+/* 开始直播按钮 */
+
+.container .foot {
+    margin-bottom: 60rpx;
+}
+
+.container .foot .start-live .start-live-btn {
+    background-image: linear-gradient(-90deg, #ff5301 0%, #ff8e00 100%);
+    border-radius: 100rpx;
+    width: 620rpx;
+    height: 80rpx;
+    line-height: 80rpx;
+}
+
+.container .foot .start-live .start-live-btn text {
+    font-family: PingFangSC-Regular;
+    font-size: 36rpx;
+    color: #fff;
+    margin-left: 12.5rpx;
+}
