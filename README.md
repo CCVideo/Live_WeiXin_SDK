@@ -21,7 +21,9 @@
 * 调试基础库：建议使用 2.2.2 及以上版本
 * 微信：建议使用 6.7.0 及以上版本
 
+### 小程序SDK和Demo
 
+下载地址：https://github.com/CCVideo/Live_WeiXin_SDK/releases
 
 
 
