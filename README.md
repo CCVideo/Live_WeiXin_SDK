@@ -6,9 +6,9 @@
 * 使用demo需要用户配置 ccsdk_demo/project.config.json appid字段，添加自己的appid。
 * 添加配置ccsdk插件后就可以运行使用ccsdk_demo，并参考demo进行二次开发。
 
-1. 推流sdk插件快速使用详见 doc/pusher/云直播微信小程序推流SDK开发指南.md
-2. 播放sdk插件快速使用详见 doc/live/云直播微信小程序播放SDK开发指南.md
-3. 回放sdk插件快速使用详见 doc/replay/云直播微信小程序播放SDK开发指南.md
+1. 推流sdk插件快速使用详见 [doc/pusher/云直播微信小程序推流SDK开发指南.md](doc/pusher/云直播微信小程序推流SDK开发指南.md)
+2. 播放sdk插件快速使用详见 [doc/live/云直播微信小程序播放SDK开发指南.md](doc/live/云直播微信小程序播放SDK开发指南.md)
+3. 回放sdk插件快速使用详见 [doc/replay/云直播微信小程序回放SDK开发指南.md](doc/replay/云直播微信小程序回放SDK开发指南.md)
 
 ### 自定义组件使用说明
 * 自定义组件封装在ccsdk_demo_1.0.0/components文件下,用户可以直接复制并使用，components/img有所有的UI资源。
