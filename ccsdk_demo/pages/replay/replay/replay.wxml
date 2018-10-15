@@ -1,0 +1,63 @@
+<view class="container">
+    <!--文档画板组件-->
+    <view bindtap="bindDocuemntFullScreen"
+          class="drawingBoard-box {{isPlayerDocument==='document'?'':'min-windows'}} {{fullDocument}}"
+          style="display: {{replayMode==='document' && showHideDcument?'block':'none'}}">
+        <drawingBoard db-class="drawingBoard" wx:if="{{renderer}}" style="position: relative;top:{{documentTop}};"
+                      height="{{documentHeight}}">
+            <!--网络链接信息-->
+            <cover-view class="net-info"
+                        style="display: {{netConnectState.toggle&&isPlayerDocument==='document'?'block':'none'}}">
+                <cover-view class="info" style="color: {{netConnectState.state?'#00d449':'red'}}">
+                    {{netConnectState.info}}
+                </cover-view>
+            </cover-view>
+            <control showHide="{{showHideDcument}}" catchfullscreen="bindDocuemntFullScreen" time="{{time}}"
+                     play="{{playState}}" catchshowhide="catchShowHide" catchswitch="catchSwitch"
+                     catchfulldocument="catchFullDocument"
+                     replayMode="{{replayMode}}" class="control"
+                     style="display: {{isPlayerDocument==='document'?'block':'none'}};"></control>
+        </drawingBoard>
+    </view>
+    <!--播放器组件-->
+    <view class="player-box {{isPlayerDocument==='video'?'':'min-windows'}}"
+          style="display: {{showHidePlayer?'block':'none'}}">
+        <player netconnectstate="{{netConnectState}}" player-class="player" bindfullscreenchange="bindFullscreenchange" bindtimeupdate="bindTimeupdate"
+                bindplay="bindPlay" bindpause="bindPause" bindended="bindEnded">
+            <!--网络链接信息-->
+            <cover-view class="net-info"
+                        style="display: {{netConnectState.toggle&&isPlayerDocument==='video'?'block':'none'}}">
+                <cover-view class="info" style="color: {{netConnectState.state?'#00d449':'red'}}">
+                    {{netConnectState.info}}
+                </cover-view>
+            </cover-view>
+            <control showHide="{{showHidePlayer}}" fullscreen="{{fullscreen}}" catchfullscreen="catchFullscreen"
+                     time="{{time}}" play="{{playState}}" catchshowhide="catchShowHide" catchswitch="catchSwitch"
+                     replayMode="{{replayMode}}" class="control"
+                     style="display: {{isPlayerDocument==='video'?'block':'none'}};"></control>
+        </player>
+    </view>
+    <!--swiper组件-->
+    <view class="swiper-box">
+        <swiper class="swiper" initData="{{initSwiper}}">
+            <view slot="chat" class="chat-box">
+                <chat class="chat"></chat>
+            </view>
+            <view slot="intro" class="intro-box">
+                <intro class="intro" initData="{{initIntro}}"></intro>
+            </view>
+            <view slot="qa" class="qa-box">
+                <qa class="qa" initData="{{initQa}}"></qa>
+            </view>
+        </swiper>
+    </view>
+</view>
+
+<!--测试进度条-->
+<view style="position: absolute;bottom:0rpx;left:20px;width: 80%">
+    <slider style="width: 100%" bindchange="bindChange" min="{{min}}" max="{{max}}" block-size="14"
+            activeColor="#ff6633"></slider>
+</view>
+
+
+

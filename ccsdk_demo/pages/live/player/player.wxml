@@ -1,0 +1,333 @@
+<view class="container">
+    <!-- player -->
+    <view class="player">
+        <!-- 直播文档 -->
+        <view class="document {{switchPip[0]}} {{fullDocument}}" wx:if="{{pdfView}}" bindtap="bindDocuemntFullScreen">
+
+            <drawingBoard style="position: relative;top:{{documentTop}}" width="{{fullDocument?'100%':dbWidth}}"
+                          height="{{fullDocument?documentHeight:dbHeight}}" wx:if="{{dbView}}" class="{{switchPip[1]}}">
+                <!--网络链接信息-->
+                <cover-view class="net-info"
+                            style="display: {{netConnectState.toggle&&switchPip[0]===''?'block':'none'}}">
+                    <cover-view class="info" style="color: {{netConnectState.state?'#00d449':'red'}}">
+                        {{netConnectState.info}}
+                    </cover-view>
+                </cover-view>
+                <cover-view class="cover"
+                            style="display:{{toggleCover[0]?'flex':'none'}};background-color:{{isPublishing==1&&!isBan?'none':'black'}};">
+                    <!-- 直播中 -->
+                    <cover-view class="living" style="display:{{living?'flex':'none'}}" catchtap="catchLiving">
+                        <cover-view class="living-box">
+                            <cover-view class="circle"></cover-view>
+                            <cover-view class="text">直播中</cover-view>
+                        </cover-view>
+                    </cover-view>
+                    <!-- 用户交互 -->
+                    <cover-view class="controls" style="display:{{toggleControls?'block':'none'}}"
+                                catchtap="catchControls">
+                        <cover-view class="top" catchtap="catchNotice">
+                            <cover-view class="notice-btn">
+                                <cover-image src="../../../components/img/live/player/announcement.png"></cover-image>
+                            </cover-view>
+                        </cover-view>
+                        <cover-view class="center">
+                            <cover-view class="hint" style="display:{{hintLiveNot?'block':'none'}}">
+                                {{hintLiveNotText}}
+                            </cover-view>
+                            <cover-view style="display: {{toggleDocumentFullScreen?'block':'none'}}"
+                                        class="document-full-screen" catchtap="bindDocuemntFullScreen">
+                                <cover-image src="../../../components/img/live/player/full-screen.png"></cover-image>
+                            </cover-view>
+                            <cover-view class="btn-group">
+                                <cover-view class="btn" catchtap="bindSwitchoverFullScreen">
+                                    <cover-image
+                                            src="../../../components/img/live/player/{{btnSwitchoverFullScreen}}.png"></cover-image>
+                                </cover-view>
+                                <cover-view class="btn" catchtap="bindTogglePlayerLiveMode">
+                                    <cover-image
+                                            src="../../../components/img/live/player/{{btnTogglePlayerLiveMode}}.png"></cover-image>
+                                </cover-view>
+                                <cover-view class="btn" catchtap="bindToggleSelectRoute">
+                                    <cover-image src="../../../components/img/live/player/switch-router.png"
+                                                 class="btn"></cover-image>
+                                </cover-view>
+                            </cover-view>
+                        </cover-view>
+                        <cover-view class="bottom">
+                            <cover-view class="online-peoples">
+                                <cover-view class="people-box">
+                                    <cover-image src="../../../components/img/live/player/people.png"
+                                                 class="people"></cover-image>
+                                </cover-view>
+                                <cover-view class="number">{{peoples}}</cover-view>
+                            </cover-view>
+                        </cover-view>
+                    </cover-view>
+                    <!-- 切换线路 -->
+                    <cover-view class="switch-router" style="display:{{toggleSelectRoute?'block':'none'}}">
+                        <cover-view class="switch-router-select">
+                            <cover-view class="switch-router-option {{RouteOptionActive===index?'active':''}}"
+                                        wx:for="{{options}}" wx:key="" wx:for-index="index" data-index="{{index}}"
+                                        bindtap="bindSelectRoute">
+                                {{item}}
+                            </cover-view>
+                        </cover-view>
+                    </cover-view>
+                    <!-- 公告 -->
+                    <cover-view class="notice-container"
+                                style="width:{{toggleNotice?'100%':'0'}}rpx;height:{{toggleNotice?'422':'0'}}rpx">
+                        <cover-view class="notice">
+                            <cover-view class="head">
+                                <cover-image src="../../../components/img/live/player/notice-head.png"></cover-image>
+                                <cover-view class="text">直播公告</cover-view>
+                            </cover-view>
+                            <cover-view class="content">
+                                <cover-view class="text">{{announcement}}</cover-view>
+                            </cover-view>
+                            <cover-view class="close" catchtap="catchCloseNotice">
+                                <cover-image src="../../../components/img/live/player/notice-close.png"></cover-image>
+                            </cover-view>
+                        </cover-view>
+                    </cover-view>
+                </cover-view>
+            </drawingBoard>
+
+        </view>
+        <!-- 直播播放器 -->
+        <view class="live {{switchPip[2]}}" wx:if="{{playerView}}">
+            <live-player bindtouchstart="bindTouchStart" bindtouchend="bindTouchEnd" bindtap="bindDoubleTap"
+                         min-cache="{{minCache}}" max-cache="{{maxCache}}" id="player" src="{{playerUrl}}" mode="live"
+                         autoplay object-fit="{{objectFit}}" orientation="{{orientation}}"
+                         bindfullscreenchange="bindFullScreenChange" bindstatechange="statechange"
+                         bindnetstatus="netstatus">
+                <!--网络链接信息-->
+                <cover-view class="net-info"
+                            style="display: {{netConnectState.toggle&&switchPip[0]!==''?'block':'none'}}">
+                    <cover-view class="info" style="color: {{netConnectState.state?'#00d449':'red'}}">
+                        {{netConnectState.info}}
+                    </cover-view>
+                </cover-view>
+                <cover-view class="exit-full-screen" bindtap='bindExitFullScreen' wx:if="{{toggleExitFullScreenBtn}}">
+                    <cover-image src="../../../components/img/live/player/full-screen.png"></cover-image>
+                </cover-view>
+                <cover-view class="cover" wx:if="{{toggleCover[1]}}">
+                    <!-- 直播中 -->
+                    <cover-view class="living" wx:if="{{living}}" catchtap="catchLiving">
+                        <cover-view class="living-box">
+                            <cover-view class="circle"></cover-view>
+                            <cover-view class="text">直播中</cover-view>
+                        </cover-view>
+                    </cover-view>
+                    <!-- 切换线路 -->
+                    <cover-view class="switch-router" wx:if="{{toggleSelectRoute}}">
+                        <cover-view class="switch-router-select">
+                            <cover-view class="switch-router-option {{RouteOptionActive===index?'active':''}}"
+                                        wx:for="{{options}}" wx:key="" wx:for-index="index" data-index="{{index}}"
+                                        bindtap="bindSelectRoute">
+                                {{item}}
+                            </cover-view>
+                        </cover-view>
+                    </cover-view>
+                    <!-- 公告 -->
+                    <cover-view class="notice-container" wx:if="{{toggleNotice}}">
+                        <cover-view class="notice">
+                            <cover-view class="head">
+                                <cover-image src="../../../components/img/live/player/notice-head.png"></cover-image>
+                                <cover-view class="text">直播公告</cover-view>
+                            </cover-view>
+                            <cover-view class="content">
+                                <cover-view class="text">{{announcement}}</cover-view>
+                            </cover-view>
+                            <cover-view class="close" catchtap="catchCloseNotice">
+                                <cover-image src="../../../components/img/live/player/notice-close.png"></cover-image>
+                            </cover-view>
+                        </cover-view>
+                    </cover-view>
+                    <!-- 用户交互 -->
+                    <cover-view class="controls" wx:if="{{toggleControls}}" catchtap="catchControls">
+                        <!-- 音频模式 -->
+                        <cover-view class="audio-mode" wx:if="{{audioMode}}">
+                            <cover-image class="audio-mode-image"
+                                         src="../../../components/img/live/player/audioMode.png"></cover-image>
+                            <cover-view class="text">音频模式</cover-view>
+                        </cover-view>
+                        <cover-view class="top" catchtap="catchNotice">
+                            <cover-view class="notice-btn">
+                                <cover-image src="../../../components/img/live/player/announcement.png"></cover-image>
+                            </cover-view>
+                        </cover-view>
+                        <cover-view class="center">
+                            <cover-view class="hint" wx:if="{{hintLiveNot}}">
+                                {{hintLiveNotText}}
+                            </cover-view>
+                            <cover-view class="btn-group" wx:if="{{btnGroup}}">
+                                <cover-view class="btn" catchtap="bindSwitchoverFullScreen">
+                                    <cover-image
+                                            src="../../../components/img/live/player/{{btnSwitchoverFullScreen}}.png"></cover-image>
+                                </cover-view>
+                                <cover-view class="btn" catchtap="bindTogglePlayerLiveMode"
+                                            style="display: {{pdfView?'block':'none'}};">
+                                    <cover-image
+                                            src="../../../components/img/live/player/{{btnTogglePlayerLiveMode}}.png"></cover-image>
+                                </cover-view>
+                                <cover-view class="btn" catchtap="bindToggleSelectRoute">
+                                    <cover-image
+                                            src="../../../components/img/live/player/switch-router.png"></cover-image>
+                                </cover-view>
+                            </cover-view>
+                        </cover-view>
+                        <cover-view class="bottom">
+                            <cover-view class="online-peoples">
+                                <cover-view class="people-box">
+                                    <cover-image src="../../../components/img/live/player/people.png"
+                                                 class="people"></cover-image>
+                                </cover-view>
+                                <cover-view class="number">{{peoples}}</cover-view>
+                            </cover-view>
+                        </cover-view>
+                    </cover-view>
+                </cover-view>
+            </live-player>
+        </view>
+    </view>
+    <!-- chat -->
+    <view class="chat">
+        <!-- tab切换 -->
+        <view class="tab">
+            <view wx:for="{{tabContent}}" wx:key="*this" class="option" data-index="{{index}}" bindtap="bindTab">
+                <text>{{item}}</text>
+                <view class="border {{tabOptionSelected==index?'active':''}}"></view>
+            </view>
+        </view>
+        <!-- swiper -->
+        <swiper class="swiper" current="{{tabOptionSelected}}" bindchange="bindSwiperChange">
+            <swiper-item class="chat" wx:if="{{chatView}}">
+                <!-- 聊天内容 -->
+                <view class="content">
+                    <scroll-view scroll-y bindscroll="bindChatScroll" bindscrolltolower="bindChatScrollTolower"
+                                 lower-threshold="10" scroll-into-view="{{toChat}}">
+                        <!-- 聊天信息 -->
+                        <view class="message-box {{message[index].type?'message-box-right':''}}" wx:for="{{message}}"
+                              wx:for-index="index" wx:key="" id="{{index==(chatLength-1)?'lastChat':''}}">
+                            <view class="left">
+                                <view class="image-box {{message[index].type?'image-box-right':''}}">
+                                    <image src="../../../components/img/live/player/header.png"></image>
+                                </view>
+                            </view>
+                            <view class="right">
+                                <view class="name-box {{message[index].type?'name-box-right':''}}">
+                                    <text>{{message[index].name}}</text>
+                                </view>
+                                <view class="msg-box {{message[index].type?'msg-box-right':''}}">
+                                    <rich-text nodes="{{message[index].msg}}"></rich-text>
+                                </view>
+                            </view>
+                        </view>
+
+                    </scroll-view>
+                </view>
+                <!-- 聊天输入框 -->
+                <view class="input">
+                    <view class="input-box">
+                        <input disabled="{{!netConnectState.state}}"
+                               placeholder='{{netConnectState.state?"请输入文字":"网络已断开，无法输入聊天"}}' value="{{chatMsg}}"
+                               adjust-position="" bindfocus="bindChatInputFocus"
+                               bindblur="bindChatInputBlur" bindinput='bindChatInput'/>
+                        <image src="../../../components/img/live/player/{{emoji}}.png"
+                               bindtap="bindToggleEmoji"></image>
+                    </view>
+                    <view class="send">
+                        <view class="btn" bindtap="bindSendPublicChatMsg">发送</view>
+                    </view>
+                </view>
+                <!-- 键盘抬起输入框 -->
+                <view style="height:{{topChatInputHeight}}px"></view>
+                <!-- 表情 -->
+                <view class="emoji" wx:if="{{toggleEmoji}}">
+                    <view class="emoji-row" wx:for="{{emojiRow}}" wx:key="" wx:for-index="i" wx:for-item="row">
+                        <view class="emoji-col" wx:for="{{emojiCol[i]}}" wx:key="" wx:for-index="j" wx:for-item="col">
+                            <view class="emoji-box" bindtap="bindEmoji" data-index="{{col}}">
+                                <image src="../../../components/img/live/player/emoji/chat_em_face{{col}}@2X.png"></image>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+                <!-- 私聊 -->
+                <view class="privateChat">
+                </view>
+            </swiper-item>
+            <swiper-item class="catechism" wx:if="{{qaView}}">
+                <!-- 问答内容展示 -->
+                <view class="content">
+                    <scroll-view scroll-y bindscroll="bindQuestionAnswerScroll"
+                                 bindscrolltolower="bindQuestionAnswerScrollTolower" lower-threshold="10"
+                                 scroll-into-view="{{toQuestionAnswer}}">
+                        <view class="catechism-box" wx:for="{{questions}}" wx:key="" wx:for-index="i" wx:for-item="qt"
+                              id="{{i==(questionAnswerLength-1)?'lastQuestionAnswer':''}}"
+                              wx:if="{{(qt.type==1?true:toggleShowQuestion)&&qt.display}}">
+                            <view class="left">
+                                <view class="image-box">
+                                    <image src="../../../components/img/live/player/header.png"></image>
+                                </view>
+                            </view>
+                            <view class="right">
+                                <view class="name-box">
+                                    <text class="name">{{qt.name}}</text>
+                                    <text class="time">{{qt.time}}</text>
+                                </view>
+                                <view class="question-box">
+                                    <text>{{qt.question}}</text>
+                                </view>
+                                <view class="answers">
+                                    <view class="answer-box" wx:for="{{qt.answers}}" wx:key="" wx:for-index="j"
+                                          wx:for-item="as" wx:if="{{as.isPrivate===0}}">
+                                        <text class="name">{{as.name}}:</text>
+                                        <text class="answer">{{as.answer}}</text>
+                                    </view>
+                                </view>
+                            </view>
+                        </view>
+                    </scroll-view>
+                </view>
+                <!-- 问答输入框 -->
+                <view class="input">
+                    <view class="input-box">
+                        <view class="show" bindtap="bindShowQuestion">
+                            <view class="hint-show-question" wx:if="{{toggleHintShowQuestion}}">
+                                <view class="hint-box">
+                                    <text>{{hintShowQuestion}}</text>
+                                </view>
+                                <view class="triangle"></view>
+                            </view>
+                            <image src="../../../components/img/live/player/{{eye}}.png"></image>
+                        </view>
+                        <input disabled="{{!netConnectState.state}}"
+                               placeholder='{{netConnectState.state?"请输入文字":"网络已断开，无法输入聊天"}}' adjust-position=""
+                               bindfocus="bindQuestionInputFocus"
+                               bindblur="bindQuestionInputBlur" bindinput='bindQuestionAnswerInput'
+                               value="{{question}}"/>
+                    </view>
+                    <view class="send">
+                        <view class="btn" bindtap="bindSendQuestionMsg">发送</view>
+                    </view>
+                </view>
+                <!-- 键盘顶起输入框 -->
+                <view class="top-input" style="height:{{topQuestionInputHeight}}px"></view>
+            </swiper-item>
+            <swiper-item class="desc">
+                <view class="title">
+                    <text>{{roomTitle}}</text>
+                </view>
+                <view class="content" wx:if="{{desc}}">
+                    <rich-text nodes="{{desc}}"></rich-text>
+                </view>
+            </swiper-item>
+        </swiper>
+        <!-- 提示信息 -->
+        <view class="hint-input-blank" wx-if="{{toggleCheckoutInputHint}}">
+            <view class="hint-box">
+                <text>{{checkoutInputHint}}</text>
+            </view>
+        </view>
+    </view>
+</view>
