@@ -52,7 +52,8 @@ Component({
     },
 
     data: {
-        playerUrl: ''
+        playerUrl: '',
+        enableProgressGesture:false
     },
 
     methods: {

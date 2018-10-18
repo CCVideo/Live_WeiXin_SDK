@@ -88,7 +88,6 @@ Page({
         });
         this.hidePlayer();
         this.alignCenter();
-        this.renderDocuemnt();
     },
 
     docuemntExitFullScreen: function () {
@@ -102,7 +101,6 @@ Page({
         });
         this.showPlayer();
         this.alignTop();
-        this.renderDocuemnt();
     },
 
     //文档全屏

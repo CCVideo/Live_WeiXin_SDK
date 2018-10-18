@@ -2,7 +2,7 @@
        initial-time="initialTime" autoplay="{{autoplay}}" duration="{{duration}}"
        controls="{{controls}}" loop="{{loop}}" muted="{{muted}}" objectFit="{{objectFit}}" bindplay="bindPlay"
        bindpause="bindPause" bindended="bindEnded" bindtimeupdate="bindTimeupdate"
-       bindwaiting="bindWaiting" bindfullscreenchange="bindFullscreenchange" binderror="bindError">
+       bindwaiting="bindWaiting" bindfullscreenchange="bindFullscreenchange" binderror="bindError" enable-progress-gesture="{{enableProgressGesture}}">
     <slot></slot>
 </video>
 
