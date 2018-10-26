@@ -21,7 +21,7 @@
   },
   "plugins": {
     "ccsdk": {
-      "version": "1.1.1",
+      "version": "1.1.2",
       "provider": "wxf7200395f7f6b071"
     }
   }

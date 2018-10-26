@@ -94,7 +94,7 @@
 
         </view>
         <!-- 直播播放器 -->
-        <view class="live {{switchPip[2]}}" wx:if="{{playerView}}">
+        <view class="live {{switchPip[2]}}" style="display:{{playerView?'block':'none'}}">
             <live-player bindtouchstart="bindTouchStart" bindtouchend="bindTouchEnd" bindtap="bindDoubleTap"
                          min-cache="{{minCache}}" max-cache="{{maxCache}}" id="player" src="{{playerUrl}}" mode="live"
                          autoplay object-fit="{{objectFit}}" orientation="{{orientation}}"
