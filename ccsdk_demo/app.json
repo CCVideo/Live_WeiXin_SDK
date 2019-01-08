@@ -1,28 +1,45 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/replay/login/login",
-    "pages/replay/replay/replay",
-    "pages/replay/api/api",
-    "pages/publisher/api/api",
-    "pages/live/api/api",
-    "pages/live/login/login",
-    "pages/live/player/player",
-    "pages/publisher/login/login",
-    "pages/publisher/live/live",
-    "pages/publisher/setting/setting",
-    "pages/publisher/camera/camera",
-    "pages/publisher/resolution/resolution",
-    "pages/publisher/server/server"
+    "pages/index/index"
   ],
   "networkTimeout": {
-    "request": 10000,
+    "request": 25000,
     "connectSocket": 10000
   },
   "plugins": {
     "ccsdk": {
-      "version": "1.1.2",
-      "provider": "wxf7200395f7f6b071"
+      "version": "1.2.0",
+      "provider": "wx245c121cc7c4028d"
     }
-  }
+  },
+  "subPackages": [
+    {
+      "root": "pages/live/",
+      "pages": [
+        "api/api",
+        "login/login",
+        "player/player"
+      ]
+    },
+    {
+      "root": "pages/publisher/",
+      "pages": [
+        "api/api",
+        "login/login",
+        "live/live",
+        "setting/setting",
+        "camera/camera",
+        "resolution/resolution",
+        "server/server"
+      ]
+    },
+    {
+      "root": "pages/replay/",
+      "pages": [
+        "login/login",
+        "replay/replay",
+        "api/api"
+      ]
+    }
+  ]
 }

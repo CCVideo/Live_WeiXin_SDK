@@ -4,7 +4,12 @@ Component({
     /**
      * 组件的属性列表
      */
-    properties: {},
+    properties: {
+        groupid: {
+            type: String,
+            value: 0
+        }
+    },
 
     /**
      * 组件的初始数据
@@ -37,27 +42,65 @@ Component({
                 });
             }
         },
+        isWithGroup: function (data) {
+            var self = this;
+            var groupId = data.groupId;
+            if (!groupId) {
+                return true;
+            }
+
+            var role = '';
+
+            if (data.userrole) {
+                role = data.userrole;
+            } else if (data.userRole) {
+                role = data.userRole;
+            } else if (data.fromuserrole) {
+                role = data.fromuserrole;
+            } else if (data.answerUserRole) {
+                role = data.answerUserRole;
+            } else if (data.fromuserrole) {
+                role = data.fromuserrole;
+            } else if (data.role) {
+                role = data.role;
+            }
+
+            if (role && role === 'publisher') {
+                return true;
+            }
+
+            if (self.data.groupid && self.data.groupid !== groupId) {
+                return false;
+            }
+            return true;
+        },
     },
 
     ready: function () {
         var self = this;
-        var chatMsg = [];
+        var chatMsgs = [];
         cc.replay.on('chat_msg_sync', function (data) {
             var data = data;
             for (var i = 0; i < data.length; i++) {
-                var cm = {};
-                cm.name = data[i].username;
-                cm.msg = data[i].msg;
-                chatMsg.push(cm);
+                if (!self.isWithGroup(data[i])) {
+                    continue;
+                }
+                var CMS = {};
+                CMS.name = data[i].username;
+                CMS.msg = cc.replay.showEm(data[i].msg);
+                chatMsgs.push(CMS);
             }
-            srollChatMsgList();
+
+            chatMsgs = chatMsgs.splice(-30, 30);
+            srollChatMsgList(chatMsgs);
         });
 
-        function srollChatMsgList() {
+        function srollChatMsgList(chatMsg) {
             self.setData({
                 chatMsg: chatMsg,
-                chatMsgLength: self.data.chatMsg.length
+                chatMsgLength: chatMsg.length
             });
+
             if (self.data.toggleChatScroll) {
                 self.setData({
                     toChatMsg: 'lastChat'

@@ -89,7 +89,7 @@ Page({
             [15, 16, 17, 18, 19, 20, 21]
         ],
         toggleLiveControlsTimer: {},
-        chatLengthMax: -150,
+        chatLengthMax: -30,
         fullDocument: '',//文档全屏
         pageHeight: 0,
         pageWidth: 0,
@@ -105,7 +105,8 @@ Page({
             time: 1000,
             toggle: false
         },
-        netConnectStateTimer: {}
+        netConnectStateTimer: {},
+        groupid: ''//分组信息
     },
 
     alignCenter: function () {
@@ -202,6 +203,9 @@ Page({
         function formatQuestionAnswerMessage(question, answer) {
             var arr = [];
             for (var i = 0; i < question.length; i++) {
+                if (!self.isWithGroup(question[i])) {
+                    continue;
+                }
                 var qObj = {};
                 qObj.name = question[i].questionUserName;
                 qObj.time = question[i].triggerTime.split(' ')[1];
@@ -215,6 +219,9 @@ Page({
                 qObj.answers = [];
                 for (var j = 0; j < answer.length; j++) {
                     if (question[i].encryptId == answer[j].encryptId) {
+                        if (!self.isWithGroup(answer[j])) {
+                            continue;
+                        }
                         var aObj = {};
                         aObj.name = answer[j].answerUserName;
                         aObj.answer = answer[j].content;
@@ -247,6 +254,9 @@ Page({
             });
             var arr = [];
             for (var i = 0; i < chatMsg.length; i++) {
+                if (!self.isWithGroup(chatMsg[i])) {
+                    continue;
+                }
                 var obj = {};
                 obj.name = chatMsg[i].userName;
                 obj.msg = cc.live.showEm(chatMsg[i].content);
@@ -617,6 +627,39 @@ Page({
         self.data.netConnectStateTimer = setTimeout(netConnectStateTimerCallback, self.data.netConnectState.time);
     },
 
+    isWithGroup: function (data) {
+        var self = this;
+        var groupId = data.groupId;
+        if (!groupId) {
+            return true;
+        }
+
+        var role = '';
+
+        if (data.userrole) {
+            role = data.userrole;
+        } else if (data.userRole) {
+            role = data.userRole;
+        } else if (data.fromuserrole) {
+            role = data.fromuserrole;
+        } else if (data.answerUserRole) {
+            role = data.answerUserRole;
+        } else if (data.fromuserrole) {
+            role = data.fromuserrole;
+        } else if (data.role) {
+            role = data.role;
+        }
+
+        if (role && role === 'publisher') {
+            return true;
+        }
+
+        if (self.data.groupid && self.data.groupid !== groupId) {
+            return false;
+        }
+        return true;
+    },
+
     onLoad: function (options) {
 
         // console.log(options);
@@ -635,6 +678,7 @@ Page({
             chatView: parseInt(decodeURIComponent(options.chatView)),
             qaView: parseInt(decodeURIComponent(options.qaView)),
             viewerId: decodeURIComponent(options.viewerId),
+            groupid: decodeURIComponent(options.groupid),
             viewerName: decodeURIComponent(options.viewerName)
         });
 
@@ -645,6 +689,89 @@ Page({
         cc.live.on('network_change', function (data) {
             console.log('network_change', data);
             self.networkChange(self, data);
+        });
+
+        //禁言回调
+        var BAN_CHAT = {
+            ban_chat_people: '直播间禁止个人聊天',
+            unban_chat_people: '直播间解禁个人聊天',
+            ban_chat_group: '直播间禁止聊天',
+            unban_chat_group: '直播间解禁聊天',
+        };
+        cc.live.on('ban_chat', function (data) {
+            console.log('ban_chat', data);
+            var _data = JSON.parse(data);
+            if(_data.mode == '1'){
+                self.showModel(BAN_CHAT.ban_chat_people);
+            }else if(_data.mode == '2'){
+                self.showModel(BAN_CHAT.ban_chat_group);
+            }
+        });
+
+        cc.live.on('unban_chat', function (data) {
+            console.log('unban_chat', data);
+            var _data = JSON.parse(data);
+            if(_data.mode == '1'){
+                self.showModel(BAN_CHAT.unban_chat_people);
+            }else if(_data.mode == '2'){
+                self.showModel(BAN_CHAT.unban_chat_group);
+            }
+        });
+
+
+        //切换视频文档区域
+        cc.live.on('on_switch_video_doc', function (data) {
+            console.log('on_switch_video_doc', data, self.data.toggleSwitchover);
+            switch (self.data.btnSwitchoverFullScreen) {
+                case 'switchover':
+                    if (data.layout_video_main) {
+                        console.log("视频为主")
+                        self.setData({
+                            dbView: false
+                        });
+                        self.setData({
+                            switchPip: ['switch-pip-document', 'switch-pip-image', 'switch-pip-player'],
+                            toggleCover: [false, true],
+                            playerView: 1,
+                            btnTogglePlayerLiveMode: 'hidden-video',
+                            toggleSwitchover: false,
+                            togglePlayer: false,
+                            dbWidth: '240rpx',
+                            dbHeight: '180rpx',
+                            dbView: true
+                        });
+                    } else {
+                        console.log("文档为主")
+                        self.setData({
+                            dbView: false
+                        });
+                        self.setData({
+                            switchPip: ['', '', ''],
+                            toggleCover: [true, false],
+                            playerView: 1,
+                            btnTogglePlayerLiveMode: 'hidden-video',
+                            toggleSwitchover: true,
+                            togglePlayer: false,
+                            dbWidth: '100%',
+                            dbHeight: '423rpx',
+                            dbView: true
+                        });
+                    }
+                    break;
+                case 'full-screen':
+                    self.ctx.requestFullScreen({
+                        success: function (res) {
+                            console.log('requestFullScreen success');
+                        },
+                        fail: function (res) {
+                            console.log('requestFullScreen fail');
+                        }
+                    });
+                    self.setData({
+                        toggleExitFullScreenBtn: true
+                    });
+                    break;
+            }
         });
 
         //是否开始直播
@@ -784,6 +911,9 @@ Page({
         //接收公聊
         cc.live.on('chat_message', function (data) {
             var data = JSON.parse(data);
+            if (!self.isWithGroup(data)) {
+                return;
+            }
             var arr = self.data.message;
             var obj = {};
             obj.name = data.username;
@@ -808,7 +938,11 @@ Page({
         var questionsCache = self.data.questions;
         //收到问题
         cc.live.on('question', function (data) {
+            questionsCache = self.data.questions;
             var data = JSON.parse(data);
+            if (!self.isWithGroup(data.value)) {
+                return;
+            }
             var qObj = {};
             qObj.name = data.value.userName;
             qObj.time = data.value.triggerTime.split(' ')[1];
@@ -840,6 +974,9 @@ Page({
         //返回答案
         cc.live.on('answer', function (data) {
             var data = JSON.parse(data);
+            if (!self.isWithGroup(data.value)) {
+                return;
+            }
             var arr = questionsCache;
             var aObj = {};
             for (var i = 0; i < arr.length; i++) {
@@ -903,6 +1040,22 @@ Page({
             console.log(data);
         });
 
+    },
+
+    showModel: function (info) {
+        var self = this;
+        self.setData({
+            toggleCheckoutInputHint: true,
+            checkoutInputHint: info,
+        });
+        setTimeout(timer, 1200);
+
+        function timer() {
+            self.setData({
+                toggleCheckoutInputHint: false,
+                checkoutInputHint: '',
+            });
+        }
     },
 
     //如果直播推流断网，小程序live-player会自动重联一定次数不再播放，调用replay重新尝试播放

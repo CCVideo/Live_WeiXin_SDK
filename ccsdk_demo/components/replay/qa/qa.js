@@ -8,6 +8,10 @@ Component({
             type: Object,
             value: {},
             observer: '_configQaData'
+        },
+        groupid: {
+            type: String,
+            value: 0
         }
     },
 
@@ -47,6 +51,9 @@ Component({
 
             function questionCache(data) {
                 var data = data;
+                if (!self.isWithGroup(data.value)) {
+                    return;
+                }
                 var qObj = {};
                 qObj.name = data.value.userName;
                 qObj.time = self._formatSeconds(data.value.time);
@@ -63,6 +70,9 @@ Component({
 
             function answerCache(data) {
                 var data = data;
+                if (!self.isWithGroup(data.value)) {
+                    return;
+                }
                 var arr = qaData;
                 var aObj = {};
                 for (var i = 0; i < arr.length; i++) {
@@ -114,7 +124,39 @@ Component({
                 result = '' + hourTime + ':' + result;
             }
             return result;
-        }
+        },
+        isWithGroup: function (data) {
+            var self = this;
+            var groupId = data.groupId;
+            if (!groupId) {
+                return true;
+            }
+
+            var role = '';
+
+            if (data.userrole) {
+                role = data.userrole;
+            } else if (data.userRole) {
+                role = data.userRole;
+            } else if (data.fromuserrole) {
+                role = data.fromuserrole;
+            } else if (data.answerUserRole) {
+                role = data.answerUserRole;
+            } else if (data.fromuserrole) {
+                role = data.fromuserrole;
+            } else if (data.role) {
+                role = data.role;
+            }
+
+            if (role && role === 'publisher') {
+                return true;
+            }
+
+            if (self.data.groupid && self.data.groupid !== groupId) {
+                return false;
+            }
+            return true;
+        },
     },
 
     ready: function () {

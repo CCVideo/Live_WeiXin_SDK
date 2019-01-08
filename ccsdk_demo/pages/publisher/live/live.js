@@ -59,6 +59,17 @@ Page({
                                 url: '../setting/setting'
                             });
                         }
+                    },
+                    fail: function (e) {
+                        console.log('fail', e);
+                    },
+                    complete: function (e) {
+                        if (!e.confirm && !e.cancel) {
+                            console.log('complete', e);
+                            wx.navigateBack({
+                                url: '../setting/setting'
+                            });
+                        }
                     }
                 });
             };

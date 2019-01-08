@@ -23,16 +23,17 @@
                          src="../../img/replay/replay/control/{{play!=='play'?'play':'pause'}}@2x.png"></cover-image>
         </cover-view>
         <cover-view class="time-box">
-            <cover-view class="time-current">{{currentTime}}/</cover-view>
-            <cover-view class="time-duration">{{duration}}</cover-view>
+            <cover-view class="time-current">{{currentTime}}  .</cover-view>
+            <cover-view style="color: #fff;font-size:28rpx;">/</cover-view>
+            <cover-view class="time-duration">{{duration}}  .</cover-view>
         </cover-view>
         <cover-view id="loadingbar" class="loadingbar-box" catchtouchstart="_catchtouchstart"
                     catchtouchend="_catchtouchend"
                     catchtouchmove="_catchLoadingbarTouchmove">
             <cover-view class="loadingbar">
-                <cover-view class="circle-box" style="left:{{left*2}}rpx">
+                <cover-view class="circle-box" style="left:{{left}}px">
                     <!--<cover-view class="circle"></cover-view>-->
-                    <cover-image class="circle" src="../../img/replay/replay/control/circle@2x.png"></cover-image>
+                    <cover-image id="circle" class="circle" src="../../img/replay/replay/control/circle@2x.png"></cover-image>
                 </cover-view>
                 <cover-view class="background">
                     <cover-view class="progress" style="width: {{percent*100}}%"></cover-view>

@@ -43,7 +43,34 @@ Page({
             time: 1000,
             toggle: false
         },
-        netConnectStateTimer: {}
+        netConnectStateTimer: {},
+        loadingbarWidth: 0,
+        progressActive: true,
+        circleWidth: 0,
+        renderControl: true,
+        groupid:0
+    },
+    setProgressActive: function () {
+        var self = this;
+        self.setData({
+            progressActive: true
+        });
+    },
+    setProgressDisable: function () {
+        var self = this;
+        self.setData({
+            progressActive: false
+        });
+    },
+    getLoadingbarSize: function (e) {
+        this.setData({
+            loadingbarWidth: e.detail
+        });
+    },
+    getCircleWidth: function (e) {
+        this.setData({
+            circleWidth: e.detail
+        });
     },
     renderDocuemnt: function () {
         if (this.data.playState === 'play') {
@@ -117,9 +144,16 @@ Page({
 
     //测试进度条
     bindChange: function (e) {
+        var self = this;
         clearTimeout(this.timer);
         this.timer = setTimeout(function () {
             cc.replay.seek(e.detail.value);
+            // console.log('getCurrentTime', cc.replay.getCurrentTime());
+            //canvas渲染性能差，每次seek，重新渲染canvas，已达到优化效果，防止canvas越来越卡
+            self.setData({
+                renderer: false
+            });
+            self.rendererDocument();
         }, 1500);
     },
 
@@ -146,6 +180,17 @@ Page({
             this.showDocument();
             this.showPlayer();
         }
+
+        this.bindRenderControl();
+    },
+
+    bindRenderControl: function () {
+        this.setData({
+            renderControl: false
+        });
+        this.setData({
+            renderControl: true
+        });
     },
 
     bindTimeupdate: function (e) {
@@ -266,7 +311,29 @@ Page({
             toggleDocuemntFullScreen: 'document',
             renderer: false
         });
+        this.rendererPlayer();
         this.rendererDocument();
+    },
+
+    rendererPlayer: function () {
+        var self = this;
+        self.setData({
+            showHidePlayer: false,
+        });
+
+        var info = wx.getSystemInfoSync();
+        var reg = /iphone/ig;
+        if (reg.test(info.model)) {
+            setTimeout(function () {
+                self.setData({
+                    showHidePlayer: true,
+                });
+            }, 100);
+        } else {
+            self.setData({
+                showHidePlayer: true,
+            });
+        }
     },
 
     rendererDocument: function () {
@@ -281,17 +348,49 @@ Page({
     onLoad: function (options) {
         //定时器
         this.timer = {};
-        // 初始化数据
+        //初始化数据
         this.initData(options);
+        //监听事件
+        this.ListenerEvents();
         //初始化回放
         this.initReplay();
-        //ListenerEvents
-        this.ListenerEvents();
     },
 
     ListenerEvents: function () {
         var self = this;
+
+        cc.replay.on('pages_info', function (data) {
+            // console.log('pages_info', data);
+        });
+
+        cc.replay.on('questions_info', function (data) {
+            // console.log('questions_info', data);
+            self.setData({
+                questions_info: data
+            });
+        });
+
+        cc.replay.on('answers_info', function (data) {
+            // console.log('answers_info', data);
+            self.setData({
+                answers_info: data
+            });
+            //配置问答
+            self.configQa();
+        });
+
+        cc.replay.on('chat_msg_info', function (data) {
+            // console.log('chat_msg_info', data);
+            self.setData({
+                chat_msg_info: data
+            });
+            //配置问答
+            self.configQa();
+        });
+
         cc.replay.on('pages_change_sync', function (data) {
+            // console.log('pages_change_sync', data);
+
             self.setData({
                 pageHeight: data.height,
                 pageWidth: data.width
@@ -302,7 +401,7 @@ Page({
         });
 
         cc.replay.on('network_change', function (data) {
-            console.log('network_change', data);
+            // console.log('network_change', data);
             self.networkChange(self, data);
         });
     },
@@ -382,17 +481,21 @@ Page({
             windowHeight: systemInfo.windowHeight,
             windowWidth: systemInfo.windowWidth
         });
+        //监听内存
+        wx.onMemoryWarning(function (res) {
+            console.log('onMemoryWarningReceive', res);
+        });
     },
     configComponents: function () {
         //配置swiper组件
         this.configSwiper();
-        //配置聊天组件
-        this.configChat();
         //配置简介组件
         this.configIntro();
         //配置问答
-        this.configQa();
-        //配置问答
+        // this.configQa();
+        //配置聊天组件
+        this.configChat();
+        //配置视频控制器
         this.configControl();
     },
     configControl: function () {
@@ -428,6 +531,9 @@ Page({
 
     },
     configQa: function () {
+        if (!this.data.questions_info || !this.data.answers_info) {
+            return;
+        }
         var data = {
             questions_info: this.data.questions_info,
             answers_info: this.data.answers_info
@@ -442,9 +548,7 @@ Page({
         this.setData({
             room_info: JSON.parse(decodeURIComponent(options.room_info || '{}')),
             template_info: JSON.parse(decodeURIComponent(options.template_info || '{}')),
-            questions_info: JSON.parse(decodeURIComponent(options.questions_info || '[]')),
-            answers_info: JSON.parse(decodeURIComponent(options.answers_info || '[]')),
-            chat_msg_info: JSON.parse(decodeURIComponent(options.chat_msg_info || '[]'))
+            groupid: decodeURIComponent(options.groupid)
         });
     },
 

@@ -24,11 +24,21 @@ Page({
     onLoad: function (options) {
         var self = this;
 
-        // wx.onNetworkStatusChange(function (res) {
-        //     self.setData({
-        //         isConnected: res.isConnected
-        //     });
-        // });
+        var once = false;
+        wx.onNetworkStatusChange(function (res) {
+            if(once){
+                return;
+            }
+            once = true;
+            wx.navigateBack({
+                url: '../login/login'
+            });
+            wx.showToast({
+                title: '请检查网络状态',
+                icon: 'none',
+                duration: 2500
+            })
+        });
 
         cc.publisher.on('kick_out', function (data) {
             console.log('kick_out', data);

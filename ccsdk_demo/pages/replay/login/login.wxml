@@ -27,6 +27,11 @@
                 <input disabled="{{loading}}" placeholder="请输入昵称" value="{{viewername}}" bindinput="setName"
                        maxlength='20'/>
             </view>
+            <view class="form-cell">
+                <text>分组ID</text>
+                <input disabled="{{loading}}" placeholder="请输入分组" value="{{groupId}}"
+                       bindinput="setGroupId"/>
+            </view>
             <view class="form-cell last">
                 <text>密码</text>
                 <input disabled="{{loading}}" type="password" placeholder="观看密码" value="{{viewertoken}}"

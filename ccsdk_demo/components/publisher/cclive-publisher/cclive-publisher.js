@@ -116,7 +116,7 @@ Component({
         number: 0,
         chatData: [],
         scrollHeight: 0,
-        chatLengthMax: -150,
+        chatLengthMax: -30,
         netConnectState: {
             state: true,
             info: '网络已链接',
@@ -130,6 +130,23 @@ Component({
 
         //配置live-publisher
         self.ctx = cc.publisher.configLivePublisher(self, wx);
+
+        var once = false;
+        wx.onNetworkStatusChange(function (res) {
+            if (once) {
+                return;
+            }
+            once = true;
+
+            wx.navigateBack({
+                url: '../login/login'
+            });
+            wx.showToast({
+                title: '请检查网络状态',
+                icon: 'none',
+                duration: 2500
+            });
+        });
 
         //网络链接监听
         var netConnectStateTimer = {};
@@ -217,8 +234,6 @@ Component({
             self.setData({
                 chatData: chatMsg.slice(self.data.chatLengthMax)
             });
-            console.log(self.data.chatData);
-            console.log(chatMsg);
             scrollChatList();
         }
 
@@ -235,7 +250,7 @@ Component({
             var query = wx.createSelectorQuery().in(self);
             query.selectAll('.chat-cell').boundingClientRect(function (res) {
                 for (var i = 0; i < res.length; i++) {
-                    scrollHeight += res[i].height;
+                    scrollHeight += res[i].height + 10;
                 }
                 fn(scrollHeight);
             }).exec();

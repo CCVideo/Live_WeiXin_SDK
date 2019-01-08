@@ -11,21 +11,26 @@
         <view class="form">
             <view class="form-cell">
                 <text>CC账号ID</text>
-                <input disabled="{{loading}}" placeholder="16位账号ID" value="{{userId}}" bindinput="setUserId"></input>
+                <input disabled="{{loading}}" placeholder="16位账号ID" value="{{userId}}" bindinput="setUserId" />
             </view>
             <view class="form-cell">
                 <text>直播间ID</text>
-                <input disabled="{{loading}}" placeholder="32位直播间ID" value="{{roomId}}" bindinput="setRoomId"></input>
+                <input disabled="{{loading}}" placeholder="32位直播间ID" value="{{roomId}}" bindinput="setRoomId" />
             </view>
             <view class="form-cell">
                 <text>昵称</text>
                 <input disabled="{{loading}}" placeholder="聊天中显示的名字" value="{{userName}}"
-                       bindinput="setUserName"></input>
+                       bindinput="setUserName" />
+            </view>
+            <view class="form-cell">
+                <text>分组ID</text>
+                <input disabled="{{loading}}" placeholder="请输入分组" value="{{groupId}}"
+                       bindinput="setGroupId" />
             </view>
             <view class="form-cell last">
                 <text>密码</text>
                 <input disabled="{{loading}}" type="password" placeholder="观看密码" value="{{password}}"
-                       bindinput="setPassword"></input>
+                       bindinput="setPassword" />
             </view>
         </view>
     </view>

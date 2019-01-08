@@ -17,10 +17,9 @@ Page({
         errorHintText: '直播间信息填写有误，请检查',
         room_info: {},
         template_info: {},
-        questions_info: [],
-        answers_info: [],
-        chat_msg_info: [],
-        isLogin: true
+        isLogin: true,
+        groupId: '',//groupId
+        groupid: '',//groupid
     },
 
     /**
@@ -33,7 +32,16 @@ Page({
 
         self.checkOutBtnType();
 
+        // //打印日志
         cc.replay.setDebug(true);
+        //
+        // //开启实时绘线功能
+        // cc.replay.setRealtimeFirst(true);
+
+        //开启分段加载画笔数据
+        // cc.replay.setDrawRequestTime(true);
+
+        // console.log('isRealtimeFirst', cc.replay.isRealtimeFirst());
 
         cc.replay.on('player_load', function (data) {
             // console.log('player_load', data);
@@ -53,28 +61,10 @@ Page({
             });
         });
 
-        cc.replay.on('pages_info', function (data) {
-            // console.log('pages_info', data);
-        });
-
-        cc.replay.on('questions_info', function (data) {
-            // console.log('questions_info', data);
+        cc.replay.on('groupid_info', function (data) {
+            // console.log('groupid_info', data);
             self.setData({
-                questions_info: data
-            });
-        });
-
-        cc.replay.on('answers_info', function (data) {
-            // console.log('answers_info', data);
-            self.setData({
-                answers_info: data
-            });
-        });
-
-        cc.replay.on('chat_msg_info', function (data) {
-            // console.log('chat_msg_info', data);
-            self.setData({
-                chat_msg_info: data
+                groupid: data
             });
         });
     },
@@ -121,6 +111,14 @@ Page({
             viewertoken: e.detail.value
         });
         this.checkOutBtnType();
+    },
+
+    //设置groupid
+    setGroupId: function (e) {
+        this.setData({
+            groupId: e.detail.value
+        });
+        // this.checkOutBtnType();
     },
 
     //扫码
@@ -173,6 +171,7 @@ Page({
                 roomId: this.data.roomId,
                 recordId: this.data.recordId,
                 viewername: this.data.viewername,
+                groupId: this.data.groupId,
                 viewertoken: this.data.viewertoken
             });
     },
@@ -187,6 +186,7 @@ Page({
             roomId: this.getStorage().roomId || '',
             recordId: this.getStorage().recordId || '',
             viewername: this.getStorage().viewername || '',
+            groupId: this.getStorage().groupId || '',
             viewertoken: this.getStorage().viewertoken || '',
         });
         this.checkOutBtnType();
@@ -214,6 +214,7 @@ Page({
             recordId: this.data.recordId,
             viewername: this.data.viewername,
             viewertoken: this.data.viewertoken,
+            groupid: self.data.groupId,
             wx: wx,
             success: function (res) {
                 if (!self.data.isLogin) {
@@ -226,10 +227,8 @@ Page({
 
                 var room_info = encodeURIComponent(JSON.stringify(self.data.room_info));
                 var template_info = encodeURIComponent(JSON.stringify(self.data.template_info));
-                var questions_info = encodeURIComponent(JSON.stringify(self.data.questions_info));
-                var answers_info = encodeURIComponent(JSON.stringify(self.data.answers_info));
-                var chat_msg_info = encodeURIComponent(JSON.stringify(self.data.chat_msg_info));
-                var json = 'room_info=' + room_info + '&template_info=' + template_info + '&questions_info=' + questions_info + '&answers_info=' + answers_info + '&chat_msg_info=' + chat_msg_info;
+                var groupid = encodeURIComponent(self.data.groupid);
+                var json = 'room_info=' + room_info + '&template_info=' + template_info + '&groupid=' + groupid;
                 wx.navigateTo({
                     url: '../replay/replay?' + json
                 });

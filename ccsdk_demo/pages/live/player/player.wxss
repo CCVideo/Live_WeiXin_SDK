@@ -840,6 +840,7 @@
 
 .container .chat .swiper .desc {
     background: #f3f3f3;
+    overflow-y: scroll;
 }
 
 .container .chat .swiper .desc .title {

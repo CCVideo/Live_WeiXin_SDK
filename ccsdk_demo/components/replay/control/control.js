@@ -27,6 +27,18 @@ Component({
         fullscreen: {
             type: Boolean,
             value: false
+        },
+        loadingbarWidth: {
+            type: Number,
+            value: 0
+        },
+        progressActive: {
+            type: Boolean,
+            value: true
+        },
+        circleWidth: {
+            type: Number,
+            value: 0
         }
     },
 
@@ -36,14 +48,13 @@ Component({
     data: {
         toggleControl: true,
         timer: {},
+        touchendDelay: {},
         currentTime: '00:00',
         duration: '00:00',
         Duration: 0,
         togglePlay: true,
-        loadingbarWidth: 0,
         percent: 0,
-        progressActive: true,
-        left: 0
+        left: 0,
     },
 
     /**
@@ -89,6 +100,7 @@ Component({
             if (JSON.stringify(newVal) === '{}') {
                 return;
             }
+
             this.setData({
                 currentTime: this._formatSeconds(newVal.detail.currentTime),
                 duration: this._formatSeconds(newVal.detail.duration),
@@ -98,11 +110,17 @@ Component({
                 this.setData({
                     percent: this._formatePercent(newVal.detail.currentTime, newVal.detail.duration)
                 });
-                var nowLeft = (this.data.percent * this.data.loadingbarWidth);
-                var left = this.data.loadingbarWidth;
-                this.setData({
-                    left: (nowLeft >= left - 12) ? (nowLeft - 12) : nowLeft
-                });
+                if (this.data.percent >= 0 && this.data.percent <= 100) {
+                    var nowLeft = (this.data.percent * this.data.loadingbarWidth);
+                    this.setData({
+                        left: nowLeft
+                    });
+                }
+                if (this.data.left >= this.data.loadingbarWidth - this.data.circleWidth) {
+                    this.setData({
+                        left: this.data.loadingbarWidth - this.data.circleWidth
+                    });
+                }
             }
         },
         _formatePercent: function (currentTime, duration) {
@@ -119,7 +137,7 @@ Component({
                 var self = this;
                 this.data.timer = setTimeout(function () {
                     self._hideControl();
-                }, 5000);
+                }, 6000);
             }
         },
         _hideControl: function () {
@@ -133,9 +151,11 @@ Component({
             });
         },
         _catchSwitch: function (e) {
-            var myEventDetail = e.detail;
-            var myEventOption = {};
-            this.triggerEvent('switch', myEventDetail, myEventOption);
+            if (this.data.progressActive) {
+                var myEventDetail = e.detail;
+                var myEventOption = {};
+                this.triggerEvent('switch', myEventDetail, myEventOption);
+            }
         },
         _catchShowHide: function (e) {
             if (this.properties.showHide) {
@@ -173,38 +193,63 @@ Component({
             var self = this;
             var query = wx.createSelectorQuery().in(self);
             query.select('#loadingbar').boundingClientRect(function (res) {
-                if (!res.width) {
+                if (!res || !res.width) {
                     return false;
                 }
                 self.setData({
-                    loadingbarWidth: res.width,
                     toggleControl: false
                 });
+                self.triggerEvent('getloadingbarsize', res.width, {});
+            }).exec();
+        },
+        _getCircleWidth: function () {
+            var self = this;
+            var query = wx.createSelectorQuery().in(self);
+            query.select('#circle').boundingClientRect(function (res) {
+                if (!res || !res.width) {
+                    return false;
+                }
+                self.setData({
+                    circleWidth: res.width
+                });
+                self.triggerEvent('getcirclewidth', res.width, {});
             }).exec();
         },
         _catchtouchstart: function () {
             clearTimeout(this.data.timer);
-            this.setData({
-                progressActive: false
-            });
+            clearTimeout(this.data.touchendDelay);
+            this.triggerEvent('progressdisable', {}, {});
         },
         _catchtouchend: function () {
-            this.setData({
-                progressActive: true
-            });
-            var s = parseFloat(this.data.percent) * this.data.Duration;
-            cc.replay.seek(s);
-
             var self = this;
-            this.data.timer = setTimeout(function () {
-                self._hideControl();
-            }, 5000);
+
+            self.data.touchendDelay = setTimeout(function () {
+
+                var s = parseFloat(self.data.percent) * self.data.Duration;
+                cc.replay.seek(s);
+
+                self.triggerEvent('progressactive', {}, {});
+
+                self.data.timer = setTimeout(function () {
+                    self._hideControl();
+                }, 6000);
+            }, 1500);
         },
         _catchLoadingbarTouchmove: function (e) {
-            this.setData({
-                percent: this._getParcent(e).percent,
-                left: this._getParcent(e).left
-            });
+            var getParcent = this._getParcent(e);
+            if (getParcent.percent >= 0 && getParcent.percent <= 100) {
+                this.setData({
+                    percent: getParcent.percent,
+                    left: getParcent.left
+                });
+            }
+            console.log(this.data.circleWidth);
+            if (getParcent.left >= this.data.loadingbarWidth - this.data.circleWidth) {
+
+                this.setData({
+                    left: this.data.loadingbarWidth - this.data.circleWidth
+                });
+            }
         },
         _getParcent: function (e) {
             var pageX = e.touches[0].pageX;
@@ -212,18 +257,10 @@ Component({
             var nowX = pageX - offsetLeft;
             var width = this.data.loadingbarWidth;
 
-            var percent = this.data.percent;
-            var left = this.data.left;
             var data = {
-                left: left,
-                percent: percent
+                left: nowX <= width ? nowX : width,
+                percent: (nowX / width).toFixed(2)
             };
-            if (nowX >= 0 && nowX <= width) {
-                data = {
-                    left: nowX <= width - 12 ? nowX : width - 12,
-                    percent: (nowX / width).toFixed(2)
-                };
-            }
             return data;
         }
     },
@@ -231,6 +268,6 @@ Component({
         var self = this;
 
         self._getLoadingBarSize();
-
+        self._getCircleWidth();
     }
 });

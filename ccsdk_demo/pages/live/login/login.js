@@ -6,6 +6,7 @@ Page({
         userId: '',//CC账号ID
         roomId: '',//直播间ID
         userName: '',//昵称
+        groupId: '',
         password: '',//密码
         btnType: 'allow',//按钮类型
         errorHintText: '',
@@ -20,7 +21,8 @@ Page({
         qaView: 0,//问答模块
         viewerName: '',//观看者昵称
         viewerId: '',//观看者id
-        isLogin: true
+        isLogin: true,
+        groupid:'',//groupid
     },
 
     onShow: function () {
@@ -67,6 +69,13 @@ Page({
                 announcement: data ? data : '暂无'
             });
         });
+
+        //groupid
+        cc.live.on('groupid_info', function (data) {
+            self.setData({
+                groupid: data
+            });
+        });
     },
 
     //设置userId
@@ -91,6 +100,14 @@ Page({
             userName: e.detail.value
         });
         this.checkOutBtnType();
+    },
+
+    //设置groupid
+    setGroupId: function (e) {
+        this.setData({
+            groupId: e.detail.value
+        });
+        // this.checkOutBtnType();
     },
 
     //设置passWord
@@ -148,6 +165,7 @@ Page({
                 userId: this.data.userId,
                 roomId: this.data.roomId,
                 userName: this.data.userName,
+                groupId: this.data.groupId,
                 password: this.data.password
             });
     },
@@ -161,6 +179,7 @@ Page({
             userId: this.getStorage().userId || '',
             roomId: this.getStorage().roomId || '',
             userName: this.getStorage().userName || '',
+            groupId: this.getStorage().groupId || '',
             password: this.getStorage().password || ''
         });
         this.checkOutBtnType();
@@ -188,6 +207,7 @@ Page({
             roomId: self.data.roomId,
             userName: self.data.userName,
             password: self.data.password,
+            groupid: self.data.groupId,
             wx: wx,
             success: function (data) {
                 if (!self.data.isLogin) {
@@ -205,6 +225,7 @@ Page({
                     + '&chatView=' + encodeURIComponent(self.data.chatView)
                     + '&qaView=' + encodeURIComponent(self.data.qaView)
                     + '&viewerName=' + encodeURIComponent(self.data.viewerName)
+                    + '&groupid=' + encodeURIComponent(self.data.groupid)
                     + '&viewerId=' + encodeURIComponent(self.data.viewerId);
 
                 wx.navigateTo({
