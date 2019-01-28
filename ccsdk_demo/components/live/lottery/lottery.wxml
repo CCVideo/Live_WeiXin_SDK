@@ -1,0 +1,18 @@
+<view class="container" style="display: {{toggle}}">
+    <view class="header">
+        <view class="lottery">
+            <text class="lottery-text">抽奖啦</text>
+        </view>
+        <view class="close" bindtap="bindClose">
+            <image class="close-image" src="../../../components/img/live/player/lottery/close.png"></image>
+        </view>
+    </view>
+    <view class="body">
+        <text class="prize-text">{{prizeText}}</text>
+        <view class="prize">
+            <rich-text class="rich-text" nodes="{{prize}}"></rich-text>
+            <text class="{{winClass}}">{{winText}}</text>
+        </view>
+        <text class="prize-info">{{prizeInfo}}</text>
+    </view>
+</view>

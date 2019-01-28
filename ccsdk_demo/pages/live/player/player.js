@@ -9,78 +9,78 @@ Page({
         lastTapTime: 0,
         lastTapTimeoutFunc: null,
         //直播模式：视频模式、文档模式 videoModel documentModel
-        model: 'videoModel',
+        model: "videoModel",
         minCache: 0,
         maxCache: 1,
         dbView: true,
-        dbWidth: '100%',
-        dbHeight: '423rpx',
-        playerUrl: '', //观看地址
-        viewerName: '', //name
-        viewerId: '', //id
+        dbWidth: "100%",
+        dbHeight: "423rpx",
+        playerUrl: "", //观看地址
+        viewerName: "", //name
+        viewerId: "", //id
         pageData: {},
-        pageUrl: '', //文档地址
+        pageUrl: "", //文档地址
         peoples: 0, //在线人数    
         chatLog: [], //历史聊天信息
-        roomTitle: '', //直播间标题
-        desc: '', //简介
+        roomTitle: "", //直播间标题
+        desc: "", //简介
         toggleNotice: false, //切换显示隐藏公告    
-        announcement: '暂无', //公告
+        announcement: "暂无", //公告
         isPublishing: 0, //是否开始直播
         isBan: 0,//是否禁播
         toggleCover: [false, false],
         hintLiveNot: true, //直播未开始
-        hintLiveNotText: '直播未开始',
+        hintLiveNotText: "直播未开始",
         btnGroup: false, //按钮组    
         toggleControls: true, //直播文档控制器
         living: false, //直播中      
         pdfView: 0, //文档模块
         chatView: 0, //聊天模块
         qaView: 0, //问答模块
-        switchPip: ['', '', ''], //视频文档切换
+        switchPip: ["", "", ""], //视频文档切换
         playerView: 0, //视频模块
         toggleExitFullScreenBtn: false,
         //按钮图标切换
-        btnSwitchoverFullScreen: 'switchover', //switchover fullscreen    
-        btnTogglePlayerLiveMode: 'hidden-video', //video-live only-audio hidden-video show-video
+        btnSwitchoverFullScreen: "switchover", //switchover fullscreen
+        btnTogglePlayerLiveMode: "hidden-video", //video-live only-audio hidden-video show-video
         toggleSwitchover: true, //切换开关
         togglePlayer: true, //切换显示隐藏视频开关
         toggleSelectRoute: false, //选择线路    
-        options: ['主线路', '备用线路', '备用线路'], //线路
+        options: ["主线路", "备用线路", "备用线路"], //线路
         RouteOptionActive: 0, //线路选中样式
-        orientation: 'vertical', //屏幕方向
-        objectFit: 'contain', //直播填充方式
-        mode: 'video', //默认视频模式
+        orientation: "vertical", //屏幕方向
+        objectFit: "contain", //直播填充方式
+        mode: "video", //默认视频模式
         audioMode: false, //音频模式  
         tabOptionSelected: 0, //swpier选项
-        tabContent: ['聊天', '问答', '简介'],
+        tabContent: ["聊天", "问答", "简介"],
         //格式 { name: 'name', msg: 'msg', type: 0 }
         message: [], //聊天信息
         chatLength: 0,
-        toChat: '',
+        toChat: "",
         toggleChatScroll: true,
-        chatMsg: '', //发送的聊天信息
+        chatMsg: "", //发送的聊天信息
         toggleCheckoutInputHint: false,
         //提示内容 输入信息 不能为空
-        checkoutInputHint: '',
-        answerLog: '', //问历史记录
-        questionLog: '', //答历史记录
+        checkoutInputHint: "",
+        answerLog: "", //问历史记录
+        questionLog: "", //答历史记录
         //格式 { name: 'name', time: '00:00', question: 'question', type: 0,encryptId:'encryptId', display:false ,answers: [{ name: 'name', answer: 'answer',isPrivate:0 }]}
         questions: [], //问答信息
-        toQuestionAnswer: '',
+        toQuestionAnswer: "",
         questionAnswerLength: 0,
         toggleQuestionAnswerScroll: true,
-        question: '',
+        question: "",
         //eye eye-hidden
-        eye: 'eye',
+        eye: "eye",
         toggleHintShowQuestion: false,
         //显示所有问答 只看我的问答
-        hintShowQuestion: '只看我的问答',
+        hintShowQuestion: "只看我的问答",
         toggleShowQuestion: true,
         topChatInputHeight: 0,
         topQuestionInputHeight: 0,
         //emoji emoji-select
-        emoji: 'emoji',
+        emoji: "emoji",
         toggleEmoji: false,
         emojiRow: [0, 1, 2],
         emojiCol: [
@@ -90,37 +90,39 @@ Page({
         ],
         toggleLiveControlsTimer: {},
         chatLengthMax: -30,
-        fullDocument: '',//文档全屏
+        fullDocument: "",//文档全屏
         pageHeight: 0,
         pageWidth: 0,
         windowHeight: 0,
         windowWidth: 0,
-        toggleDocument: false,
+        // toggleDocument: false,
         documentTop: 0,
-        documentHeight: '',
+        documentHeight: "",
         toggleDocumentFullScreen: false,
         netConnectState: {
             state: true,
-            info: '网络已链接',
+            info: "网络已链接",
             time: 1000,
             toggle: false
         },
         netConnectStateTimer: {},
-        groupid: ''//分组信息
+        groupid: "",//分组信息
+        toggleLottery: "none",
+        toggleDocument: "block",
     },
 
     alignCenter: function () {
         var height = this.data.windowWidth * this.data.pageHeight / this.data.pageWidth;
         var top = (this.data.windowHeight / 2) - (height / 2);
         this.setData({
-            documentHeight: height.toFixed(2) + 'px',
+            documentHeight: height.toFixed(2) + "px",
             documentTop: 0
         });
         if (height >= this.data.windowHeight) {
             return;
         }
         this.setData({
-            documentTop: top + 'px'
+            documentTop: top + "px"
         });
     },
 
@@ -135,10 +137,10 @@ Page({
             return;
         }
         this.setData({
-            fullDocument: 'fullDocument',
+            fullDocument: "fullDocument",
             toggleCover: [false, false]
         });
-        if (this.data.btnTogglePlayerLiveMode === 'hidden-video') {
+        if (this.data.btnTogglePlayerLiveMode === "hidden-video") {
             this.setData({
                 playerView: 0
             });
@@ -151,10 +153,10 @@ Page({
             return;
         }
         this.setData({
-            fullDocument: '',
+            fullDocument: "",
             toggleCover: [true, false]
         });
-        if (this.data.btnTogglePlayerLiveMode === 'hidden-video') {
+        if (this.data.btnTogglePlayerLiveMode === "hidden-video") {
             this.setData({
                 playerView: 1
             });
@@ -163,7 +165,7 @@ Page({
     },
 
     bindDocuemntFullScreen: function (e) {
-        if (this.data.switchPip[0] !== '') {
+        if (this.data.switchPip[0] !== "") {
             return;
         }
         if (this.data.fullDocument) {
@@ -178,12 +180,12 @@ Page({
         //初始化swiper
         var tabConetent = [];
         if (self.data.chatView) {
-            tabConetent.push('聊天');
+            tabConetent.push("聊天");
         }
         if (self.data.qaView) {
-            tabConetent.push('问答');
+            tabConetent.push("问答");
         }
-        tabConetent.push('简介');
+        tabConetent.push("简介");
         //初始化tab
         self.setData({
             tabContent: tabConetent
@@ -197,7 +199,7 @@ Page({
         self.setData({
             questions: formatQuestionAnswerMessage(self.data.questionLog, self.data.answerLog),
             questionAnswerLength: self.data.questionLog.length,
-            toQuestionAnswer: 'lastQuestionAnswer'
+            toQuestionAnswer: "lastQuestionAnswer"
         });
 
         function formatQuestionAnswerMessage(question, answer) {
@@ -208,7 +210,7 @@ Page({
                 }
                 var qObj = {};
                 qObj.name = question[i].questionUserName;
-                qObj.time = question[i].triggerTime.split(' ')[1];
+                qObj.time = question[i].triggerTime.split(" ")[1];
                 qObj.question = question[i].content;
                 if (question[i].questionUserId == self.data.viewerId) {
                     qObj.type = 1;
@@ -245,7 +247,7 @@ Page({
         self.setData({
             message: formatChatMessage(self.data.chatLog),
             chatLength: self.data.chatLog.length,
-            toChat: 'lastChat'
+            toChat: "lastChat"
         });
 
         function formatChatMessage(chatMsg) {
@@ -259,9 +261,13 @@ Page({
                 }
                 var obj = {};
                 obj.name = chatMsg[i].userName;
+                obj.userId = chatMsg[i].userId;
                 obj.msg = cc.live.showEm(chatMsg[i].content);
+                obj.status = chatMsg[i].status;
+                obj.chatId = chatMsg[i].chatId;
                 if (chatMsg[i].userId == self.data.viewerId) {
                     obj.type = 1;
+                    obj.status = 0;//自己发的可以看到
                 } else {
                     obj.type = 0;
                 }
@@ -280,7 +286,7 @@ Page({
             toggleControls: false,
             living: true,
             playerView: 1,
-            btnTogglePlayerLiveMode: 'hidden-video',
+            btnTogglePlayerLiveMode: "hidden-video",
             toggleDocumentFullScreen: true,
             isPublishing: 1
         });
@@ -297,7 +303,7 @@ Page({
                 toggleControls: false,
                 living: true,
                 playerView: 1,
-                btnTogglePlayerLiveMode: 'hidden-video',
+                btnTogglePlayerLiveMode: "hidden-video",
                 toggleDocumentFullScreen: true
             });
         }
@@ -311,17 +317,17 @@ Page({
             //文档模式
             self.setData({
                 toggleCover: [true, false],
-                model: 'documentModel'
+                model: "documentModel"
             });
         } else {
             //视频模式
             self.setData({
-                switchPip: ['switch-pip-document', 'switch-pip-image', 'switch-pip-player'],
+                switchPip: ["switch-pip-document", "switch-pip-image", "switch-pip-player"],
                 toggleCover: [false, true],
                 playerView: 1,
-                btnSwitchoverFullScreen: 'full-screen',
-                btnTogglePlayerLiveMode: 'video-live',
-                model: 'videoModel'
+                btnSwitchoverFullScreen: "full-screen",
+                btnTogglePlayerLiveMode: "video-live",
+                model: "videoModel"
             });
         }
     },
@@ -331,7 +337,7 @@ Page({
 
         //初始化禁播
         if (self.data.isBan) {
-            if (self.data.model === 'documentModel') {
+            if (self.data.model === "documentModel") {
                 self.setData({
                     dbView: false
                 });
@@ -340,15 +346,15 @@ Page({
                     btnGroup: false,
                     toggleControls: true,
                     living: false,
-                    hintLiveNotText: '直播已封禁，请联系管理员',
+                    hintLiveNotText: "直播已封禁，请联系管理员",
                     playerView: 0,
-                    switchPip: ['', '', ''],
+                    switchPip: ["", "", ""],
                     toggleCover: [true, false],
-                    btnTogglePlayerLiveMode: 'hidden-video',
+                    btnTogglePlayerLiveMode: "hidden-video",
                     toggleSwitchover: true,
                     togglePlayer: false,
-                    dbWidth: '100%',
-                    dbHeight: '423rpx',
+                    dbWidth: "100%",
+                    dbHeight: "423rpx",
                     dbView: true,
                     toggleDocumentFullScreen: false
                 });
@@ -356,18 +362,18 @@ Page({
                 //退出全屏
                 self.ctx.exitFullScreen({
                     success: function (res) {
-                        console.log('exitFullScreen success');
+                        console.log("exitFullScreen success");
                     },
                     fail: function (res) {
-                        console.log('exitFullScreen fail');
+                        console.log("exitFullScreen fail");
                     }
                 });
                 self.ctx.stop({
                     success: function (res) {
-                        console.log('stop success');
+                        console.log("stop success");
                     },
                     fail: function (res) {
-                        console.log('stop fail');
+                        console.log("stop fail");
                     }
                 });
                 //设置结束直播参数
@@ -377,7 +383,7 @@ Page({
                     btnGroup: false,
                     toggleControls: true,
                     living: false,
-                    hintLiveNotText: '直播已封禁，请联系管理员'
+                    hintLiveNotText: "直播已封禁，请联系管理员"
                 });
             }
         }
@@ -389,7 +395,7 @@ Page({
         self.setData({
             isBan: 1
         });
-        if (self.data.model === 'documentModel') {
+        if (self.data.model === "documentModel") {
             self.setData({
                 dbView: false
             });
@@ -398,15 +404,15 @@ Page({
                 btnGroup: false,
                 toggleControls: true,
                 living: false,
-                hintLiveNotText: '直播已封禁，请联系管理员',
+                hintLiveNotText: "直播已封禁，请联系管理员",
                 playerView: 0,
-                switchPip: ['', '', ''],
+                switchPip: ["", "", ""],
                 toggleCover: [true, false],
-                btnTogglePlayerLiveMode: 'hidden-video',
+                btnTogglePlayerLiveMode: "hidden-video",
                 toggleSwitchover: true,
                 togglePlayer: false,
-                dbWidth: '100%',
-                dbHeight: '423rpx',
+                dbWidth: "100%",
+                dbHeight: "423rpx",
                 dbView: true,
                 toggleDocumentFullScreen: false
             });
@@ -414,18 +420,18 @@ Page({
             //退出全屏
             self.ctx.exitFullScreen({
                 success: function (res) {
-                    console.log('exitFullScreen success');
+                    console.log("exitFullScreen success");
                 },
                 fail: function (res) {
-                    console.log('exitFullScreen fail');
+                    console.log("exitFullScreen fail");
                 }
             });
             self.ctx.stop({
                 success: function (res) {
-                    console.log('stop success');
+                    console.log("stop success");
                 },
                 fail: function (res) {
-                    console.log('stop fail');
+                    console.log("stop fail");
                 }
             });
             //设置结束直播参数
@@ -436,7 +442,7 @@ Page({
                 toggleControls: true,
                 living: false,
                 // isPublishing: 0,
-                hintLiveNotText: '直播已封禁，请联系管理员'
+                hintLiveNotText: "直播已封禁，请联系管理员"
             });
         }
     },
@@ -450,7 +456,7 @@ Page({
         if (!self.data.isPublishing) {
             return;
         }
-        if (self.data.model === 'documentModel') {
+        if (self.data.model === "documentModel") {
             self.setData({
                 hintLiveNot: false,
                 btnGroup: true,
@@ -470,10 +476,10 @@ Page({
             });
             self.ctx.play({
                 success: function (res) {
-                    console.log('play success', res);
+                    console.log("play success", res);
                 },
                 fail: function (res) {
-                    console.log('play fail', res);
+                    console.log("play fail", res);
                 }
             });
         }
@@ -485,7 +491,7 @@ Page({
         if (self.data.isBan) {
             return false;
         }
-        if (self.data.model === 'documentModel') {
+        if (self.data.model === "documentModel") {
             self.setData({
                 hintLiveNot: false,
                 btnGroup: true,
@@ -506,10 +512,10 @@ Page({
             });
             self.ctx.play({
                 success: function (res) {
-                    console.log('play success', res);
+                    console.log("play success", res);
                 },
                 fail: function (res) {
-                    console.log('play fail', res);
+                    console.log("play fail", res);
                 }
             });
         }
@@ -518,7 +524,7 @@ Page({
     endStream: function () {
         var self = this;
 
-        if (self.data.model === 'documentModel') {
+        if (self.data.model === "documentModel") {
             self.setData({
                 dbView: false
             });
@@ -528,15 +534,15 @@ Page({
                 toggleControls: true,
                 living: false,
                 isPublishing: 0,
-                hintLiveNotText: '直播结束',
+                hintLiveNotText: "直播结束",
                 playerView: 0,
-                switchPip: ['', '', ''],
+                switchPip: ["", "", ""],
                 toggleCover: [true, false],
-                btnTogglePlayerLiveMode: 'hidden-video',
+                btnTogglePlayerLiveMode: "hidden-video",
                 toggleSwitchover: true,
                 togglePlayer: false,
-                dbWidth: '100%',
-                dbHeight: '423rpx',
+                dbWidth: "100%",
+                dbHeight: "423rpx",
                 dbView: true,
                 toggleDocumentFullScreen: false
             });
@@ -544,18 +550,18 @@ Page({
             //退出全屏
             self.ctx.exitFullScreen({
                 success: function (res) {
-                    console.log('exitFullScreen success');
+                    console.log("exitFullScreen success");
                 },
                 fail: function (res) {
-                    console.log('exitFullScreen fail');
+                    console.log("exitFullScreen fail");
                 }
             });
             self.ctx.stop({
                 success: function (res) {
-                    console.log('stop success');
+                    console.log("stop success");
                 },
                 fail: function (res) {
-                    console.log('stop fail');
+                    console.log("stop fail");
                 }
             });
             //设置结束直播参数
@@ -566,7 +572,7 @@ Page({
                 toggleControls: true,
                 living: false,
                 isPublishing: 0,
-                hintLiveNotText: '直播结束'
+                hintLiveNotText: "直播结束"
             });
         }
     },
@@ -598,7 +604,7 @@ Page({
             self.setData({
                 netConnectState: {
                     state: true,
-                    info: '网络链接正常',
+                    info: "网络链接正常",
                     time: 4000,
                     toggle: true
                 }
@@ -607,7 +613,7 @@ Page({
             self.setData({
                 netConnectState: {
                     state: false,
-                    info: '网络未链接',
+                    info: "网络未链接",
                     time: 1200,
                     toggle: true
                 }
@@ -634,7 +640,7 @@ Page({
             return true;
         }
 
-        var role = '';
+        var role = "";
 
         if (data.userrole) {
             role = data.userrole;
@@ -650,7 +656,7 @@ Page({
             role = data.role;
         }
 
-        if (role && role === 'publisher') {
+        if (role && role === "publisher") {
             return true;
         }
 
@@ -658,6 +664,111 @@ Page({
             return false;
         }
         return true;
+    },
+
+    hiddenPlayer: function () {
+        this.setData({
+            playerView: 0,
+            btnTogglePlayerLiveMode: "show-video",
+            togglePlayer: true
+        });
+    },
+
+    showPlayer: function () {
+        this.setData({
+            playerView: 1,
+            btnTogglePlayerLiveMode: "hidden-video",
+            togglePlayer: false
+        });
+    },
+
+    bindClose: function () {
+        if (!this.data.isPublishing) {
+            return;
+        }
+        this.setData({
+            toggleLottery: "none"
+        });
+        if (this.data.toggleSwitchover) {
+            //文档为主
+            this.showPlayer();
+        } else {
+            //视频为主
+            this.setData({
+                toggleDocument: "block"
+            });
+        }
+    },
+
+    startLottery: function () {
+        if (!this.data.isPublishing) {
+            return;
+        }
+        this.setData({
+            toggleLottery: "block"
+        });
+        if (this.data.toggleSwitchover) {
+            //文档为主
+            this.hiddenPlayer();
+        } else {
+            //视频为主
+            this.setData({
+                toggleDocument: "none"
+            });
+        }
+    },
+
+    winLottery: function () {
+        if (!this.data.isPublishing) {
+            return;
+        }
+        this.setData({
+            toggleLottery: "block"
+        });
+        if (this.data.toggleSwitchover) {
+            //文档为主
+            this.hiddenPlayer();
+        } else {
+            //视频为主
+            this.setData({
+                toggleDocument: "none"
+            });
+        }
+    },
+
+    missLotteryTimer: 0,
+
+    missLottery: function () {
+        var self = this;
+        if (!this.data.isPublishing) {
+            return;
+        }
+        this.setData({
+            toggleLottery: "block"
+        });
+        if (this.data.toggleSwitchover) {
+            //文档为主
+            this.hiddenPlayer();
+        } else {
+            //视频为主
+            this.setData({
+                toggleDocument: "none"
+            });
+        }
+
+        clearTimeout(self.missLotteryTimer);
+        self.missLotteryTimer = setTimeout(function () {
+            self.bindClose();
+        }, 5000);
+    },
+
+    configHistoryPublishing: function (isPublishing) {
+        var self = this;
+        self.setData({
+            isPublishing: isPublishing
+        });
+        self.configLive();
+        self.configHistoryPublishing = null;
     },
 
     onLoad: function (options) {
@@ -686,85 +797,102 @@ Page({
         self.configSwiper();
         self.configLiveMode();
 
-        cc.live.on('network_change', function (data) {
-            console.log('network_change', data);
+        cc.live.on("switch_source", function (data) {
+            console.log(data);
+        });
+
+        cc.live.on("kick_out", function (data) {
+            wx.showModal({
+                title: "提示",
+                showCancel: false,
+                content: "你被踢出了直播间",
+                success: function () {
+                    wx.navigateBack({
+                        url: "../login/login"
+                    });
+                }
+            });
+        });
+
+        cc.live.on("network_change", function (data) {
+            console.log("network_change", data);
             self.networkChange(self, data);
         });
 
         //禁言回调
         var BAN_CHAT = {
-            ban_chat_people: '直播间禁止个人聊天',
-            unban_chat_people: '直播间解禁个人聊天',
-            ban_chat_group: '直播间禁止聊天',
-            unban_chat_group: '直播间解禁聊天',
+            ban_chat_people: "直播间禁止个人聊天",
+            unban_chat_people: "直播间解禁个人聊天",
+            ban_chat_group: "直播间禁止聊天",
+            unban_chat_group: "直播间解禁聊天",
         };
-        cc.live.on('ban_chat', function (data) {
-            console.log('ban_chat', data);
+        cc.live.on("ban_chat", function (data) {
+            console.log("ban_chat", data);
             var _data = JSON.parse(data);
-            if(_data.mode == '1'){
+            if (_data.mode == "1") {
                 self.showModel(BAN_CHAT.ban_chat_people);
-            }else if(_data.mode == '2'){
+            } else if (_data.mode == "2") {
                 self.showModel(BAN_CHAT.ban_chat_group);
             }
         });
 
-        cc.live.on('unban_chat', function (data) {
-            console.log('unban_chat', data);
+        cc.live.on("unban_chat", function (data) {
+            console.log("unban_chat", data);
             var _data = JSON.parse(data);
-            if(_data.mode == '1'){
+            if (_data.mode == "1") {
                 self.showModel(BAN_CHAT.unban_chat_people);
-            }else if(_data.mode == '2'){
+            } else if (_data.mode == "2") {
                 self.showModel(BAN_CHAT.unban_chat_group);
             }
         });
 
 
         //切换视频文档区域
-        cc.live.on('on_switch_video_doc', function (data) {
-            console.log('on_switch_video_doc', data, self.data.toggleSwitchover);
+        cc.live.on("on_switch_video_doc", function (data) {
+            console.log("on_switch_video_doc", data, self.data.toggleSwitchover);
             switch (self.data.btnSwitchoverFullScreen) {
-                case 'switchover':
+                case "switchover":
                     if (data.layout_video_main) {
-                        console.log("视频为主")
+                        console.log("视频为主");
                         self.setData({
                             dbView: false
                         });
                         self.setData({
-                            switchPip: ['switch-pip-document', 'switch-pip-image', 'switch-pip-player'],
+                            switchPip: ["switch-pip-document", "switch-pip-image", "switch-pip-player"],
                             toggleCover: [false, true],
                             playerView: 1,
-                            btnTogglePlayerLiveMode: 'hidden-video',
+                            btnTogglePlayerLiveMode: "hidden-video",
                             toggleSwitchover: false,
                             togglePlayer: false,
-                            dbWidth: '240rpx',
-                            dbHeight: '180rpx',
+                            dbWidth: "240rpx",
+                            dbHeight: "180rpx",
                             dbView: true
                         });
                     } else {
-                        console.log("文档为主")
+                        console.log("文档为主");
                         self.setData({
                             dbView: false
                         });
                         self.setData({
-                            switchPip: ['', '', ''],
+                            switchPip: ["", "", ""],
                             toggleCover: [true, false],
                             playerView: 1,
-                            btnTogglePlayerLiveMode: 'hidden-video',
+                            btnTogglePlayerLiveMode: "hidden-video",
                             toggleSwitchover: true,
                             togglePlayer: false,
-                            dbWidth: '100%',
-                            dbHeight: '423rpx',
+                            dbWidth: "100%",
+                            dbHeight: "423rpx",
                             dbView: true
                         });
                     }
                     break;
-                case 'full-screen':
+                case "full-screen":
                     self.ctx.requestFullScreen({
                         success: function (res) {
-                            console.log('requestFullScreen success');
+                            console.log("requestFullScreen success");
                         },
                         fail: function (res) {
-                            console.log('requestFullScreen fail');
+                            console.log("requestFullScreen fail");
                         }
                     });
                     self.setData({
@@ -775,16 +903,15 @@ Page({
         });
 
         //是否开始直播
-        cc.live.on('isPublishing_log', function (data) {
-            self.setData({
-                isPublishing: parseInt(data)
-            });
-
-            self.configLive();
+        cc.live.on("isPublishing_log", function (data) {
+            if (typeof self.configHistoryPublishing == "function") {
+                console.log("isPublishing_log", data);
+                self.configHistoryPublishing(parseInt(data));
+            }
         });
 
         //是否禁播
-        cc.live.on('isBan_log', function (data) {
+        cc.live.on("isBan_log", function (data) {
             self.setData({
                 isBan: data
             });
@@ -793,9 +920,9 @@ Page({
         });
 
         //历史文档页
-        cc.live.on('page_change_log', function (data) {
+        cc.live.on("page_change_log", function (data) {
             self.setData({
-                pageData: data || ''
+                pageData: data || ""
             });
 
             if (self.data.pageData) {
@@ -807,7 +934,7 @@ Page({
         });
 
         //历史聊天信息
-        cc.live.on('chat_log', function (data) {
+        cc.live.on("chat_log", function (data) {
             self.setData({
                 chatLog: data
             });
@@ -816,14 +943,14 @@ Page({
         });
 
         //收到问题记录
-        cc.live.on('question_log', function (data) {
+        cc.live.on("question_log", function (data) {
             self.setData({
                 questionLog: data
             });
         });
 
         //返回答案记录
-        cc.live.on('answer_log', function (data) {
+        cc.live.on("answer_log", function (data) {
             self.setData({
                 answerLog: data
             });
@@ -832,48 +959,48 @@ Page({
         });
 
         //禁止播放回掉
-        cc.live.on('ban_stream', function () {
+        cc.live.on("ban_stream", function () {
             self.banStream();
         });
 
         //恢复禁播
-        cc.live.on('unban_stream', function () {
+        cc.live.on("unban_stream", function () {
             self.unbanStream();
         });
 
         // 直播开始
-        cc.live.on('publish_stream', function (data) {
+        cc.live.on("publish_stream", function (data) {
             self.publishStream();
         });
 
         // 直播结束
-        cc.live.on('end_stream', function (data) {
+        cc.live.on("end_stream", function (data) {
             self.endStream();
         });
 
         //在线人数
-        cc.live.on('room_user_count', function (data) {
+        cc.live.on("room_user_count", function (data) {
             //人数长度限制
-            var n = data.length > 8 ? data.split('').splice(0, 8).join('') + '+' : data;
+            var n = data.length > 8 ? data.split("").splice(0, 8).join("") + "+" : data;
             self.setData({
                 peoples: n
             });
         });
 
         //禁言
-        cc.live.on('information', function (data) {
+        cc.live.on("information", function (data) {
             self.onInformation(data);
         });
 
         //公告
-        cc.live.on('announcement', function (data) {
+        cc.live.on("announcement", function (data) {
             self.setData({
-                announcement: data.announcement || '暂无'
+                announcement: data.announcement || "暂无"
             });
         });
 
         //翻页
-        cc.live.on('page_change', function (data) {
+        cc.live.on("page_change", function (data) {
             self.setData({
                 pageUrl: data.value.url,
                 pageHeight: data.value.height,
@@ -885,7 +1012,7 @@ Page({
         });
 
         //禁言
-        cc.live.on('silence_user_chat_message', function (data) {
+        cc.live.on("silence_user_chat_message", function (data) {
             var data = JSON.parse(data);
             var arr = self.data.message;
             var obj = {};
@@ -903,23 +1030,27 @@ Page({
             });
             if (self.data.toggleChatScroll) {
                 self.setData({
-                    toChat: 'lastChat'
+                    toChat: "lastChat"
                 });
             }
         });
 
         //接收公聊
-        cc.live.on('chat_message', function (data) {
+        cc.live.on("chat_message", function (data) {
             var data = JSON.parse(data);
             if (!self.isWithGroup(data)) {
                 return;
             }
             var arr = self.data.message;
             var obj = {};
+            obj.userId = data.userid;
             obj.name = data.username;
+            obj.status = data.status;
+            obj.chatId = data.chatId;
             obj.msg = cc.live.showEm(data.msg);
             if (data.userid == self.data.viewerId) {
                 obj.type = 1;
+                obj.status = 0;
             } else {
                 obj.type = 0;
             }
@@ -930,14 +1061,37 @@ Page({
             });
             if (self.data.toggleChatScroll) {
                 self.setData({
-                    toChat: 'lastChat'
+                    toChat: "lastChat"
+                });
+            }
+        });
+
+        cc.live.on("chat_log_manage", function (data) {
+            var data = JSON.parse(data);
+            var message = self.data.message;
+            for (var i = 0; i < message.length; i++) {
+                if (message[i].chatId == data.chatIds[0]) {
+                    message[i].status = data.status;
+                    if ( message[i].userId == self.data.viewerId) {
+                        message[i].status = 0;
+                    }
+                    break;
+                }
+            }
+            self.setData({
+                message: message.slice(self.data.chatLengthMax),
+                chatLength: message.length
+            });
+            if (self.data.toggleChatScroll) {
+                self.setData({
+                    toChat: "lastChat"
                 });
             }
         });
 
         var questionsCache = self.data.questions;
         //收到问题
-        cc.live.on('question', function (data) {
+        cc.live.on("question", function (data) {
             questionsCache = self.data.questions;
             var data = JSON.parse(data);
             if (!self.isWithGroup(data.value)) {
@@ -945,7 +1099,7 @@ Page({
             }
             var qObj = {};
             qObj.name = data.value.userName;
-            qObj.time = data.value.triggerTime.split(' ')[1];
+            qObj.time = data.value.triggerTime.split(" ")[1];
             qObj.question = data.value.content;
             qObj.answers = [];
             if (data.value.userId == self.data.viewerId) {
@@ -972,7 +1126,7 @@ Page({
         };
 
         //返回答案
-        cc.live.on('answer', function (data) {
+        cc.live.on("answer", function (data) {
             var data = JSON.parse(data);
             if (!self.isWithGroup(data.value)) {
                 return;
@@ -1015,13 +1169,13 @@ Page({
             });
             if (self.data.toggleQuestionAnswerScroll) {
                 self.setData({
-                    toQuestionAnswer: 'lastQuestionAnswer'
+                    toQuestionAnswer: "lastQuestionAnswer"
                 });
             }
         };
 
         //发布问答
-        cc.live.on('publish_question', function (data) {
+        cc.live.on("publish_question", function (data) {
             var data = JSON.parse(data);
             var id = data.value.questionId;
             for (var i = 0; i < questionsCache.length; i++) {
@@ -1032,11 +1186,11 @@ Page({
             updateQuestion();
         });
 
-        cc.live.on('private_chat', function (data) {
+        cc.live.on("private_chat", function (data) {
             console.log(data);
         });
 
-        cc.live.on('private_chat_self', function (data) {
+        cc.live.on("private_chat_self", function (data) {
             console.log(data);
         });
 
@@ -1053,7 +1207,7 @@ Page({
         function timer() {
             self.setData({
                 toggleCheckoutInputHint: false,
-                checkoutInputHint: '',
+                checkoutInputHint: "",
             });
         }
     },
@@ -1067,10 +1221,10 @@ Page({
             //重新播放
             this.ctx.play({
                 success: function (res) {
-                    console.log('play success', res);
+                    console.log("play success", res);
                 },
                 fail: function (res) {
-                    console.log('play fail', res);
+                    console.log("play fail", res);
                 }
             });
         }
@@ -1113,14 +1267,14 @@ Page({
             if (currentTime - lastTapTime < 300) {
                 // 成功触发双击事件时，取消单击事件的执行
                 clearTimeout(self.lastTapTimeoutFunc);
-                if (self.data.model === 'videoModel') {
+                if (self.data.model === "videoModel") {
                     //双击退出全屏
                     self.ctx.exitFullScreen({
                         success: function (res) {
-                            console.log('exitFullScreen success');
+                            console.log("exitFullScreen success");
                         },
                         fail: function (res) {
-                            console.log('exitFullScreen fail');
+                            console.log("exitFullScreen fail");
                         }
                     });
                     self.setData({
@@ -1136,10 +1290,10 @@ Page({
         //ios live-player 不支持 bindtap
         self.ctx.exitFullScreen({
             success: function (res) {
-                console.log('exitFullScreen success');
+                console.log("exitFullScreen success");
             },
             fail: function (res) {
-                console.log('exitFullScreen fail');
+                console.log("exitFullScreen fail");
             }
         });
         self.setData({
@@ -1152,13 +1306,13 @@ Page({
         var index = e.currentTarget.dataset.index;
         var msg = this.data.chatMsg;
         if (index !== 21) {
-            var emoji = '[em2_' + (index < 10 ? '0' + index : index) + ']';
+            var emoji = "[em2_" + (index < 10 ? "0" + index : index) + "]";
             msg += emoji;
         } else {
             //删除
-            var arr = msg.split('');
+            var arr = msg.split("");
             arr.pop();
-            msg = arr.join('');
+            msg = arr.join("");
         }
         this.setData({
             chatMsg: msg
@@ -1172,12 +1326,12 @@ Page({
         }
         if (this.data.toggleEmoji) {
             this.setData({
-                emoji: 'emoji',
+                emoji: "emoji",
                 toggleEmoji: false,
             });
         } else {
             this.setData({
-                emoji: 'emoji-select',
+                emoji: "emoji-select",
                 toggleEmoji: true,
             });
         }
@@ -1202,17 +1356,17 @@ Page({
         var self = this;
         if (self.data.toggleShowQuestion) {
             self.setData({
-                eye: 'eye-hidden',
+                eye: "eye-hidden",
                 toggleShowQuestion: false,
                 toggleHintShowQuestion: true,
-                hintShowQuestion: '只看我的问答',
+                hintShowQuestion: "只看我的问答",
             });
         } else {
             self.setData({
-                eye: 'eye',
+                eye: "eye",
                 toggleShowQuestion: true,
                 toggleHintShowQuestion: true,
-                hintShowQuestion: '显示所有问答',
+                hintShowQuestion: "显示所有问答",
             });
         }
         setTimeout(timer, 1500);
@@ -1220,30 +1374,30 @@ Page({
         function timer() {
             self.setData({
                 toggleHintShowQuestion: false,
-                hintShowQuestion: '',
+                hintShowQuestion: "",
             });
         }
 
         self.setData({
-            toQuestionAnswer: 'lastQuestionAnswer'
+            toQuestionAnswer: "lastQuestionAnswer"
         });
     },
 
-    //验证输入框信息不能为空，小于140字
+    //验证输入框信息不能为空，小于300字
     checkoutInput: function (value) {
         var self = this;
         if (!value) {
             self.setData({
                 toggleCheckoutInputHint: true,
-                checkoutInputHint: '聊天信息不能为空',
+                checkoutInputHint: "输入内容不能为空",
             });
             setTimeout(timer, 1200);
             return false;
         }
-        if (value.length >= 140) {
+        if (value.length >= 139) {
             self.setData({
                 toggleCheckoutInputHint: true,
-                checkoutInputHint: '聊天信息应小于140字',
+                checkoutInputHint: "输入内容应小于140字",
             });
             setTimeout(timer, 1200);
             return false;
@@ -1253,7 +1407,7 @@ Page({
         function timer() {
             self.setData({
                 toggleCheckoutInputHint: false,
-                checkoutInputHint: '',
+                checkoutInputHint: "",
             });
         }
     },
@@ -1270,7 +1424,7 @@ Page({
         function timer() {
             self.setData({
                 toggleCheckoutInputHint: false,
-                checkoutInputHint: '',
+                checkoutInputHint: "",
             });
         }
     },
@@ -1282,7 +1436,7 @@ Page({
         }
         cc.live.sendQuestionMsg(this.data.question);
         this.setData({
-            question: ''
+            question: ""
         });
     },
 
@@ -1319,8 +1473,8 @@ Page({
         }
         cc.live.sendPublicChatMsg(this.data.chatMsg);
         this.setData({
-            chatMsg: '',
-            emoji: 'emoji',
+            chatMsg: "",
+            emoji: "emoji",
             toggleEmoji: false
         });
     },
@@ -1337,7 +1491,7 @@ Page({
     bindChatInputFocus: function (e) {
         this.setData({
             topChatInputHeight: e.detail.height,
-            emoji: 'emoji',
+            emoji: "emoji",
             toggleEmoji: false
         });
     },
@@ -1367,49 +1521,66 @@ Page({
         }
     },
 
-    //全屏
+    //文档全屏 视频全屏 切换按钮
     bindSwitchoverFullScreen: function () {
         switch (this.data.btnSwitchoverFullScreen) {
-            case 'switchover':
+            case "switchover":
                 if (this.data.toggleSwitchover) {
                     this.setData({
                         dbView: false
                     });
                     this.setData({
-                        switchPip: ['switch-pip-document', 'switch-pip-image', 'switch-pip-player'],
+                        switchPip: ["switch-pip-document", "switch-pip-image", "switch-pip-player"],
                         toggleCover: [false, true],
                         playerView: 1,
-                        btnTogglePlayerLiveMode: 'hidden-video',
+                        btnTogglePlayerLiveMode: "hidden-video",
                         toggleSwitchover: false,
                         togglePlayer: false,
-                        dbWidth: '240rpx',
-                        dbHeight: '180rpx',
+                        dbWidth: "240rpx",
+                        dbHeight: "180rpx",
                         dbView: true
                     });
+
+                    //文档小窗
+                    if (this.data.toggleLottery === "block") {
+                        this.showPlayer();
+                        this.setData({
+                            toggleDocument: "none"
+                        });
+                    }
+
                 } else {
                     this.setData({
                         dbView: false
                     });
                     this.setData({
-                        switchPip: ['', '', ''],
+                        switchPip: ["", "", ""],
                         toggleCover: [true, false],
                         playerView: 1,
-                        btnTogglePlayerLiveMode: 'hidden-video',
+                        btnTogglePlayerLiveMode: "hidden-video",
                         toggleSwitchover: true,
                         togglePlayer: false,
-                        dbWidth: '100%',
-                        dbHeight: '423rpx',
+                        dbWidth: "100%",
+                        dbHeight: "423rpx",
                         dbView: true
                     });
+
+                    //视频小窗
+                    if (this.data.toggleLottery === "block") {
+                        this.hiddenPlayer();
+                        this.setData({
+                            toggleDocument: "block"
+                        });
+                    }
                 }
                 break;
-            case 'full-screen':
+            case "full-screen":
                 this.ctx.requestFullScreen({
                     success: function (res) {
-                        console.log('requestFullScreen success');
+                        console.log("requestFullScreen success");
                     },
                     fail: function (res) {
-                        console.log('requestFullScreen fail');
+                        console.log("requestFullScreen fail");
                     }
                 });
                 this.setData({
@@ -1424,13 +1595,13 @@ Page({
         if (e.detail.fullScreen) {
             this.setData({
                 toggleCover: [false, false],
-                orientation: 'horizontal',
+                orientation: "horizontal",
                 // toggleControls:
             });
         } else {
             this.setData({
                 toggleCover: [false, true],
-                orientation: 'vertical'
+                orientation: "vertical"
             });
         }
     },
@@ -1438,19 +1609,23 @@ Page({
     //切换音频视频模式
     bindTogglePlayerLiveMode: function () {
         switch (this.data.btnTogglePlayerLiveMode) {
-            case 'hidden-video':
-            case 'show-video':
+            case "hidden-video":
+            case "show-video":
+                //抽奖时隐藏小窗
+                if (this.data.toggleLottery === "block") {
+                    return;
+                }
                 if (this.data.toggleSwitchover) {
                     if (this.data.togglePlayer) {
                         this.setData({
                             playerView: 1,
-                            btnTogglePlayerLiveMode: 'hidden-video',
+                            btnTogglePlayerLiveMode: "hidden-video",
                             togglePlayer: false
                         });
                     } else {
                         this.setData({
                             playerView: 0,
-                            btnTogglePlayerLiveMode: 'show-video',
+                            btnTogglePlayerLiveMode: "show-video",
                             togglePlayer: true
                         });
                     }
@@ -1459,31 +1634,31 @@ Page({
                         dbView: false
                     });
                     this.setData({
-                        switchPip: ['', '', ''],
+                        switchPip: ["", "", ""],
                         toggleCover: [true, false],
                         playerView: 0,
-                        btnTogglePlayerLiveMode: 'show-video',
+                        btnTogglePlayerLiveMode: "show-video",
                         toggleSwitchover: true,
                         togglePlayer: true,
-                        dbWidth: '100%',
-                        dbHeight: '423rpx',
+                        dbWidth: "100%",
+                        dbHeight: "423rpx",
                         dbView: true
                     });
                 }
                 break;
-            case 'video-live':
-            case 'only-audio':
+            case "video-live":
+            case "only-audio":
                 if (this.data.audioMode) {
                     this.setData({
-                        mode: 'video',
+                        mode: "video",
                         audioMode: false, //视频模式
-                        btnTogglePlayerLiveMode: 'video-live'
+                        btnTogglePlayerLiveMode: "video-live"
                     });
                 } else {
                     this.setData({
-                        mode: 'audio',
+                        mode: "audio",
                         audioMode: true, //音频模式
-                        btnTogglePlayerLiveMode: 'only-audio'
+                        btnTogglePlayerLiveMode: "only-audio"
                     });
                 }
                 cc.live.streamMode(this.data.mode);
@@ -1581,7 +1756,7 @@ Page({
 
     //选中样式
     bindSwiperChange: function (e) {
-        if (e.detail.source === 'touch') {
+        if (e.detail.source === "touch") {
             var index = e.detail.current;
             this.setData({
                 tabOptionSelected: index

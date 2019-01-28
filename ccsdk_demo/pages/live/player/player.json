@@ -2,7 +2,9 @@
   "navigationBarTitleText": "观看直播",
   "usingComponents": {
     "drawingBoard": "plugin://ccsdk/drawingBoard",
-    "live": "../../../components/live/live/live"
+    "live": "../../../components/live/live/live",
+    "practice": "../../../components/live/practice/practice",
+    "lottery": "../../../components/live/lottery/lottery"
   },
   "disableScroll": false
 }

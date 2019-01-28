@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: replay/cache.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,97 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: replay/cache.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var util = require('./util');
+
+var Cache = function (emitter) {
+    this.cache = [];
+    this.lastTimeRefresh = new Date().getTime();
+    var self = this;
+    this.INTERVAL_TIME = setInterval(function () {
+        self.refresh();
+    }, 500);
 
 
-    <h3> </h3>
+    this.push = function (data) {
+        // 缓存中超过150条数据，则丢弃
+        if (this.cache.length > 150) {
+            return;
+        }
+        this.cache.push(data);
+    };
 
+    this.ableRefresh = function () {
+        var n = new Date().getTime();
 
+        if (this.cache.length == 0) {
+            return false;
+        }
 
+        if ((n - this.lastTimeRefresh) >= 500) {
+            return true;
+        }
+        return false;
+    };
 
+    this.refresh = function () {
+        if (!this.ableRefresh()) {
+            return;
+        }
 
+        clearInterval(this.INTERVAL_TIME);
 
+        var d = [];
+        var l = Math.min(this.cache.length, 10);
+        for (var i = 0; i &lt; l; i++) {
+            d.push(this.cache.shift());
+        }
 
+        /**
+         * @event chat_msg_sync
+         * @description 同步返回聊天信息
+         * @example
+         * ccsdk.live.on('chat_msg_sync',function(data){
+         *    //console.log(data);
+         *    //返回值说明
+         *    //{
+         *    //  "chatId":"312312321", // 聊天消息的ID，当isFilterChat值为1时，返回空。
+         *    //  "status":"0", // 聊天消息的状态，值为0显示消息，值为1不显示消息。当isFilterChat值为1时，返回空。
+         *    //  "isFilterChat": 1,//是否开启了敏感词过滤，开启值为1，未开启返回空。
+         *    //  "groupId":"",//分组ID，未分组返回空。
+         *    //  "userid":"4ccd73b2fb1a4b63be1043b6c4c225dc", // 发送者id
+         *    //  "username":"name",   // 发送者名字
+         *    //  "userrole":"student",   // 发送者身份
+         *    //  "useravatar":"img",   // 发送者头像
+         *    //  "msg":"rrr",   // 消息内容
+         *    //  "time":"16:45:08",   // 发送时间
+         *    //  "usercustommark": ""  // 聊天自定义参数
+         *    //}
+         * })
+         */
 
+        util.log('chat_msg_sync', d);
+        emitter.emit('chat_msg_sync', d);
 
+        this.lastTimeRefresh = new Date().getTime();
 
-    
+        this.INTERVAL_TIME = setInterval(function () {
+            self.refresh();
+        }, 500);
+    };
+};
 
-
-
-
-
+module.exports = Cache;</code></pre>
+        </article>
+    </section>
 
 
 

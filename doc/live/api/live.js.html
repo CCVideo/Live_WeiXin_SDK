@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: live.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,135 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: live.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
+ * 观看端-观看直播SDK入口文件
+ */
+var StateMachine = require("./module/stateMachine");
+var util = require("./module/util");
+var Observer = require("./module/observer");
+// var Net = require('./module/net');
+var Login = require("./live/login");
+var Pusher = require("./live/pusher");
+var event = require("./live/event");
+var History = require("./live/history");
+var Player = require("./live/player");
+var Manager = require("./live/manager");
+var CONFIG = require("./module/config").LIVE;
+var drawingBoard = require("./module/drawingBoard");
 
+var stateMachine = new StateMachine();
+var observer = new Observer(CONFIG);
+drawingBoard.init(observer);
+var history = new History(stateMachine, observer);
+var player = new Player(stateMachine, observer);
+var manager = new Manager(stateMachine, observer);
+// var net = new Net(stateMachine);
 
-    <h3> </h3>
+// var reconnectParam = {};
 
+/**
+ * @description 初始化
+ * @param {Object} param 初始化参数对象
+ * @property {String} param.userId 用户 id
+ * @property {String} param.roomId 直播间id
+ * @property {String} param.userName 用户名称
+ * @property {String} param.password 需要密码验证方式时，可选
+ * @property {String} param.viewercustomua 自定义UA参数，配合接口验证使用，可为空
+ * @property {String} param.viewercustominfo json格式字符串，可选，自定义用户信息，该信息会记录在用户访问记录中，用于统计分析使用（长度不能超过1000个字符，若直播间启用接口验证则该参数无效）
+ * @property {Object} param.wx 微信全局对象
+ * @property {Boolean} param.forcibly 强制登录，可选
+ * @property {Function} param.success 初始化成功回掉函数，可选
+ * @property {Function} param.fail 初始化失败回掉函数，可选
+ * @example cc.live.init({
+    userId: 'userId',
+    roomId: 'roomId',
+    userName: 'userName',
+    password: 'password',
+    wx: wx,
+    forcibly: false,
+    success: function (data) {
+      console.log('init success',data);
+    },
+    fail: function (data) {
+      console.log('init fail',data);
+    }
+  });
+ */
 
+var init = function (param) {
+    var login = new Login(stateMachine);
 
+    login.login(param, function () {
+        //链接pusher
+        var pusher = new Pusher(stateMachine, manager, observer);
+        pusher.connectIo(login.getParam(), login.getData(), history);
 
+        //初始化事件
+        event.ListenerEvent(login.getData(), pusher.getIo(), stateMachine, observer);
 
+        observer.pub("loginData");
 
+        if (param.success) {
+            //请求成功用户回掉
+            util.callbackUser(param.success, CONFIG.CODE_INIT, "init success", "ok");
+        }
 
+        //配置播放地址
+        player.init(login.getParam(), login.getData());
 
+        //初始化方法
+        manager.init(login, pusher, player);
 
+        //获得历史信息
+        history.init(login.getParam());
+    });
 
-    
+};
 
+var api = {
 
+    // init
+    init: init,
 
+    //observer
+    on: observer.on,
 
+    //util
+    showEm: util.showEm,
 
+    getPublishing: history.getPublishing,
+
+    //manager
+    configLivePlayer: manager.configLivePlayer,
+    sendPublicChatMsg: manager.sendPublicChatMsg,
+    sendPrivateChatMsg: manager.sendPrivateChatMsg,
+    sendQuestionMsg: manager.sendQuestionMsg,
+    streamRoute: manager.streamRoute,
+    streamMode: manager.streamMode,
+    quit: manager.quit,
+    setDebug: manager.setDebug,
+    getPracticeRank: manager.getPracticeRank,
+    getPracticeStatis: manager.getPracticeStatis,
+    submitPractice: manager.submitPractice,
+    getPracticeInfo: manager.getPracticeInfo,
+    reportPlayResult: manager.reportPlayResult,
+    reportPlaying: manager.reportPlaying,
+    statechange: manager.statechange,
+    netstatus: manager.netstatus
+};
+
+module.exports = api;</code></pre>
+        </article>
+    </section>
 
 
 

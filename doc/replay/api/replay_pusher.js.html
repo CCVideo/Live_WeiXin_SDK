@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: replay/pusher.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: replay/pusher.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var sio = require('../module/sio');
+// var sio = require('./sio');
+var util = require('./util');
+var CONFIG = require('./config');
+
+function Pusher(opts, state, emitter) {
+    this.opts = opts;
+    this.io = {};
+    this.state = state;
+    this.emitter = emitter;
+    this.ioStateInfo = {};
+}
+
+Pusher.prototype.connectIo = function () {
+    if (this.state.isIoConnectState()) {
+        util.log('socket已经链接', this.state.isIoConnectState());
+        return false;
+    }
+    var pusherUrl = this.getPusherUrl();
+    this.io = sio.default(pusherUrl, {forceNew: true}, this.opts.wx);
+    this.listenerEvents(this.emitter, this);
+};
+
+/**
+ * @event network_change
+ * @description 插件网络链接状态
+ * @example
+ * ccsdk.live.on('network_change',function(data){
+   *    //console.log(data);
+   *    //state:链接状态 （true网络链接正常 ，false网络链接异常）
+   *    //type：类型 connect登录链接成功 connect_error链接失败 reconnect断网重联成功 disconnect退出成功事件（quit）
+   *    //{
+   *    //    state: true,
+   *    //    type:'connect'
+   *    //}
+   * })
+ */
+
+Pusher.prototype.listenerEvents = function (emitter, self) {
+    var self = this;
+
+    this.io.on('connect', function () {
+        util.log({
+            message: 'pusher链接成功',
+            code: CONFIG.CODE_CONNECTIO,
+            result: 'ok'
+        });
+
+        self.ioStateInfo = {
+            state: true,
+            type: 'connect'
+        };
+        emitter.emit('network_change', self.ioStateInfo);
+
+        self.state.setIoConnectState(true);
+    });
+    this.io.on('connect_error', function () {
+        util.log({
+            message: 'pusher链接失败',
+            code: CONFIG.ERRORCODE_CONNECTIO,
+            result: 'ok'
+        });
+
+        self.ioStateInfo = {
+            state: false,
+            type: 'connect_error'
+        };
+        emitter.emit('network_change', self.ioStateInfo);
+
+        self.state.setIoConnectState(false);
+    });
+    this.io.on('disconnect', function () {
+        util.log('socket disconnect');
+
+        self.ioStateInfo = {
+            state: false,
+            type: 'disconnect'
+        };
+        emitter.emit('network_change', self.ioStateInfo);
+
+        self.state.setIoConnectState(false);
+    });
+    this.io.on('reconnect', function () {
+        util.log('reconnect');
+        self.ioStateInfo = {
+            state: true,
+            type: 'reconnect'
+        };
+        emitter.emit('network_change', self.ioStateInfo);
+
+        self.state.setIoConnectState(true);
+    });
+
+    this.io.on('reconnect_failed', function () {
+        util.log('reconnect_failed');
+    });
+};
+
+Pusher.prototype.getPusherUrl = function () {
+    var host = this.opts.host;
+    var sessionId = this.opts.sessionId;
+    var roomid = this.opts.roomid;
+    var pusherUrl = 'wss://' + host + '/replay?roomid=' + roomid + '&amp;sessionid=' + sessionId + '&amp;secure=' + true + '&amp;platform=' + 4 + '&amp;terminal=' + 1;
+    return pusherUrl;
+};
+
+module.exports = Pusher;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:answers_info">answers_info</a></li><li><a href="global.html#event:chat_msg_info">chat_msg_info</a></li><li><a href="global.html#event:chat_msg_sync">chat_msg_sync</a></li><li><a href="global.html#event:groupid_info">groupid_info</a></li><li><a href="global.html#event:meta_draws_ready">meta_draws_ready</a></li><li><a href="global.html#event:network_change">network_change</a></li><li><a href="global.html#event:pages_change_sync">pages_change_sync</a></li><li><a href="global.html#event:pages_info">pages_info</a></li><li><a href="global.html#event:questions_info">questions_info</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:viewerid_info">viewerid_info</a></li></ul><h3>Global</h3><ul><li><a href="global.html#configPlayer">configPlayer</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#exitFullScreen">exitFullScreen</a></li><li><a href="global.html#getCurrentTime">getCurrentTime</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isDrawRequestTime">isDrawRequestTime</a></li><li><a href="global.html#isRealtimeFirst">isRealtimeFirst</a></li><li><a href="global.html#listenerended">listenerended</a></li><li><a href="global.html#listenerplay">listenerplay</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#play">play</a></li><li><a href="global.html#playbackRate">playbackRate</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#requestFullScreen">requestFullScreen</a></li><li><a href="global.html#seek">seek</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#timeupdate">timeupdate</a></li><li><a href="global.html#waiting">waiting</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Jan 23 2019 14:00:01 GMT+0800 (China Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

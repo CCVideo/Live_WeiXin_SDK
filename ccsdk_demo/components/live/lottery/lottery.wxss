@@ -1,0 +1,81 @@
+/* components/live/lottery/lottery.wxss */
+.container {
+    background-color: #FFFFFF;
+    height: 100%;
+    width: 100%;
+}
+
+.container .header {
+    height: 40px;
+    box-shadow: 1px 1px 10px #eeeeee;
+    line-height: 40px;
+}
+
+.container .header .lottery {
+    width: 46px;
+    height: 16px;
+    margin: 0 auto;
+}
+
+.container .header .lottery .lottery-text {
+    color: #38404B;
+    font-size: 15px;
+}
+
+.container .header .close {
+    position: absolute;
+    right: 10px;
+    top: 6px;
+}
+
+.container .header .close .close-image {
+    width: 28px;
+    height: 28px;
+}
+
+.container .body {
+    height: 83%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.container .body .prize-text {
+    margin-bottom: 25px;
+    color: #FF412E;
+    font-size: 17px;
+}
+
+.container .body .prize {
+    width: 227px;
+    height: 124px;
+    position: relative;
+    text-align: center;
+    line-height: 124px;
+}
+
+.container .body .prize .rich-text {
+
+}
+
+.container .body .prize .win-text {
+    position: relative;
+    top: -175px;
+    color: #FF412E;
+    font-size: 36px;
+}
+
+.container .body .prize .miss-text {
+    color: #38404B;
+    font-size: 18px;
+    position: relative;
+    top: -175px;
+}
+
+.container .body .prize-info {
+    margin-top: 20px;
+    color: #79808B;
+    font-size: 14px;
+}
+

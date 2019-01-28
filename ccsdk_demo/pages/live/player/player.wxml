@@ -2,7 +2,8 @@
     <!-- player -->
     <view class="player">
         <!-- 直播文档 -->
-        <view class="document {{switchPip[0]}} {{fullDocument}}" wx:if="{{pdfView}}" bindtap="bindDocuemntFullScreen">
+        <view style="display: {{toggleDocument}}" class="document {{switchPip[0]}} {{fullDocument}}" wx:if="{{pdfView}}"
+              bindtap="bindDocuemntFullScreen">
 
             <drawingBoard style="position: relative;top:{{documentTop}}" width="{{fullDocument?'100%':dbWidth}}"
                           height="{{fullDocument?documentHeight:dbHeight}}" wx:if="{{dbView}}" class="{{switchPip[1]}}">
@@ -208,7 +209,8 @@
                                  lower-threshold="10" scroll-into-view="{{toChat}}">
                         <!-- 聊天信息 -->
                         <view class="message-box {{message[index].type?'message-box-right':''}}" wx:for="{{message}}"
-                              wx:for-index="index" wx:key="" id="{{index==(chatLength-1)?'lastChat':''}}">
+                              wx:for-index="index" wx:key="" id="{{index==(chatLength-1)?'lastChat':''}}"
+                              wx:if="{{message[index].status=='1'?false:true}}">
                             <view class="left">
                                 <view class="image-box {{message[index].type?'image-box-right':''}}">
                                     <image src="../../../components/img/live/player/header.png"></image>
@@ -329,5 +331,11 @@
                 <text>{{checkoutInputHint}}</text>
             </view>
         </view>
+        <!--抽奖-->
+        <lottery style="display: {{toggleLottery}}" class="lottery" viewerId="{{viewerId}}" bindclose="bindClose"
+                 bindstartlottery="startLottery" bindwinlottery="winLottery" bindmisslottery="missLottery"></lottery>
+        <!--随堂测-->
+        <!--<practice></practice>-->
     </view>
 </view>
+

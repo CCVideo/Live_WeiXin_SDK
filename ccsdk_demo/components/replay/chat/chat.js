@@ -8,6 +8,10 @@ Component({
         groupid: {
             type: String,
             value: 0
+        },
+        viewerid: {
+            type: String,
+            value: 0
         }
     },
 
@@ -19,7 +23,7 @@ Component({
         chatMsg: [],
         toggleChatScroll: true,
         chatMsgLength: 0,
-        toChatMsg: ''
+        toChatMsg: ""
     },
 
     /**
@@ -49,7 +53,7 @@ Component({
                 return true;
             }
 
-            var role = '';
+            var role = "";
 
             if (data.userrole) {
                 role = data.userrole;
@@ -65,7 +69,7 @@ Component({
                 role = data.role;
             }
 
-            if (role && role === 'publisher') {
+            if (role && role === "publisher") {
                 return true;
             }
 
@@ -79,7 +83,7 @@ Component({
     ready: function () {
         var self = this;
         var chatMsgs = [];
-        cc.replay.on('chat_msg_sync', function (data) {
+        cc.replay.on("chat_msg_sync", function (data) {
             var data = data;
             for (var i = 0; i < data.length; i++) {
                 if (!self.isWithGroup(data[i])) {
@@ -87,6 +91,11 @@ Component({
                 }
                 var CMS = {};
                 CMS.name = data[i].username;
+                CMS.userid = data[i].userid;
+                CMS.status = data[i].status;
+                if (CMS.userid === self.data.viewerid) {
+                    CMS.status = 0;
+                }
                 CMS.msg = cc.replay.showEm(data[i].msg);
                 chatMsgs.push(CMS);
             }
@@ -103,7 +112,7 @@ Component({
 
             if (self.data.toggleChatScroll) {
                 self.setData({
-                    toChatMsg: 'lastChat'
+                    toChatMsg: "lastChat"
                 });
             }
         }

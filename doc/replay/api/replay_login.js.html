@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: replay/login.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: replay/login.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var util = require("./util");
+var CONFIG = require("./config");
+var http = require("./http");
+var limitRequestDraws = require("./limitRequestDraws");
+
+function Login(opts, state, emitter, cache, manager) {
+    this.opts = opts;
+    this.data = {};
+    this.state = state;
+    this.emitter = emitter;
+    this.cache = cache;
+    this.manager = manager;
+    this.userId = "";
+    this.videoId = "";
+    this.room = {};
+    this.template = {};
+    this.pages = [];
+    this.questions = [];
+    this.answers = [];
+    this.draws = [];
+    this.pageChanges = [];
+    this.chatLogs = [];
+    this.CHATLOGS = [];
+    this.stateMachine = {};
+    this.drawsInfoRequestPool = {};
+    this.drawRequestTime = 0;
+    this.drawsAlready = false;
+    this.isRealtimeFirst = false;//实时绘线
+    this.isLimitRequestDraws = true;
+    this.groupid = "";
+    this.viewerid = "";
+}
+
+Login.prototype.login = function (callback) {
+    if (!this.checkout()) {
+        util.log("初始化参数不正确", this.opts);
+        util.callback(this.opts.fail, CONFIG.ERRORCODE_LOGIN_PARAM, "初始化参数不正确", "error");
+        return false;
+    }
+    this.send(callback);
+};
+
+var setGroupId = function (viewerGroupId) {
+    var viewerGroupId = viewerGroupId;
+    util.log("groupid", viewerGroupId);
+    // 数字英语混合
+    var rel = /^[0-9a-zA-Z]+$/;
+    if (!viewerGroupId || !rel.test(viewerGroupId) || viewerGroupId.length >= 40) {
+        util.log("viewerGroupId不能为空且类型为数字或英文字母，长度小于40");
+        viewerGroupId = "";
+    }
+    //测试，虚拟viewerGroupId
+    // viewerGroupId = 1;
+    util.log("groupid", viewerGroupId);
+    return viewerGroupId;
+};
+
+Login.prototype.send = function (callback) {
+    var self = this;
+
+    var groupid = setGroupId(this.opts.groupid);
+
+    var options = {
+        roomid: this.opts.roomId,
+        userid: this.opts.userId,
+        recordid: this.opts.recordId,
+        viewertoken: this.opts.viewertoken || "",
+        viewername: this.opts.viewername || "",
+        groupid: groupid
+    };
+
+    var state = {
+        isRequestState: this.state.isLoginRequestState,
+        setRequestState: this.state.setLoginRequestState
+    };
+
+    http.request({
+        url: CONFIG.URL.V2_LOGIN,
+        method: "GET",
+        data: options,
+        state: state,
+        log: "login",
+        success: function (data) {
+            if (!data.success) {
+                util.log({code: CONFIG.ERRORCODE_LOGIN_RESULT, message: data.msg, result: "error"});
+                util.callback(self.opts.fail, CONFIG.ERRORCODE_LOGIN_RESULT, data.msg, data.success);
+                return false;
+            }
+            self.data = data;
+            self.assignment(data);
+            self.state.setLoginState(false);
+            var opts = {
+                host: self.host,
+                sessionId: self.sessionId,
+                roomid: self.opts.roomId,
+                wx: self.opts.wx
+            };
+            callback(opts);
+
+            util.isQuit = false;
+
+            self.isLimitRequestDraws = self.manager.isDrawRequestTime();
+            if (self.isLimitRequestDraws) {
+                self.drawRequestTime = self.data.datas.drawRequestTime || 1;
+            } else {
+                self.drawRequestTime = 0;
+            }
+            //是否开启实时绘线
+            self.isRealtimeFirst = self.manager.isRealtimeFirst();
+
+            util.log("isLimitRequestDraws", self.isLimitRequestDraws);
+            util.log("drawRequestTime", self.drawRequestTime);
+            util.log("isRealtimeFirst", self.isRealtimeFirst);
+
+            self.requestChatQa(options);
+
+            self.ListenerDrawingBoard({
+                isRealtimeFirst: self.isRealtimeFirst,
+                fn: function () {
+                    self.emitter.pub("is_limit_request_draws", self.isLimitRequestDraws);
+
+                    if (self.requestInfo) {
+                        self.requestInfo(options);
+                    } else {
+                        self.emitter.pub("meta_pagechanges", self.pages);
+                    }
+
+                    if (!self.drawRequestTime) {
+                        util.log("直接请求画笔数据");
+                        if (self.requestDraws) {
+                            self.requestDraws(options);
+                        } else {
+                            self.emitter.pub("meta_draws", self.draws);
+                        }
+                    } else {
+                        util.log("分页请求画笔数据");
+                        if (self.initLimitRequestDraws) {
+                            self.initLimitRequestDraws(options);
+                        } else {
+                            self.emitter.pub("meta_draws_ready");
+                            self.emitter.pub("meta_draws", self.draws);
+                        }
+                    }
+                }
+            });
+        },
+        fail: function () {
+            util.callback(self.opts.fail, CONFIG.ERRORCODE_LOGIN_TIMEOUT, "初始化超时", "fail");
+            self.state.setLoginState(false);
+        }
+    });
+};
+
+Login.prototype.initLimitRequestDraws = function (options) {
+    var self = this;
+
+    options.drawRequestTime = this.drawRequestTime;
+
+    var StateMachine = limitRequestDraws.StateMachine;
+    var DrawsInfoRequestPool = limitRequestDraws.DrawsInfoRequestPool;
+    this.stateMachine = new StateMachine(options);
+    this.drawsInfoRequestPool = new DrawsInfoRequestPool(this.stateMachine, this.emitter);
+
+    //分段请求画笔数据
+    this.emitter.sub("limit_request_draws", function (e) {
+        self.emitter.deletSDKHandlerEvents("limit_request_draws");
+        if (!options.drawRequestTime) {
+            return;
+        }
+        var duration = e.detail.duration + 1;
+        util.log("duration", duration + "");
+        //请求数据左包含，右不包含，duration+1秒，防止最后一秒数据无法请求到。
+        var blockTime = Math.ceil(duration / options.drawRequestTime);
+        var startTime = 0;
+        var endTime = startTime + blockTime;
+
+        var blockDuration = {
+            blockTime: blockTime,
+            startTime: startTime,
+            endTime: endTime
+        };
+        self.stateMachine.init(blockDuration);
+
+        util.log("callback.state", self.stateMachine);
+
+        util.log("logtime 开始分页请求画笔数据时间戳", util.getLogTime());
+        self.drawsInfoRequestPool.httpRequestStream({
+            success: function (data) {
+                self.draws = data;
+                self.emitter.pub("meta_draws", self.draws);
+            },
+            ready: function (result) {
+                self.drawsAlready = result.drawsAlready;
+                // self.draws = result.draws;
+                // self.emitter.pub('meta_draws', self.draws);
+                self.emitter.pub("meta_draws_ready");
+                self.emitter.emit("document_ready", {result: true});
+
+                util.log("drawsAlready", self.drawsAlready);
+                util.log("draws.length", self.draws.length);
+                util.log("logtime 分页请求画笔数据完成时间戳", util.getLogTime());
+            }
+        });
+    });
+
+    if (self.initLimitRequestDraws) {
+        self.initLimitRequestDraws = null;
+    }
+};
+
+Login.prototype.requestInfo = function (options) {
+    var self = this;
+    var stateInfo = {
+        isRequestState: this.state.isInfoRequestState,
+        setRequestState: this.state.setInfoRequestState
+    };
+    //广播，翻页，animation及后续新增数据
+    http.request({
+        url: CONFIG.URL.V2_INFO,
+        method: "GET",
+        data: options,
+        state: stateInfo,
+        log: "info",
+        success: function (data) {
+            if (!data.success) {
+                util.log({code: CONFIG.ERRORCODE_V2_INFO_RESULT, message: data.msg, result: "error"});
+                util.callback(self.opts.fail, CONFIG.ERRORCODE_V2_INFO_RESULT, data.msg, data.success);
+                return false;
+            }
+            var meta = data.datas.meta;
+            if (!meta) {
+                return;
+            }
+            //翻页信息
+            self.pagesData(meta.pageChange);
+            self.pageChangeData(meta.pageChange);
+            self.emitter.pub("meta_pagechanges", self.pages);
+            self.state.setInfoRequestState(false);
+        },
+        fail: function () {
+            util.callback(self.opts.fail, CONFIG.ERRORCODE_V2_INFO_RESULT, "初始化超时", "fail");
+            self.state.setInfoRequestState(false);
+        }
+    });
+    if (self.requestInfo) {
+        self.requestInfo = null;
+    }
+};
+
+Login.prototype.requestChatQa = function (options) {
+    var self = this;
+    var stateChatqa = {
+        isRequestState: this.state.isChatqaRequestState,
+        setRequestState: this.state.setChatqaRequestState
+    };
+    //聊天和问答信息
+    http.request({
+        url: CONFIG.URL.V2_CHATQA,
+        method: "GET",
+        data: options,
+        state: stateChatqa,
+        log: "chatqa",
+        success: function (data) {
+            if (!data.success) {
+                util.log({code: CONFIG.ERRORCODE_V2_CHATQA_RESULT, message: data.msg, result: "error"});
+                util.callback(self.opts.fail, CONFIG.ERRORCODE_V2_CHATQA_RESULT, data.msg, data.success);
+                return false;
+            }
+            var meta = data.datas.meta;
+            if (!meta) {
+                return;
+            }
+            //问答
+            self.qaData(meta.question, meta.answer);
+            self.chatLogsData(meta.chatLog);
+            self.chatLogsSyncData();
+            self.state.setChatqaRequestState(false);
+        },
+        fail: function () {
+            util.callback(self.opts.fail, CONFIG.ERRORCODE_V2_CHATQA_RESULT, "初始化超时", "fail");
+            self.state.setChatqaRequestState(false);
+        }
+    });
+};
+
+/**
+ * @event meta_draws_ready
+ * @description 文档模块加载完成
+ * @example
+ * ccsdk.replay.on('document_ready',function(data){
+ *    //console.log(data);
+ * })
+ */
+
+Login.prototype.requestDraws = function (options) {
+    var self = this;
+    var stateDraws = {
+        isRequestState: this.state.isDrawsRequestState,
+        setRequestState: this.state.setDrawsRequestState
+    };
+    util.log("logtime 开始直接请求画笔数据时间戳", util.getLogTime());
+    //画笔信息
+    http.request({
+        url: CONFIG.URL.DRAWS,
+        method: "GET",
+        data: options,
+        state: stateDraws,
+        log: "draws",
+        success: function (data) {
+            if (!data.success) {
+                util.log({code: CONFIG.ERRORCODE_V2_DRAWS_RESULT, message: data.msg, result: "error"});
+                util.callback(self.opts.fail, CONFIG.ERRORCODE_V2_DRAWS_RESULT, data.msg, data.success);
+                return false;
+            }
+            var meta = data.datas.meta;
+            if (!meta) {
+                return;
+            }
+            //画笔
+            self.drawsData(meta.draw);
+            util.log("logtime 请求画笔数据成功时间戳", util.getLogTime());
+            self.emitter.pub("meta_draws", self.draws);
+            self.state.setDrawsRequestState(false);
+            self.emitter.emit("document_ready", {result: true});
+        },
+        fail: function () {
+            util.callback(self.opts.fail, CONFIG.ERRORCODE_V2_DRAWS_RESULT, "初始化超时", "fail");
+            self.state.setDrawsRequestState(false);
+        }
+    });
+    if (self.requestDraws) {
+        self.requestDraws = null;
+    }
+};
+
+Login.prototype.assignment = function (data) {
+    var self = this;
+    var datas = data.datas;
+
+    //connect io
+    self.host = datas.pusherNode.primary;
+    self.sessionId = datas.sessionId;
+
+    //get player url
+    self.userId = self.opts.userId;
+    self.videoId = datas.live.encryptRecordvideoId;
+
+    //login datas
+    self.roomData(datas.room);
+    self.groupId(datas.viewer.groupId);
+    self.getViewerId(datas.viewer.id);
+    self.templateData(datas.template);
+};
+
+Login.prototype.ListenerDrawingBoard = function (options) {
+    var self = this;
+    self.emitter.pub("drawing_board_play_back", options);
+    self.emitter.sub("drawingboard_init", function () {
+        self.emitter.pub("drawing_board_play_back", options);
+    });
+};
+
+Login.prototype.chatLogsSyncData = function () {
+    var self = this;
+    this.emitter.sub("timeupdate", function (e) {
+        var ft = 0;
+        try {
+            ft = e.detail.currentTime;
+        } catch (e) {
+        }
+        if (ft &lt;= 0) {
+            return;
+        }
+
+        if (!self.CHATLOGS.length) {
+            return;
+        }
+
+        var chatLog = self.CHATLOGS[0];
+
+        while (chatLog.time &lt;= ft) {
+            var cl = self.CHATLOGS.shift();
+            self.cache.push({
+                userid: cl.userId,
+                username: cl.userName,
+                time: cl.time,
+                msg: cl.content,
+                useravatar: cl.userAvatar,
+                userRole: cl.userRole,
+                usercustommark: cl.userCustomMark,
+                chatId: cl.chatId || "",
+                status: cl.status || "",
+                isFilterChat: cl.isFilterChat || "",
+                groupId: cl.groupId || "",
+            });
+            if (!self.CHATLOGS.length) {
+                break;
+            }
+            chatLog = self.CHATLOGS[0];
+        }
+    });
+};
+
+/**
+ * @event groupid_info
+ * @description 分组信息
+ * @example
+ * ccsdk.replay.on('groupid_info',function(data){
+ *    //必须在cc.replay.init登录成功之前监听
+ *    //console.log(data);
+ * })
+ */
+
+Login.prototype.groupId = function (groupid) {
+    this.groupid = groupid;
+    util.log("groupid_info", this.groupid);
+    this.emitter.emit("groupid_info", this.groupid);
+};
+
+
+/**
+ * @event viewerid_info
+ * @description 分组信息
+ * @example
+ * ccsdk.replay.on('viewerid_info',function(data){
+ *    //必须在cc.replay.init登录成功之前监听
+ *    //console.log(data);
+ * })
+ */
+
+Login.prototype.getViewerId = function (viewerid) {
+    this.viewerid = viewerid;
+    var json = {
+        viewerid: this.viewerid
+    };
+    util.log("viewerid_info", json);
+    this.emitter.emit("viewerid_info", json);
+};
+
+/**
+ * @event room_info
+ * @description 回放房间信息
+ * @example
+ * ccsdk.replay.on('room_info',function(data){
+ *    //必须在cc.replay.init登录成功之前监听
+ *    //console.log(data);
+ * })
+ */
+
+Login.prototype.roomData = function (room) {
+    this.room = room;
+    this.room.desc = this.aspectFit(this.room.desc);
+    util.log("room_info", this.room);
+    this.emitter.emit("room_info", this.room);
+};
+
+Login.prototype.aspectFit = function (desc) {
+    if (typeof desc !== "string") {
+        util.log("简介格式有误");
+        return false;
+    }
+    var _desc = desc;
+    var isImg = /&lt;img/ig;
+    if (!isImg.test(_desc)) {
+        util.log("简介无图片，无需适配处理");
+        return _desc;
+    }
+    var info = wx.getSystemInfoSync();
+    var windowWidth = info.windowWidth - 30;
+    var aspect = " style=\"max-width: " + windowWidth + "px;height: auto\" ";
+    _desc = _desc.replace(/&lt;img/gi, "&lt;img" + aspect);
+    return _desc;
+};
+
+
+/**
+ * @event template_info
+ * @description 回放模版信息
+ * @example
+ * ccsdk.replay.on('template_info',function(data){
+ *    //必须在cc.replay.init登录成功之前监听
+ *    //console.log(data);
+ * })
+ */
+
+Login.prototype.templateData = function (template) {
+    this.template = template;
+    util.log("template_info", this.template);
+    this.emitter.emit("template_info", this.template);
+};
+
+/**
+ * @event pages_info
+ * @description 文档信息
+ * @example
+ * ccsdk.replay.on('pages_info',function(data){
+ *    //console.log(data);
+ * })
+ */
+
+/**
+ * @event pages_change_sync
+ * @description 同步返回文档信息
+ * @example
+ * ccsdk.replay.on('pages_change_sync',function(data){
+ *    //console.log(data);
+ * })
+ */
+
+Login.prototype.pagesData = function (pages) {
+    var pages = pages;
+    for (var i = 0; i &lt; pages.length; i++) {
+        var imgUrl = pages[i].url;
+        if (imgUrl.indexOf("//") > 0) {
+            imgUrl = imgUrl.replace("http", "https");
+            pages[i].url = imgUrl;
+        }
+    }
+    this.pages = pages;
+    util.log("pages_info", this.pages);
+    this.emitter.emit("pages_info", pages);
+};
+
+/**
+ * @event questions_info
+ * @description 提问信息
+ * @example
+ * ccsdk.replay.on('questions_info',function(data){
+ *    //console.log(data);
+ * })
+ */
+
+/**
+ * @event answers_info
+ * @description 回答信息
+ * @example
+ * ccsdk.replay.on('answers_info',function(data){
+ *    //console.log(data);
+ * })
+ */
+
+Login.prototype.qaData = function (questions, answers) {
+    var questions = questions;
+    var answers = answers;
+
+    if (questions &amp;&amp; questions.length) {
+        questions.sort(function (p1, p2) {
+            return parseInt(p1.time) - parseInt(p2.time);
+        });
+        this.questions = questions;
+        var qs = [];
+        for (var i = 0; i &lt; this.questions.length; i++) {
+            var question = questions[i];
+            qs.push({
+                "action": "question",
+                "value": {
+                    "id": question.encryptId,
+                    "content": question.content,
+                    "userId": question.questionUserId,
+                    "userName": question.questionUserName,
+                    "userAvatar": question.questionUserAvatar,
+                    "isPublish": question.isPublish,
+                    "time": question.time,
+                    "groupId": question.groupId
+                }
+            });
+        }
+        util.log("questions_info", qs);
+        this.emitter.emit("questions_info", qs);
+    }
+
+    if (answers &amp;&amp; answers.length) {
+        answers.sort(function (p1, p2) {
+            return parseInt(p1.time) - parseInt(p2.time);
+        });
+        this.answers = answers;
+        var as = [];
+        for (var i = 0; i &lt; this.answers.length; i++) {
+            var answer = answers[i];
+            as.push({
+                "action": "answer",
+                "value": {
+                    "questionId": answer.encryptId,
+                    "content": answer.content,
+                    "userId": answer.answerUserId,
+                    "isPrivate": answer.isPrivate,
+                    "userName": answer.answerUserName,
+                    "userAvatar": answer.answerUserAvatar,
+                    "userRole": answer.answerUserRole,
+                    "groupId": answer.groupId
+                }
+            });
+        }
+        util.log("answers_info", as);
+        this.emitter.emit("answers_info", as);
+    }
+};
+
+Login.prototype.drawsData = function (draws) {
+    if (draws &amp;&amp; draws.length) {
+        this.draws = draws;
+        this.draws.sort(function (p1, p2) {
+            return parseInt(p1.time) - parseInt(p2.time);
+        });
+    }
+};
+
+Login.prototype.pageChangeData = function (pageChanges) {
+    var pageChanges = pageChanges;
+
+    if (pageChanges &amp;&amp; pageChanges.length) {
+        pageChanges.sort(function (p1, p2) {
+            return parseInt(p1.time) - parseInt(p2.time);
+        });
+        this.pageChanges = pageChanges;
+    }
+};
+
+/**
+ * @event chat_msg_info
+ * @description 收到公聊信息
+ * @example
+ * ccsdk.live.on('chat_msg_info',function(data){
+         *    //console.log(data);
+         *    //返回值说明
+         *    //{
+         *    //  "chatId":"312312321", // 聊天消息的ID，当isFilterChat值为1时，返回空。
+         *    //  "status":"0", // 聊天消息的状态，值为0显示消息，值为1不显示消息。当isFilterChat值为1时，返回空。
+         *    //  "isFilterChat": 1,//是否开启了敏感词过滤，开启值为1，未开启返回空。
+         *    //  "groupId":"",//分组ID，未分组返回空。
+         *    //  "userid":"4ccd73b2fb1a4b63be1043b6c4c225dc", // 发送者id
+         *    //  "username":"name",   // 发送者名字
+         *    //  "userrole":"student",   // 发送者身份
+         *    //  "useravatar":"img",   // 发送者头像
+         *    //  "msg":"rrr",   // 消息内容
+         *    //  "time":"16:45:08",   // 发送时间
+         *    //  "usercustommark": ""  // 聊天自定义参数
+         *    //}
+         * })
+ */
+
+Login.prototype.chatLogsData = function (chatLogs) {
+    var chatLogs = chatLogs;
+    var ct = [];
+    if (chatLogs &amp;&amp; chatLogs.length) {
+        chatLogs.sort(function (p1, p2) {
+            return parseInt(p1.time) - parseInt(p2.time);
+        });
+        for (var i = 0; i &lt; chatLogs.length; i++) {
+            var chatLog = chatLogs[i];
+            ct.push({
+                chatId: chatLog.chatId || "",
+                status: chatLog.status || "",
+                isFilterChat: chatLog.isFilterChat || "",
+                userid: chatLog.userId,
+                username: chatLog.userName,
+                time: chatLog.time,
+                msg: chatLog.content,
+                useravatar: chatLog.userAvatar,
+                userRole: chatLog.userRole,
+                usercustommark: chatLog.userCustomMark,
+                groupId: chatLog.groupId || ""
+            });
+        }
+        this.chatLogs = chatLogs;
+        this.CHATLOGS = chatLogs;
+        util.log("chat_msg_info", ct);
+        this.emitter.emit("chat_msg_info", ct);
+    }
+};
+
+Login.prototype.checkout = function () {
+    //校验参数合法性
+    if (typeof this.opts.wx !== "object"
+        || typeof this.opts.userId !== "string"
+        || typeof this.opts.roomId !== "string"
+        || typeof this.opts.recordId !== "string"
+        || typeof this.opts.viewername !== "undefined" &amp;&amp; typeof this.opts.viewername !== "string"
+        || typeof this.opts.viewertoken !== "undefined" &amp;&amp; typeof this.opts.viewertoken !== "string"
+        || typeof this.opts.success !== "undefined" &amp;&amp; typeof this.opts.success !== "function"
+        || typeof this.opts.fail !== "undefined" &amp;&amp; typeof this.opts.fail !== "function"
+    ) {
+        return false;
+    }
+    return true;
+};
+
+module.exports = Login;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:answers_info">answers_info</a></li><li><a href="global.html#event:chat_msg_info">chat_msg_info</a></li><li><a href="global.html#event:chat_msg_sync">chat_msg_sync</a></li><li><a href="global.html#event:groupid_info">groupid_info</a></li><li><a href="global.html#event:meta_draws_ready">meta_draws_ready</a></li><li><a href="global.html#event:network_change">network_change</a></li><li><a href="global.html#event:pages_change_sync">pages_change_sync</a></li><li><a href="global.html#event:pages_info">pages_info</a></li><li><a href="global.html#event:questions_info">questions_info</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:viewerid_info">viewerid_info</a></li></ul><h3>Global</h3><ul><li><a href="global.html#configPlayer">configPlayer</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#exitFullScreen">exitFullScreen</a></li><li><a href="global.html#getCurrentTime">getCurrentTime</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isDrawRequestTime">isDrawRequestTime</a></li><li><a href="global.html#isRealtimeFirst">isRealtimeFirst</a></li><li><a href="global.html#listenerended">listenerended</a></li><li><a href="global.html#listenerplay">listenerplay</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#play">play</a></li><li><a href="global.html#playbackRate">playbackRate</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#requestFullScreen">requestFullScreen</a></li><li><a href="global.html#seek">seek</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#timeupdate">timeupdate</a></li><li><a href="global.html#waiting">waiting</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Jan 23 2019 14:00:01 GMT+0800 (China Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

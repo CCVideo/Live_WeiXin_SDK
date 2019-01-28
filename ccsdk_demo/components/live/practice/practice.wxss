@@ -1,0 +1,16 @@
+/* components/live/practice/practice.wxss */
+.container{
+    position: fixed;
+    top:50%;
+    left: 100px;
+    z-index: 999;
+    height: 200px;
+    overflow: auto;
+}
+
+.toggle-parctice{
+    position: fixed;
+    top:45%;
+    left: 100px;
+    z-index: 999;
+}

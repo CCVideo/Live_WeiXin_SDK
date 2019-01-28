@@ -12,9 +12,9 @@
 		"nodeModules": false
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.4.3",
-	"appid": "",
-	"projectname": "wxapp_demo_1.2.0",
+	"libVersion": "2.5.1",
+	"appid": "wx245c121cc7c4028d",
+	"projectname": "wxapp_demo_1.3.0",
 	"isGameTourist": false,
 	"scripts": {
 		"beforeCompile": "",

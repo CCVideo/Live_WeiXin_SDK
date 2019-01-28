@@ -3,26 +3,26 @@ var cc = getApp().globalData.ccsdk;
 Page({
 
     data: {
-        userId: '',//CC账号ID
-        roomId: '',//直播间ID
-        userName: '',//昵称
-        groupId: '',
-        password: '',//密码
-        btnType: 'allow',//按钮类型
-        errorHintText: '',
+        userId: "",//CC账号ID
+        roomId: "",//直播间ID
+        userName: "",//昵称
+        groupId: "",
+        password: "",//密码
+        btnType: "allow",//按钮类型
+        errorHintText: "",
         hint: false,//提示
         loading: false,//加载中
 
-        roomTitle: '',//
-        desc: '',//简介
-        announcement: '',//公告
+        roomTitle: "",//
+        desc: "",//简介
+        announcement: "",//公告
         pdfView: 0,//文档模块
         chatView: 0,//聊天模块
         qaView: 0,//问答模块
-        viewerName: '',//观看者昵称
-        viewerId: '',//观看者id
+        viewerName: "",//观看者昵称
+        viewerId: "",//观看者id
         isLogin: true,
-        groupid:'',//groupid
+        groupid: "",//groupid
     },
 
     onShow: function () {
@@ -39,7 +39,7 @@ Page({
         self.checkOutBtnType();
 
         //模版信息
-        cc.live.on('template_info', function (data) {
+        cc.live.on("template_info", function (data) {
             self.setData({
                 pdfView: data.pdfView,
                 chatView: data.chatView,
@@ -48,7 +48,7 @@ Page({
         });
 
         //观看者信息
-        cc.live.on('viewer_info', function (data) {
+        cc.live.on("viewer_info", function (data) {
             self.setData({
                 viewerName: data.name,
                 viewerId: data.id
@@ -56,7 +56,7 @@ Page({
         });
 
         //简介
-        cc.live.on('room_info', function (data) {
+        cc.live.on("room_info", function (data) {
             self.setData({
                 roomTitle: data.name,
                 desc: data.desc
@@ -64,14 +64,14 @@ Page({
         });
 
         //公告
-        cc.live.on('announcement_info', function (data) {
+        cc.live.on("announcement_info", function (data) {
             self.setData({
-                announcement: data ? data : '暂无'
+                announcement: data ? data : "暂无"
             });
         });
 
         //groupid
-        cc.live.on('groupid_info', function (data) {
+        cc.live.on("groupid_info", function (data) {
             self.setData({
                 groupid: data
             });
@@ -125,34 +125,34 @@ Page({
         wx.scanCode({
             success: function (res) {
                 var data = parseUrl(res.result);
-                if (data['roomid'] && data['userid']) {
+                if (data["roomid"] && data["userid"]) {
                     self.setData({
-                        roomId: data['roomid'],
-                        userId: data['userid']
+                        roomId: data["roomid"],
+                        userId: data["userid"]
                     });
                 } else {
-                    self.hint('无效二维码');
+                    self.hint("无效二维码");
                 }
                 self.checkOutBtnType();
             }
         });
 
         function parseUrl(url) {
-            var querys = url.split('?');
+            var querys = url.split("?");
             if (!querys[1]) {
-                self.hint('无效二维码');
+                self.hint("无效二维码");
                 return false;
             }
-            var query = url.split('?')[1];
-            var queryArr = query.split('&');
+            var query = url.split("?")[1];
+            var queryArr = query.split("&");
             if (queryArr.length === 0) {
-                self.hint('无效二维码');
+                self.hint("无效二维码");
                 return false;
             }
             var obj = {};
             queryArr.forEach(function (item) {
-                var key = item.split('=')[0];
-                var value = item.split('=')[1];
+                var key = item.split("=")[0];
+                var value = item.split("=")[1];
                 obj[key] = value;
             });
             return obj;
@@ -160,7 +160,7 @@ Page({
 
     },
     setStorage: function () {
-        wx.setStorageSync('live_opts',
+        wx.setStorageSync("live_opts",
             {
                 userId: this.data.userId,
                 roomId: this.data.roomId,
@@ -171,16 +171,16 @@ Page({
     },
 
     getStorage: function () {
-        return wx.getStorageSync('live_opts');
+        return wx.getStorageSync("live_opts");
     },
 
     setOpts: function () {
         this.setData({
-            userId: this.getStorage().userId || '',
-            roomId: this.getStorage().roomId || '',
-            userName: this.getStorage().userName || '',
-            groupId: this.getStorage().groupId || '',
-            password: this.getStorage().password || ''
+            userId: this.getStorage().userId || "",
+            roomId: this.getStorage().roomId || "",
+            userName: this.getStorage().userName || "",
+            groupId: this.getStorage().groupId || "",
+            password: this.getStorage().password || ""
         });
         this.checkOutBtnType();
     },
@@ -208,33 +208,35 @@ Page({
             userName: self.data.userName,
             password: self.data.password,
             groupid: self.data.groupId,
+            viewercustomua: "ios",
+            viewercustominfo: "{\"exportInfos\": [{\"key\": \"城市\", \"value\": \"北京\"}, {\"key\": \"姓名\", \"value\": \"哈哈\"}]}",
             wx: wx,
             success: function (data) {
                 if (!self.data.isLogin) {
                     return false;
                 }
-                console.log('登录成功回掉', data);
+                console.log("登录成功回掉", data);
 
                 self.setData({
                     loading: false
                 });
-                var str = '&roomTitle=' + encodeURIComponent(self.data.roomTitle)
-                    + '&desc=' + encodeURIComponent(self.data.desc)
-                    + '&announcement=' + encodeURIComponent(self.data.announcement)
-                    + '&pdfView=' + encodeURIComponent(self.data.pdfView)
-                    + '&chatView=' + encodeURIComponent(self.data.chatView)
-                    + '&qaView=' + encodeURIComponent(self.data.qaView)
-                    + '&viewerName=' + encodeURIComponent(self.data.viewerName)
-                    + '&groupid=' + encodeURIComponent(self.data.groupid)
-                    + '&viewerId=' + encodeURIComponent(self.data.viewerId);
+                var str = "&roomTitle=" + encodeURIComponent(self.data.roomTitle)
+                    + "&desc=" + encodeURIComponent(self.data.desc)
+                    + "&announcement=" + encodeURIComponent(self.data.announcement)
+                    + "&pdfView=" + encodeURIComponent(self.data.pdfView)
+                    + "&chatView=" + encodeURIComponent(self.data.chatView)
+                    + "&qaView=" + encodeURIComponent(self.data.qaView)
+                    + "&viewerName=" + encodeURIComponent(self.data.viewerName)
+                    + "&groupid=" + encodeURIComponent(self.data.groupid)
+                    + "&viewerId=" + encodeURIComponent(self.data.viewerId);
 
                 wx.navigateTo({
-                    url: '../player/player?' + str
+                    url: "../player/player?" + str
                 });
 
             },
             fail: function (res) {
-                console.log('登录失败回掉', res);
+                console.log("登录失败回掉", res);
                 self.hint(res.message);
 
                 // if (res.code === 412) {
@@ -273,11 +275,11 @@ Page({
 
         if (self.checkOutParam()) {
             self.setData({
-                btnType: 'allow'
+                btnType: "allow"
             });
         } else {
             self.setData({
-                btnType: 'ban'
+                btnType: "ban"
             });
         }
 

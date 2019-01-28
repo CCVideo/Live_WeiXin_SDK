@@ -22,7 +22,7 @@
     </view>
     <!--播放器组件-->
     <view class="player-box {{isPlayerDocument==='video'?'':'min-windows'}}"
-          style="display: {{showHidePlayer?'block':'none'}}">
+          style="display: {{togglePlayer?'block':'none'}};opacity: {{showHidePlayer?'1':'0'}};">
         <player netconnectstate="{{netConnectState}}" player-class="player" bindfullscreenchange="bindFullscreenchange"
                 bindtimeupdate="bindTimeupdate"
                 bindplay="bindPlay" bindpause="bindPause" bindended="bindEnded">
@@ -37,14 +37,14 @@
                      showHide="{{showHidePlayer}}" fullscreen="{{fullscreen}}" catchfullscreen="catchFullscreen"
                      time="{{time}}" play="{{playState}}" catchshowhide="catchShowHide" catchswitch="catchSwitch"
                      replayMode="{{replayMode}}" class="control"
-                     style="display: {{isPlayerDocument==='video'?'block':'none'}};"></control>
+                     style="display: {{isPlayerDocument==='video' && !isDocuemntFullScreen?'block':'none'}};"></control>
         </player>
     </view>
     <!--swiper组件-->
     <view class="swiper-box">
         <swiper class="swiper" initData="{{initSwiper}}">
             <view slot="chat" class="chat-box">
-                <chat class="chat" groupid="{{groupid}}"></chat>
+                <chat class="chat" groupid="{{groupid}}" viewerid="{{viewerid}}"></chat>
             </view>
             <view slot="intro" class="intro-box">
                 <intro class="intro" initData="{{initIntro}}"></intro>

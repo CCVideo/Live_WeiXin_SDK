@@ -17,29 +17,29 @@ Page({
         initIntro: {},
         initQa: {},
 
-        replayMode: 'document',//直播模版
-        isPlayerDocument: 'document',//切换播放器文档
+        replayMode: "document",//直播模版
+        isPlayerDocument: "document",//切换播放器文档
         renderer: true,//渲染文档画板：如果改变文档画板大小，必须重新渲染以获取最新尺寸。
         showHidePlayer: true,
         showHideDcument: true,
-        playState: 'play',
+        playState: "play",
         time: {},
         fullscreenBtnDisabled: false,
         fullscreen: false,
-        fullDocument: '',
+        fullDocument: "",
         documentTop: 0,
         pageHeight: 0,
         pageWidth: 0,
         windowHeight: 0,
         windowWidth: 0,
-        documentHeight: '100%',
-        toggleDocuemntFullScreen: 'document',
+        documentHeight: "100%",
+        toggleDocuemntFullScreen: "document",
         //测试进度条
         max: 100,
         min: 0,
         netConnectState: {
             state: true,
-            info: '网络已链接',
+            info: "网络已链接",
             time: 1000,
             toggle: false
         },
@@ -48,7 +48,10 @@ Page({
         progressActive: true,
         circleWidth: 0,
         renderControl: true,
-        groupid:0
+        groupid: 0,
+        viewerid: "",
+        togglePlayer:true,
+        isDocuemntFullScreen:false
     },
     setProgressActive: function () {
         var self = this;
@@ -73,7 +76,7 @@ Page({
         });
     },
     renderDocuemnt: function () {
-        if (this.data.playState === 'play') {
+        if (this.data.playState === "play") {
             return;
         }
         this.setData({
@@ -88,14 +91,14 @@ Page({
         var height = this.data.windowWidth * this.data.pageHeight / this.data.pageWidth;
         var top = (this.data.windowHeight / 2) - (height / 2);
         this.setData({
-            documentHeight: height.toFixed(2) + 'px',
+            documentHeight: height.toFixed(2) + "px",
             documentTop: 0
         });
         if (height >= this.data.windowHeight) {
             return;
         }
         this.setData({
-            documentTop: top + 'px'
+            documentTop: top + "px"
         });
     },
 
@@ -110,8 +113,9 @@ Page({
             return;
         }
         this.setData({
-            fullDocument: 'full-document',
-            isPlayerDocument: 'video'
+            fullDocument: "full-document",
+            isPlayerDocument: "video",
+            isDocuemntFullScreen:true
         });
         this.hidePlayer();
         this.alignCenter();
@@ -122,17 +126,20 @@ Page({
             return;
         }
         this.setData({
-            fullDocument: '',
-            isPlayerDocument: 'document',
-            documentHeight: '100%'
+            fullDocument: "",
+            isPlayerDocument: "document",
+            documentHeight: "100%",
+            isDocuemntFullScreen:false
         });
         this.showPlayer();
         this.alignTop();
+        //ios 解决视频变形问题
+        this.rendererPlayer();
     },
 
     //文档全屏
     bindDocuemntFullScreen: function () {
-        if (this.data.toggleDocuemntFullScreen === 'video') {
+        if (this.data.toggleDocuemntFullScreen === "video") {
             return;
         }
         if (this.data.fullDocument) {
@@ -205,19 +212,19 @@ Page({
 
     bindPlay: function (e) {
         this.setData({
-            playState: 'play'
+            playState: "play"
         });
     },
 
     bindPause: function (e) {
         this.setData({
-            playState: 'pause'
+            playState: "pause"
         });
     },
 
     bindEnded: function (e) {
         this.setData({
-            playState: 'ended'
+            playState: "ended"
         });
     },
 
@@ -231,10 +238,10 @@ Page({
 
     // 切换显示隐藏
     toggleShowHide: function () {
-        if (this.data.replayMode === 'video') {
+        if (this.data.replayMode === "video") {
             return;
         }
-        if (this.data.isPlayerDocument === 'video') {
+        if (this.data.isPlayerDocument === "video") {
             if (this.data.showHideDcument) {
                 this.hideDocument();
             } else {
@@ -279,7 +286,7 @@ Page({
 
     //切换视频/文档为主
     togglePlayerDocument: function () {
-        if (this.data.isPlayerDocument === 'video') {
+        if (this.data.isPlayerDocument === "video") {
             this.toggleDocument();
         } else {
             this.togglePlayer();
@@ -288,13 +295,13 @@ Page({
 
     //视频为主
     togglePlayer: function () {
-        if (this.data.replayMode === 'video') {
+        if (this.data.replayMode === "video") {
             return;
         }
         this.setData({
             showHidePlayer: true,
-            isPlayerDocument: 'video',
-            toggleDocuemntFullScreen: 'video',
+            isPlayerDocument: "video",
+            toggleDocuemntFullScreen: "video",
             renderer: false
         });
         this.rendererDocument();
@@ -302,13 +309,13 @@ Page({
 
     //文档为主
     toggleDocument: function () {
-        if (this.data.replayMode === 'video') {
+        if (this.data.replayMode === "video") {
             return;
         }
         this.setData({
             showHideDcument: true,
-            isPlayerDocument: 'document',
-            toggleDocuemntFullScreen: 'document',
+            isPlayerDocument: "document",
+            toggleDocuemntFullScreen: "document",
             renderer: false
         });
         this.rendererPlayer();
@@ -317,29 +324,45 @@ Page({
 
     rendererPlayer: function () {
         var self = this;
-        self.setData({
-            showHidePlayer: false,
-        });
+
+        var info = wx.getSystemInfoSync();
+        var reg = /iphone/ig;
+        if (reg.test(info.model)) {
+            self.setData({
+                togglePlayer: false,
+            });
+            setTimeout(function () {
+                self.setData({
+                    togglePlayer: true,
+                });
+            }, 100);
+        } else {
+            // self.setData({
+            //     togglePlayer: true,
+            //     showHidePlayer: true,
+            // });
+            // setTimeout(function(){
+            //     cc.replay.play();
+            // },1000)
+        }
+    },
+
+    rendererDocument: function () {
+        var self = this;
 
         var info = wx.getSystemInfoSync();
         var reg = /iphone/ig;
         if (reg.test(info.model)) {
             setTimeout(function () {
                 self.setData({
-                    showHidePlayer: true,
+                    renderer: true
                 });
             }, 100);
         } else {
             self.setData({
-                showHidePlayer: true,
+                renderer: true
             });
         }
-    },
-
-    rendererDocument: function () {
-        this.setData({
-            renderer: true
-        });
     },
 
     /**
@@ -359,18 +382,18 @@ Page({
     ListenerEvents: function () {
         var self = this;
 
-        cc.replay.on('pages_info', function (data) {
+        cc.replay.on("pages_info", function (data) {
             // console.log('pages_info', data);
         });
 
-        cc.replay.on('questions_info', function (data) {
+        cc.replay.on("questions_info", function (data) {
             // console.log('questions_info', data);
             self.setData({
                 questions_info: data
             });
         });
 
-        cc.replay.on('answers_info', function (data) {
+        cc.replay.on("answers_info", function (data) {
             // console.log('answers_info', data);
             self.setData({
                 answers_info: data
@@ -379,7 +402,7 @@ Page({
             self.configQa();
         });
 
-        cc.replay.on('chat_msg_info', function (data) {
+        cc.replay.on("chat_msg_info", function (data) {
             // console.log('chat_msg_info', data);
             self.setData({
                 chat_msg_info: data
@@ -388,7 +411,7 @@ Page({
             self.configQa();
         });
 
-        cc.replay.on('pages_change_sync', function (data) {
+        cc.replay.on("pages_change_sync", function (data) {
             // console.log('pages_change_sync', data);
 
             self.setData({
@@ -400,7 +423,7 @@ Page({
             }
         });
 
-        cc.replay.on('network_change', function (data) {
+        cc.replay.on("network_change", function (data) {
             // console.log('network_change', data);
             self.networkChange(self, data);
         });
@@ -412,7 +435,7 @@ Page({
             self.setData({
                 netConnectState: {
                     state: true,
-                    info: '网络链接正常',
+                    info: "网络链接正常",
                     time: 4000,
                     toggle: true
                 }
@@ -421,7 +444,7 @@ Page({
             self.setData({
                 netConnectState: {
                     state: false,
-                    info: '网络未链接',
+                    info: "网络未链接",
                     time: 1200,
                     toggle: true
                 }
@@ -453,15 +476,15 @@ Page({
 
         if (data.pdfView) {
             this.setData({
-                replayMode: 'document',
-                isPlayerDocument: 'document',
-                toggleDocuemntFullScreen: 'document'
+                replayMode: "document",
+                isPlayerDocument: "document",
+                toggleDocuemntFullScreen: "document"
             });
         } else {
             this.setData({
-                replayMode: 'video',
-                isPlayerDocument: 'video',
-                toggleDocuemntFullScreen: 'video',
+                replayMode: "video",
+                isPlayerDocument: "video",
+                toggleDocuemntFullScreen: "video",
             });
         }
     },
@@ -469,7 +492,7 @@ Page({
         var data = this.data.room_info;
         //设置小程序title
         wx.setNavigationBarTitle({
-            title: data.name || ''
+            title: data.name || ""
         });
         //保持常亮状态
         wx.setKeepScreenOn({
@@ -483,7 +506,7 @@ Page({
         });
         //监听内存
         wx.onMemoryWarning(function (res) {
-            console.log('onMemoryWarningReceive', res);
+            console.log("onMemoryWarningReceive", res);
         });
     },
     configComponents: function () {
@@ -507,12 +530,12 @@ Page({
 
         var tabConetent = [];
         if (data.chatView) {
-            initSwiper.push({name: 'chat', content: '聊天记录'});
+            initSwiper.push({name: "chat", content: "聊天记录"});
         }
         if (data.qaView) {
-            initSwiper.push({name: 'qa', content: '问答记录'});
+            initSwiper.push({name: "qa", content: "问答记录"});
         }
-        initSwiper.push({name: 'intro', content: '简介'});
+        initSwiper.push({name: "intro", content: "简介"});
 
         this.setData({
             initSwiper: initSwiper
@@ -546,9 +569,10 @@ Page({
     },
     initData: function (options) {
         this.setData({
-            room_info: JSON.parse(decodeURIComponent(options.room_info || '{}')),
-            template_info: JSON.parse(decodeURIComponent(options.template_info || '{}')),
-            groupid: decodeURIComponent(options.groupid)
+            room_info: JSON.parse(decodeURIComponent(options.room_info || "{}")),
+            template_info: JSON.parse(decodeURIComponent(options.template_info || "{}")),
+            groupid: decodeURIComponent(options.groupid),
+            viewerid: decodeURIComponent(options.viewerid),
         });
     },
 
@@ -563,7 +587,7 @@ Page({
      * 生命周期函数--监听页面显示
      */
     onShow: function () {
-        if (this.data.playState === 'pause') {
+        if (this.data.playState === "pause") {
             cc.replay.play();
         } else {
             cc.replay.pause();

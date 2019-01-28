@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: replay.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: replay.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var Login = require('./replay/login');
+var util = require('./replay/util');
+var State = require('./replay/state');
+var Pusher = require('./replay/pusher');
+var Manager = require('./replay/manager');
+var Player = require('./replay/player');
+var Emitter = require('./replay/emitter');
+var Cache = require('./replay/cache');
+var CONFIG = require('./replay/config');
+// var Report = require('./replay/report');
+var drawingBoardPlayback = require('./replay/drawingBoardPlayback');
+
+
+var state = new State();
+var emitter = new Emitter();
+drawingBoardPlayback.init(emitter);
+var player = new Player(state, emitter);
+var manager = new Manager(state, emitter, player);
+var cache = new Cache(emitter);
+// var report = new Report(emitter,state);
+
+/**
+ * @description 初始化
+ * @param {Object} param 初始化参数对象
+ * @property {String} param.userId 用户 id
+ * @property {String} param.roomId 直播间id
+ * @property {String} param.recordId 回放id
+ * @property {String} param.viewername 用户名称
+ * @property {String} param.viewertoken 需要密码验证方式时，可选
+ * @property {Object} param.wx 微信全局对象
+ * @property {Function} param.success 初始化成功回掉函数，可选
+ * @property {Function} param.fail 初始化失败回掉函数，可选
+ * @example cc.replay.init({
+        userId: 'userId',
+        roomId: 'roomId',
+        recordId: 'recordId',
+        viewername: 'viewername',
+        viewertoken: 'viewertoken',
+        wx: wx,
+        success: function (data) {
+          console.log('init success',data);
+        },
+        fail: function (data) {
+          console.log('init fail',data);
+        }
+      });
+ */
+
+var init = function (param) {
+
+    util.log('logtime 登录时间戳', util.getLogTime());
+
+    var login = new Login(param, state, emitter, cache, manager);
+
+    login.login(callback);
+
+    function callback(opts) {
+
+        var pusher = new Pusher(opts, state, emitter);
+        pusher.connectIo();
+
+        util.callback(param.success, CONFIG.CODE_LOGIN, '初始化成功', 'ok');
+
+        player.init(param.userId, param.roomId, param.recordId);
+
+        manager.setIo(pusher.io);
+
+        // report.init(login);
+    };
+};
+
+var api = {
+    init: init,
+    setDebug: util.setDebug,
+    showEm: util.showEm,
+    quit: manager.quit,
+    on: emitter.on,
+
+    listenerplay: manager.listenerplay,
+    listenerended: manager.listenerended,
+    timeupdate: manager.timeupdate,
+    waiting: manager.waiting,
+    error: manager.error,
+
+    configPlayer: manager.configPlayer,
+    getCurrentTime: manager.getCurrentTime,
+    setRealtimeFirst: manager.setRealtimeFirst,
+    isRealtimeFirst: manager.isRealtimeFirst,
+    setDrawRequestTime: manager.setDrawRequestTime,
+    isDrawRequestTime: manager.isDrawRequestTime,
+    seek: manager.seek,
+    play: manager.play,
+    pause: manager.pause,
+    playbackRate: manager.playbackRate,
+    requestFullScreen: manager.requestFullScreen,
+    exitFullScreen: manager.exitFullScreen,
+
+};
+
+module.exports = api;
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:answers_info">answers_info</a></li><li><a href="global.html#event:chat_msg_info">chat_msg_info</a></li><li><a href="global.html#event:chat_msg_sync">chat_msg_sync</a></li><li><a href="global.html#event:groupid_info">groupid_info</a></li><li><a href="global.html#event:meta_draws_ready">meta_draws_ready</a></li><li><a href="global.html#event:network_change">network_change</a></li><li><a href="global.html#event:pages_change_sync">pages_change_sync</a></li><li><a href="global.html#event:pages_info">pages_info</a></li><li><a href="global.html#event:questions_info">questions_info</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:viewerid_info">viewerid_info</a></li></ul><h3>Global</h3><ul><li><a href="global.html#configPlayer">configPlayer</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#exitFullScreen">exitFullScreen</a></li><li><a href="global.html#getCurrentTime">getCurrentTime</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isDrawRequestTime">isDrawRequestTime</a></li><li><a href="global.html#isRealtimeFirst">isRealtimeFirst</a></li><li><a href="global.html#listenerended">listenerended</a></li><li><a href="global.html#listenerplay">listenerplay</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#play">play</a></li><li><a href="global.html#playbackRate">playbackRate</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#requestFullScreen">requestFullScreen</a></li><li><a href="global.html#seek">seek</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#timeupdate">timeupdate</a></li><li><a href="global.html#waiting">waiting</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Jan 23 2019 14:00:01 GMT+0800 (China Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

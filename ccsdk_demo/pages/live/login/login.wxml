@@ -22,7 +22,7 @@
                 <input disabled="{{loading}}" placeholder="聊天中显示的名字" value="{{userName}}"
                        bindinput="setUserName" />
             </view>
-            <view class="form-cell">
+            <view class="form-cell" style="display: none">
                 <text>分组ID</text>
                 <input disabled="{{loading}}" placeholder="请输入分组" value="{{groupId}}"
                        bindinput="setGroupId" />

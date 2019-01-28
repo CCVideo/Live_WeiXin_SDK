@@ -659,7 +659,7 @@
     flex: 1;
     background: #f3f3f3;
     overflow: scroll;
-    height: 86%;    
+    height: 86%;
 }
 
 .container .chat .swiper .catechism .content scroll-view {
@@ -890,4 +890,12 @@
 .container .chat .hint-input-blank text {
     font-size: 24rpx;
     color: #fff;
+}
+
+/*抽奖*/
+.container .chat .lottery{
+    position: fixed;
+    height: 71%;
+    width: 100%;
+    flex: 1;
 }

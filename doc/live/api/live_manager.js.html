@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: live/manager.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: live/manager.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
+  方法模块
+*/
+var util = require("../module/util");
+var CONFIG = require("../module/config").LIVE;
+
+function Manager(stateMachine, observer) {
+
+    var _login = {};
+    var _player = {};
+    var _client = {};
+    var _route = 0;
+    var _mode = "video";
+    var _pusher = {};
+
+    var _vdrop = -1;
+    var _bytes = [];
+    var _block = -1;
+    var timer = {};
+
+    var _ctx = {};
+
+    this.getCtx = function () {
+        return _ctx;
+    };
+
+    var setCtx = function (ctx) {
+        _ctx = ctx;
+    };
+
+    this.init = function (login, pusher, player) {
+        _login = login;
+        _player = player;
+        _pusher = pusher;
+    };
+
+    /**
+     * @description 获取随堂测信息
+     * @param {Object} options 获取随堂测信息参数对象
+     * @property {String} options.practiceId 随堂测ID，如果为空，则默认为当前正在发布随堂测信息，可选
+     * @property {Function} options.success 获取随堂测信息成功回掉函数，可选
+     * @property {Function} options.fail 获取随堂测信息失败回掉函数，可选
+     * @example
+     * cc.live.getPracticeInfo({
+     *     practiceId: "XXXX2345",
+     *     success: function (res) {
+     *         console.log("getPracticeInfo success", res);
+     *         //成功返回数据示例及说明:
+     *         {
+     *           "datas": {
+     *               "isExist": 1, // 是否存在正在发布的随堂测 1 存在 0 不存在
+     *               "practice": {
+     *                   "id": "xxx", // 随堂测ID
+     *                   "type": 2, // 随堂测类型: 0 判断 1 单选 2 多选
+     *                   "status": 1, // 随堂测状态: 1 发布中 2 停止发布
+     *                   "options": [
+     *                       {
+     *                           "id": "xxx", // 选项ID
+     *                           "index": 0 // 选项索引 0 代表第一个选项,其他依次类推
+     *                       },
+     *                       {
+     *                           "id": "xxxy",
+     *                           "index": 1
+     *                       }
+     *                   ]
+     *               }
+     *           },
+     *           "errorCode": 0,
+     *           "msg": "操作成功",
+     *           "success": true
+     *       }
+     *
+     *       //失败返回数据示例及说明:
+     *       {
+     *           "datas": {},
+     *           "errorCode": 具体的错误码,
+     *           "msg": "具体的错误信息",
+     *           "success": false
+     *       }
+     *     },
+     *     fail: function (error) {
+     *         console.log("getPracticeInfo fail", error);
+     *     }
+     * });
+     */
+
+    this.getPracticeInfo = function (options) {
+        if (typeof options !== "object") {
+            return false;
+        }
+        var sessionId = _login.getData().datas.viewer.key;
+
+        var param = {
+            practiceId: options.practiceId || "",
+            sessionId: sessionId
+        };
+        wx.request({
+            data: param,
+            method: "GET",
+            url: CONFIG.URL.PRACTICE,
+            success: function (res) {
+                util.log("getPracticeInfo success", res);
+                if (options.success) {
+                    options.success(res);
+                }
+            },
+
+            //请求超时
+            fail: function (error) {
+                util.log("getPracticeInfo fail", error);
+                if (options.fail) {
+                    options.fail(error);
+                }
+            }
+        });
+    };
+
+    /**
+     * @description 提交随堂测
+     * @param {Object} param 提交随堂测参数对象
+     * @property {String} param.practiceId 随堂测ID
+     * @property {String} param.options 选项ID，多个之间用","(英文逗号)隔开 如："123321,213131"
+     * @property {Function} param.success 提交随堂测成功回掉函数，可选
+     * @property {Function} param.fail 提交随堂测失败回掉函数，可选
+     * @example
+     * cc.live.submitPractice({
+     *     practiceId: "XXXX2345",
+     *     success: function (res) {
+     *         console.log("submitPractice success", res);
+     *     },
+     *     fail: function (error) {
+     *         console.log("submitPractice fail", error);
+     *     }
+     * });
+     *
+     * 返回数据示例及说明:
+     *   成功:
+     *   {
+     *       "datas": {
+     *           "practice" : {
+     *               "id": "xxx", // 随堂测ID
+     *               "type": 2, // 随堂测类型: 0 判断 1 单选 2 多选
+     *               "answerResult": 1, // 回答是否正确 1 正确 0 错误
+     *               "options": [
+     *                   {
+     *                       "id": "xxx", // 选项ID
+     *                       "index": 0, // 选项索引 0 代表第一个选项,其他依次类推
+     *                       "count": 100, // 选择该选项的人数
+     *                       "percent": "50%", // 选择该选项的百分比
+     *                       "isCorrect": 1 // 是否为正确选项 1 正确 0 错误
+     *                   },
+     *                   {
+     *                       "id": "xxxy",
+     *                       "index": 1,
+     *                       "count": 100,
+     *                       "percent": "50%",
+     *                       "isCorrect": 0
+     *                   }
+     *               ]
+     *           }
+     *       },
+     *       "errorCode": 0,
+     *       "msg": "操作成功",
+     *       "success": true
+     *   }
+     *   失败:
+     *   {
+     *       "datas": {},
+     *       "errorCode": 具体的错误码,
+     *       "msg": "具体的错误信息",
+     *       "success": false
+     *   }
+     */
+
+    this.submitPractice = function (param) {
+        if (typeof param !== "object" &amp;&amp; !options.practiceId) {
+            return false;
+        }
+        var sessionId = _login.getData().datas.viewer.key;
+
+        var data = {
+            practiceId: param.practiceId,
+            options: param.options,
+            sessionId: sessionId
+        };
+        wx.request({
+            data: data,
+            method: "POST",
+            url: CONFIG.URL.PRACTICE_SUBMIT + "?practiceId=" + param.practiceId + "&amp;options=" + param.options + "&amp;sessionId=" + sessionId,
+            success: function (res) {
+                util.log("submitPractice success", res);
+                if (param.success) {
+                    param.success(res);
+                }
+            },
+
+            //请求超时
+            fail: function (error) {
+                util.log("submitPractice fail", error);
+                if (param.fail) {
+                    param.fail(error);
+                }
+            }
+        });
+    };
+
+    /**
+     * @description 获取随堂测统计信息
+     * @param {Object} options 获取随堂测统计信息参数对象
+     * @property {String} options.practiceId 随堂测ID
+     * @property {Function} options.success 获取随堂测统计信息成功回掉函数，可选
+     * @property {Function} options.fail 获取随堂测统计信息失败回掉函数，可选
+     * @example
+     * cc.live.getPracticeStatis({
+     *     practiceId: "XXXX2345",
+     *     success: function (res) {
+     *         console.log("getPracticeStatis success", res);
+     *     },
+     *     fail: function (error) {
+     *         console.log("getPracticeStatis fail", error);
+     *     }
+     * });
+     * 返回数据格式示例及说明:
+     *   成功:
+     *   {
+     *       "datas": {
+     *           "practice": {
+     *               "id": "xxx", // 随堂测ID
+     *               "type": 2, // 随堂测类型: 0 判断 1 单选 2 多选
+     *               "status": 1, // 随堂测状态 1 发布中 2 停止发布
+     *               "answerPersonNum": 200, // 回答该随堂测的人数
+     *               "correctPersonNum": 100, // 回答正确的人数
+     *               "correctRate": "50%",  // 正确率
+     *               "options": [
+     *                   {
+     *                       "id": "xxx", // 选项ID
+     *                       "index": 0, // 选项索引 0 代表第一个选项,其他依次类推
+     *                       "count": 100, // 选择该选项的人数
+     *                       "percent": "50%", // 选择该选项的百分比
+     *                       "isCorrect": 1 // 是否为正确选项 1 正确 0 错误
+     *                   },
+     *                   {
+     *                       "id": "xxxy",
+     *                       "index": 1,
+     *                       "count": 100,
+     *                       "percent": "50%",
+     *                       "isCorrect": 0
+     *                   }
+     *               ]
+     *           }
+     *       },
+     *       "errorCode": 0,
+     *       "msg": "操作成功",
+     *       "success": true
+     *   }
+     *   失败:
+     *   {
+     *       "datas": {},
+     *       "errorCode": 具体的错误码,
+     *       "msg": "具体的错误信息",
+     *       "success": false
+     *   }
+     */
+
+    this.getPracticeStatis = function (options) {
+        if (typeof options !== "object" &amp;&amp; !options.practiceId) {
+            return false;
+        }
+        var sessionId = _login.getData().datas.viewer.key;
+
+        var param = {
+            practiceId: options.practiceId,
+            sessionId: sessionId
+        };
+        wx.request({
+            data: param,
+            method: "GET",
+            url: CONFIG.URL.PRACTICE_STATIS,
+            success: function (res) {
+                util.log("getPracticeStatis success", res);
+                if (options.success) {
+                    options.success(res);
+                }
+            },
+
+            //请求超时
+            fail: function (error) {
+                util.log("getPracticeStatis fail", error);
+                if (options.fail) {
+                    options.fail(error);
+                }
+            }
+        });
+    };
+
+    /**
+     * @description 获取随堂测排名数据
+     * @param {Object} options 获取随堂测排名数据数对象
+     * @property {String} options.practiceId 随堂测ID
+     * @property {Function} options.success 获取随堂测排名数据成功回掉函数，可选
+     * @property {Function} options.fail 获取随堂测排名数据失败回掉函数，可选
+     * @example
+     * cc.live.getPracticeRank({
+     *     practiceId: "XXXX2345",
+     *     success: function (res) {
+     *         console.log("getPracticeRank success", res);
+     *     },
+     *     fail: function (error) {
+     *         console.log("getPracticeRank fail", error);
+     *     }
+     * });
+     * 返回数据格式示例及说明:
+     *   成功:
+     *   {
+     *       "datas": {
+     *           "practice": {
+     *               "id": "xxxxx", // 随堂测ID
+     *               "ranking":[ // 回答正确的前30名学员信息
+     *                   {
+     *                       "viewerId": "79439432ufjdsl", // 观看者ID
+     *                       "viewerName": "张飞", // 观看者昵称
+     *                       "costTime": 1 // 观看者提交答案时间与随堂测发布时间的差值,单位: 秒
+     *                   },
+     *                   {
+     *                       "viewerId": "79439432ufjdsl", // 观看者ID
+     *                       "viewerName": "刘备", // 观看者昵称
+     *                       "costTime": 6 // 观看者提交答案时间与随堂测发布时间的差值,单位: 秒
+     *                   },
+     *                   {
+     *                       "viewerId": "79439432ufjdsl", // 观看者ID
+     *                       "viewerName": "关羽", // 观看者昵称
+     *                       "costTime": 10 // 观看者提交答案时间与随堂测发布时间的差值,单位: 秒
+     *                   }
+     *               ]
+     *           }
+     *       },
+     *       "errorCode": 0,
+     *       "msg": "操作成功",
+     *       "success": true
+     *   }
+     *   失败:
+     *   {
+     *       "datas": {},
+     *       "errorCode": 具体的错误码,
+     *       "msg": "具体的错误信息",
+     *       "success": false
+     *   }
+     */
+
+    this.getPracticeRank = function (options) {
+        if (typeof options !== "object" &amp;&amp; !options.practiceId) {
+            return false;
+        }
+        var sessionId = _login.getData().datas.viewer.key;
+
+        var param = {
+            practiceId: options.practiceId,
+            sessionId: sessionId
+        };
+        wx.request({
+            data: param,
+            method: "GET",
+            url: CONFIG.URL.PRACTICE_RANK,
+            success: function (res) {
+                util.log("getPracticeRank success", res);
+                if (options.success) {
+                    options.success(res);
+                }
+            },
+
+            //请求超时
+            fail: function (error) {
+                util.log("getPracticeRank fail", error);
+                if (options.fail) {
+                    options.fail(error);
+                }
+            }
+        });
+    };
+
+    /**
+     * @description 开启开发者调试功能
+     * @param {Boolean} b 是否开启debug调试功能
+     * @default false
+     * @return {Boolean} 返回true调用成功，false调用失败
+     * @example ccsdk.live.setDebug(true);
+     */
+
+    this.setDebug = function (b) {
+        if (typeof b !== "boolean") {
+            return false;
+        }
+        CONFIG.CONSOLE_LOG = b;
+        return true;
+    };
+
+    /**
+     * @description 配置live-player组件
+     * @param {Object} that 微信小程序全局this对象
+     * @param {Object} wx 微信小程序全局wx对象
+     * @return {Object} 返回live-player实例
+     * @example onLoad:function(){
+     *     ccsdk.live.configLivePlayer(this,wx);
+     * }
+     */
+
+    this.configLivePlayer = function (that, wx) {
+
+        if (typeof that !== "object") {
+            util.log("configLivePlayer", "参数错误");
+            return false;
+        }
+
+        _client = that;
+
+        if (stateMachine.isPlayerDataState()) {
+            //live-player加载成功主动调用配置playerUrl
+            var playerUrl = _player.getPlayerUrl();
+            if (playerUrl.host[0]) {
+                _client.setData({
+                    playerUrl: playerUrl.host[0]
+                });
+            }
+        }
+
+        //登陆成功后接收配置playerUrl事件
+        observer.sub("configLivePlayer", function (data) {
+            _client.setData({
+                playerUrl: data.host[0]
+            });
+        });
+
+        var ctx = wx.createLivePlayerContext("player");
+
+        setCtx(ctx);
+
+        return ctx;
+
+    };
+
+    /**
+     * @description 发送公聊
+     * @param {String} msg 聊天信息，聊天信息必须是字符串并小于300字且不能为空
+     * @return {Boolean} 返回true调用成功，返回false发送失败
+     * @example ccsdk.live.sendPublicChatMsg('hello world');
+     */
+
+    this.sendPublicChatMsg = function (msg) {
+
+        if (!checkout()) {
+            util.log("sendPublicChatMsg", "状态不满足");
+            return false;
+        }
+
+        //参数校验
+        if (typeof msg !== "string" || msg.length > 300 || !msg) {
+            util.log("聊天信息必须是字符串并小于300字且不能为空");
+            return false;
+        }
+
+        //发送聊天 
+        observer.pub("send_chat_message", msg);
+
+        return true;
+    };
+
+    /**
+     * @description 发送私聊
+     * @param {String} touserId 接收者的viewerid
+     * @param {String} touserName 接收者的viewername
+     * @param {String} msg 消息内容，聊天内容必须是字符串并小于300字且不能为空
+     * @return {Boolean} 返回true调用成功，返回false发送失败
+     * @example ccsdk.live.sendPrivateChatMsg('33ed40d2d7b746919219789733b5bdd4','name','hello world');
+     */
+
+    this.sendPrivateChatMsg = function (touserId, touserName, msg) {
+        if (!checkout()) {
+            util.log("sendPrivateChatMsg", "状态不满足");
+            return false;
+        }
+
+        //参数校验
+        if (typeof touserId !== "string" || typeof touserName !== "string" || typeof msg !== "string" || msg.length > 300 || !msg) {
+            util.log("参数错误或聊天信息必须是字符串并小于300字且不能为空");
+            return false;
+        }
+
+        var json = {
+            "fromuserid": _login.getData().datas.viewer.id,
+            "fromusername": _login.getData().datas.viewer.name,
+            "touserid": touserId,
+            "tousername": touserName,
+            "msg": msg.trim(),
+            "time": util.formatTime(new Date())
+        };
+
+        observer.pub("send_private_chat", JSON.stringify(json));
+
+        return true;
+    };
+
+    /**
+     * @description 发送问题
+     * @param {String} content 发送问题，msg:消息内容
+     * @return {Boolean} 返回true调用成功，返回false发送失败
+     * @example ccsdk.live.sendQuestionMsg('hello world');
+     */
+
+    this.sendQuestionMsg = function (content) {
+
+        if (!checkout()) {
+            util.log("sendQuestionMsg", "状态不满足");
+            return false;
+        }
+
+        //参数校验
+        if (typeof content !== "string" || content.length > 300 || !content) {
+            util.log("问题内容必须是字符串并小于300字且不能为空");
+            return false;
+        }
+
+        var json = {
+            "action": "question",
+            "value": {
+                "userId": _login.getData().datas.viewer.id,
+                "userName": _login.getData().datas.viewer.name,
+                "content": content
+            }
+        };
+
+        observer.pub("send_question", JSON.stringify(json));
+
+        return true;
+    };
+
+    /**
+     * @description 切换线路
+     * @param {Number} route 观看直播线路，可选值0,1,2
+     * @return {Boolean} 返回true调用成功，返回false发送失败
+     * @example ccsdk.live.streamRoute(0);
+     */
+
+    this.streamRoute = function (route) {
+
+        if (!checkout()) {
+            util.log("streamRoute", "状态不满足");
+            return false;
+        }
+
+        var playerUrls = _player.getPlayerUrl();
+
+        if (typeof route !== "number" || route > (playerUrls.host.length - 1) || route &lt; 0) {
+            util.log("streamRoute", "参数错误");
+            return false;
+        }
+
+        _route = route;
+
+        if (_mode === "video") {
+            _client.setData({
+                playerUrl: playerUrls.host[parseInt(route)]
+            });
+        } else if (_mode === "audio") {
+            _client.setData({
+                playerUrl: playerUrls.audioStream[parseInt(route)]
+            });
+        }
+        return true;
+    };
+
+    /**
+     * @description 切换模式
+     * @param {String} mode 观看直播模式，可选值video、audio
+     * @return {Boolean} 返回true调用成功，返回false调用失败
+     * @example ccsdk.live.streamMode('video');
+     */
+
+    this.streamMode = function (mode) {
+
+        if (!checkout()) {
+            util.log("streamMode", "状态不满足");
+            return false;
+        }
+
+        if (typeof mode !== "string") {
+            util.log("streamMode", "参数错误");
+            return false;
+        }
+
+        _mode = mode;
+
+        var playerUrls = _player.getPlayerUrl();
+
+        if (mode === "video") {
+            _client.setData({
+                playerUrl: playerUrls.host[parseInt(_route)]
+            });
+        } else if (mode === "audio") {
+            _client.setData({
+                playerUrl: playerUrls.audioStream[parseInt(_route)]
+            });
+        } else {
+            util.log("streamMode", "参数错误");
+            return false;
+        }
+        return true;
+    };
+
+    /**
+     * @description 退出登录
+     * @return {Boolean} 返回true调用成功，返回false发送失败
+     * @example ccsdk.live.quit();
+     */
+
+    this.quit = function () {
+        stateMachine.setLoginState(false);
+        if (_pusher.getIo &amp;&amp; _pusher.getIo().io) {
+            _pusher.getIo().close();
+            _pusher.setIo({});
+        }
+        stateMachine.setIoConnectState(false);
+        stateMachine.setReportLoginResult(false);
+        timerIndex = 0;
+        stateMachine.setReportPlayerResult(false);
+        //清空画笔缓存
+        observer.pub("quit");
+        return true;
+    };
+
+    var reportLoginResult = function () {
+        if (stateMachine.isReportLoginResult()) {
+            return false;
+        }
+        stateMachine.setReportLoginResult(true);
+
+        _player.init(_login.getParam(), _login.getData(), reportCallback);
+
+        function reportCallback() {
+            //统计上报
+            var reportData = {
+                userid: _login.getParam().userId,
+                roomid: _login.getParam().roomId,
+                liveid: _player.getData().live.liveId,
+                viewerid: _login.getData().datas.viewer.id,
+                upid: _player.getData().upid,
+                terminal: 1,
+                ua: 40
+            };
+
+            if (!CONFIG.URL.REPORT) {
+                return;
+            }
+
+            wx.request({
+                url: CONFIG.URL.REPORT + "/report/live/login",
+                data: reportData,
+                success: function (res) {
+                    util.log("直播⻚面加载完成(登录成功)上报成功", reportData);
+                },
+                fail: function (res) {
+                    util.log("直播⻚面加载完成(登录成功)上报超时", reportData);
+                }
+            });
+        };
+    };
+
+    /**
+     * @description 播放结果统计上报
+     * @param {EventHandle} e 播放状态变化事件参数
+     * @example cc.live.reportPlayResult(e);
+     */
+
+    this.reportPlayResult = function (e) {
+
+        reportLoginResult();
+
+        var reportData = {
+            userid: _login.getParam().userId,
+            roomid: _login.getParam().roomId,
+            liveid: _player.getData().live.liveId,
+            viewerid: _login.getData().datas.viewer.id,
+            upid: _player.getData().upid,
+            terminal: 1,
+            ua: 40,
+        };
+        var code = e.detail.code;
+        if (code === 2004) {
+            reportData.result = 0;
+            if (stateMachine.isReportPlayerResult()) {
+                util.log("直播播放器器播放结果已上报");
+                clearInterval(timer);
+                timerIndex = 0;
+                timer = setInterval(timerCallback, 1000);
+                return false;
+            }
+            stateMachine.setReportPlayerResult(true);
+            reportRequest("/report/live/play", reportData, "直播播放器器播放结果上报");
+
+            clearInterval(timer);
+            timerIndex = 0;
+            timer = setInterval(timerCallback, 1000);
+
+        } else if (code === -2301 || code === -2302 || code === 2101 || code === 2102 || code === 2103 || code === 3001 || code === 3002 || code === 3003 || code === 3005) {
+            reportData.result = 1;
+            reportRequest("/report/live/play", reportData, "直播播放器器播放结果上报");
+            stateMachine.setReportPlayerResult(false);
+        }
+
+        //计算丢帧
+        if (code === 2107) {
+            _vdrop++;
+        }
+
+        //计算卡顿
+        if (code === 2105) {
+            _block++;
+        }
+
+    };
+
+    /**
+     * @description 直播过程中心跳统计上报
+     * @param {EventHandle} e 网络状态通知事件参数
+     * @example cc.live.reportPlaying(e);
+     */
+
+    this.reportPlaying = function (e) {
+        var info = e.detail.info;
+        if (_mode === "video") {
+            _bytes.push(info.videoBitrate);
+        } else {
+            _bytes.push(info.audioBitrate);
+        }
+
+    };
+
+    var reportRequest = function (path, data, msg) {
+        if (!CONFIG.URL.REPORT) {
+            return;
+        }
+        wx.request({
+            url: CONFIG.URL.REPORT + path, //仅为示例，并非真实的接口地址
+            data: data,
+            header: {
+                "content-type": "application/json" // 默认值
+            },
+            success: function () {
+                util.log(msg + "成功", data);
+            },
+            fail: function () {
+                util.log(msg + "超时", data);
+            }
+        });
+    };
+
+    var timerIndex = 0;
+
+    function timerCallback() {
+
+        if (!stateMachine.isLoginState()) {
+            return false;
+        }
+
+        timerIndex++;
+
+        if (timerIndex >= 10) {
+
+            var avgbyte = 0;
+            var totalbyte = 0;
+            for (var i = 0; i &lt; _bytes.length; i++) {
+                totalbyte += _bytes[i];
+            }
+            avgbyte = totalbyte / _bytes.length;
+
+            var reportData = {
+                userid: _login.getParam().userId,
+                roomid: _login.getParam().roomId,
+                liveid: _player.getData().live.liveId,
+                viewerid: _login.getData().datas.viewer.id,
+                upid: _player.getData().upid,
+                terminal: 1,
+                ua: 40,
+                vdrop: _vdrop,
+                avgbytes: isNaN(avgbyte) ? -1 : avgbyte,
+                block: _block
+            };
+            if (reportData.avgbytes === -1) {
+                clearInterval(timer);
+                return false;
+            }
+            reportRequest("/report/live/heartbeat", reportData, "直播中上报统计");
+
+            _vdrop = -1;
+            _bytes = [];
+            _block = -1;
+            timerIndex = 0;
+        }
+    }
+
+    this.statechange = function (e) {
+        //播放异常，重新播放
+        // replay(e, this.streamRoute);
+        //统计
+    };
+
+    this.netstatus = function (e) {
+
+    };
+
+    //重试播放
+    var replay = function (e, streamRoute) {
+        if (e.detail.code === -2301 &amp;&amp; _ctx.domId) {
+            //切换留地址
+            // streamRoute()
+            _ctx.play({
+                success: function (res) {
+                    console.log("play success");
+                },
+                fail: function (res) {
+                    console.log("play fail");
+                }
+            });
+        }
+    };
+
+    var checkout = function () {
+        if (!stateMachine.isLoginState() || !stateMachine.isIoConnectState()) {
+            return false;
+        }
+        return true;
+    };
+
+}
+
+module.exports = Manager;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:announcement">announcement</a></li><li><a href="global.html#event:announcement_info">announcement_info</a></li><li><a href="global.html#event:answer">answer</a></li><li><a href="global.html#event:answer_log">answer_log</a></li><li><a href="global.html#event:ban_chat">ban_chat</a></li><li><a href="global.html#event:ban_stream">ban_stream</a></li><li><a href="global.html#event:chat_log">chat_log</a></li><li><a href="global.html#event:chat_log_manage">chat_log_manage</a></li><li><a href="global.html#event:chat_msg_info">chat_msg_info</a></li><li><a href="global.html#event:draw">draw</a></li><li><a href="global.html#event:draw_log">draw_log</a></li><li><a href="global.html#event:end_stream">end_stream</a></li><li><a href="global.html#event:groupid_info">groupid_info</a></li><li><a href="global.html#event:information">information</a></li><li><a href="global.html#event:isBan_log">isBan_log</a></li><li><a href="global.html#event:isPublishing_log">isPublishing_log</a></li><li><a href="global.html#event:kick_out">kick_out</a></li><li><a href="global.html#event:network_change">network_change</a></li><li><a href="global.html#event:on_switch_video_doc">on_switch_video_doc</a></li><li><a href="global.html#event:page_change">page_change</a></li><li><a href="global.html#event:page_change_log">page_change_log</a></li><li><a href="global.html#event:practice_close">practice_close</a></li><li><a href="global.html#event:practice_publish">practice_publish</a></li><li><a href="global.html#event:practice_stop">practice_stop</a></li><li><a href="global.html#event:private_chat">private_chat</a></li><li><a href="global.html#event:private_chat_self">private_chat_self</a></li><li><a href="global.html#event:publish_question">publish_question</a></li><li><a href="global.html#event:publish_stream">publish_stream</a></li><li><a href="global.html#event:question">question</a></li><li><a href="global.html#event:question_log">question_log</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:room_teachers">room_teachers</a></li><li><a href="global.html#event:room_user_count">room_user_count</a></li><li><a href="global.html#event:silence_user_chat_message">silence_user_chat_message</a></li><li><a href="global.html#event:start_lottery">start_lottery</a></li><li><a href="global.html#event:stop_lottery">stop_lottery</a></li><li><a href="global.html#event:switch_source">switch_source</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:unban_chat">unban_chat</a></li><li><a href="global.html#event:unban_stream">unban_stream</a></li><li><a href="global.html#event:viewer_info">viewer_info</a></li><li><a href="global.html#event:win_lottery">win_lottery</a></li></ul><h3>Global</h3><ul><li><a href="global.html#configLivePlayer">configLivePlayer</a></li><li><a href="global.html#getPracticeInfo">getPracticeInfo</a></li><li><a href="global.html#getPracticeRank">getPracticeRank</a></li><li><a href="global.html#getPracticeStatis">getPracticeStatis</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#reportPlaying">reportPlaying</a></li><li><a href="global.html#reportPlayResult">reportPlayResult</a></li><li><a href="global.html#sendPrivateChatMsg">sendPrivateChatMsg</a></li><li><a href="global.html#sendPublicChatMsg">sendPublicChatMsg</a></li><li><a href="global.html#sendQuestionMsg">sendQuestionMsg</a></li><li><a href="global.html#setDebug">setDebug</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#streamMode">streamMode</a></li><li><a href="global.html#streamRoute">streamRoute</a></li><li><a href="global.html#submitPractice">submitPractice</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Jan 23 2019 13:59:55 GMT+0800 (China Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: module/observer.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,116 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: module/observer.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
+  发布订阅模块
+
+  observer.emit 发送给用户
+  observer.on 用户监听sdk
+  observer.sub sdk内部监听
+  observer.pub 发送给sdk内部
+*/
+
+function Observer(CONFIG) {
+    //公开事件
+    var publicEvent = CONFIG.PUBLIC_EVENT;
+    //发布订阅模式
+    var SDKHandler = {};
+    var UserHandler = {};
+    var SDKParams = {};
+    var UserParams = {};
+    var _this = this;
+
+    //订阅事件
+    this.sub = function (event, cb) {
+        if (typeof event == "string" &amp;&amp; typeof cb == "function") {
+            SDKHandler[event] = cb;
+            _this.deleteParams(event, cb);
+            return true;
+        }
+        return false;
+    };
 
 
-    <h3> </h3>
+    /**
+     * @description 监听回掉事件方法
+     * @param {String} event 回掉事件
+     * @param {CallBack} cb 回掉函数
+     * @example ccsdk.live.on('something event',function(data){
+   *     console.log(data)
+   * });
+     */
 
+    //用户订阅事件
+    this.on = function (event, cb) {
 
+        if (typeof event === "string" &amp;&amp; typeof cb === "function" &amp;&amp; isPublicEvent(event)) {
+            UserHandler[event] = cb;
+            _this.deleteParams(event, cb);
+            return true;
+        }
+        return false;
+    };
 
+    //判断事件是否允许用户调用
+    var isPublicEvent = function (event) {
+        for (var i = 0; i &lt; publicEvent.length; i++) {
+            if (event === publicEvent[i]) {
+                return true;
+            }
+        }
+    };
 
+    //发布事件
+    this.pub = function (event, param) {
+        var cb = SDKHandler[event];
+        if (cb) {
+            cb.call(this, param);
+        } else {
+            _this.catchParams(event, param);
+        }
+    };
 
+    //发布事件
+    this.emit = function (event, param) {
+        var cb = UserHandler[event];
+        if (cb) {
+            cb.call(this, param);
+        } else {
+            _this.catchParams(event, param);
+        }
+    };
 
+    this.catchParams = function (event, param) {
+        SDKParams[event] = param;
+        UserParams[event] = param;
+    };
 
+    this.deleteParams = function (event, cb) {
+        if (UserParams[event]) {
+            cb(UserParams[event]);
+            delete UserParams[event];
+        }
 
+        if (SDKParams[event]) {
+            cb(SDKParams[event]);
+            delete SDKParams[event];
+        }
+    };
 
+}
 
-    
-
-
-
-
-
+module.exports = Observer;</code></pre>
+        </article>
+    </section>
 
 
 
