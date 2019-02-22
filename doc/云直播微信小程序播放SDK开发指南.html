@@ -326,6 +326,10 @@ Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmai
 <td style="text-align: left">获取在线人数</td>
 <td style="text-align: left">支持获取直播间在线人数</td>
 </tr>
+<tr>
+<td style="text-align: left">获取在线人数</td>
+<td style="text-align: left">支持获取直播间在线人数</td>
+</tr>
 </tbody>
 </table>
 
@@ -399,7 +403,7 @@ https://image.csslcloud.net
 }
 </code></pre>
 
-<p>version：由于文档更新局限性，插件版本请使用最新版本，登陆微信公众平台小程序开发平台 - 设置 - 第三方服务 - 插件管理 - WXCCLive - 详情 - 基本信息 - 更新记录，查询插件最新版本。</p>
+<p>version：插件版本请使用最新版本，登陆微信公众平台小程序开发平台 - 设置 - 第三方服务 - 插件管理 - WXCCLive - 详情 - 基本信息 - 更新记录，查询插件最新版本。</p>
 
 <p>（微信小程序2018.05.15 更新日志：新增 小程序使用的插件有更新时，在控制台提示插件更新）</p>
 
@@ -449,6 +453,14 @@ https://image.csslcloud.net
 <tr>
 <td style="text-align: left">password</td>
 <td style="text-align: left">需要密码验证方式时，可选</td>
+</tr>
+<tr>
+<td style="text-align: left">viewercustomua</td>
+<td style="text-align: left">自定义UA参数，配合接口验证使用，可为空</td>
+</tr>
+<tr>
+<td style="text-align: left">viewercustominfo</td>
+<td style="text-align: left">json格式字符串，可选，自定义用户信息，该信息会记录在用户访问记录中，用于统计分析使用（长度不能超过1000个字符，若直播间启用接口验证则该参数无效）</td>
 </tr>
 <tr>
 <td style="text-align: left">wx</td>
@@ -543,7 +555,7 @@ Page({
 </tbody>
 </table>
 
-<p>Tip</p>
+<p>Tip:</p>
 
 <ol>
 <li><p>drawingBoard 文档画板自定义组件基于canvas组件，层级属性与canvas一致，是最高的，不能通过 z-index 控制层级。</p></li>
@@ -562,7 +574,9 @@ Page({
 
 <h2 id="toc_15">4.功能使用</h2>
 
-<p>功能使用时相关的核心类：ccsdk.live（观看直播核心对象），ccsdk.live.on（观看直播事件方法）。</p>
+<p>功能使用时相关的核心类：ccsdk.live（观看直播核心对象），ccsdk.live.on（观看直播事件方法）。<br/>
+除init外，其他方法需要在登录以后才能成功调用，返回true,失败返回false。<br/>
+通过on方法监听事件必须是唯一的，重复监听同一事件，只有最后一次监听函数有效。</p>
 
 <h3 id="toc_16">4.1 聊天功能</h3>
 
@@ -776,24 +790,6 @@ Page({
 <h2 id="toc_21">5.更多相关API查询</h2>
 
 <p>详见 live/api/index.html</p>
-
-<h2 id="toc_22">6.Q&amp;A</h2>
-
-<h3 id="toc_23">6.1 自定义组件使用说明</h3>
-
-<ul>
-<li>自定义组件封装在ccsdk_demo/components文件下,用户可以直接复制并使用，components/img有所有的UI资源。</li>
-<li>需要注意自定义组件均使用了ccsdk插件，需要用户配置插件路径。ccsdk_demo直接在小程序app.js中引用了插件，并且赋值给globalData。</li>
-<li>尽量避免修改自定义组件中的内容，可以适当增加，避免减少。因为WXCCLive插件需要自定义组件提供部分数据支持。</li>
-<li>如果用户需要的功能自定义组件已经封装，推荐使用封装好的自定义组件，否则可能会导致某些功能异常。</li>
-</ul>
-
-<h3 id="toc_24">6.2 方法、事件使用说明</h3>
-
-<ul>
-<li>除init外，其他方法需要在登录以后才能成功调用，返回true。</li>
-<li>通过on方法监听事件必须是唯一的，多个监听只会有一个回掉函数返回事件参数。</li>
-</ul>
 
 <br><br><br><br>
 

@@ -12,7 +12,10 @@
                     {{netConnectState.info}}
                 </cover-view>
             </cover-view>
-            <control wx:if="{{renderControl}}" circleWidth="{{circleWidth}}" progressActive="{{progressActive}}" bindprogressactive="setProgressActive" bindprogressdisable="setProgressDisable" bindgetloadingbarsize="getLoadingbarSize" bindgetcirclewidth="getCircleWidth" loadingbarWidth="{{loadingbarWidth}}"
+            <control wx:if="{{renderControl}}" circleWidth="{{circleWidth}}" progressActive="{{progressActive}}"
+                     bindprogressactive="setProgressActive" bindprogressdisable="setProgressDisable"
+                     bindgetloadingbarsize="getLoadingbarSize" bindgetcirclewidth="getCircleWidth"
+                     loadingbarWidth="{{loadingbarWidth}}"
                      showHide="{{showHideDcument}}" catchfullscreen="bindDocuemntFullScreen" time="{{time}}"
                      play="{{playState}}" catchshowhide="catchShowHide" catchswitch="catchSwitch"
                      catchfulldocument="catchFullDocument"
@@ -22,10 +25,10 @@
     </view>
     <!--播放器组件-->
     <view class="player-box {{isPlayerDocument==='video'?'':'min-windows'}}"
-          style="display: {{togglePlayer?'block':'none'}};opacity: {{showHidePlayer?'1':'0'}};">
+          style="display: {{togglePlayer?'block':'none'}};opacity: {{showHidePlayer?'1':'0'}};position:{{showHidePlayer?'':'absolute'}};right: {{showHidePlayer?'':'-2048rpx'}}">
         <player netconnectstate="{{netConnectState}}" player-class="player" bindfullscreenchange="bindFullscreenchange"
                 bindtimeupdate="bindTimeupdate"
-                bindplay="bindPlay" bindpause="bindPause" bindended="bindEnded">
+                bindplay="bindPlay" bindpause="bindPause" bindended="bindEnded" _stopInterval="{{_stopInterval}}">
             <!--网络链接信息-->
             <cover-view class="net-info"
                         style="display: {{netConnectState.toggle&&isPlayerDocument==='video'?'block':'none'}}">
@@ -33,7 +36,10 @@
                     {{netConnectState.info}}
                 </cover-view>
             </cover-view>
-            <control wx:if="{{renderControl}}" circleWidth="{{circleWidth}}" progressActive="{{progressActive}}" bindprogressactive="setProgressActive" bindprogressdisable="setProgressDisable" bindgetloadingbarsize="getLoadingbarSize" bindgetcirclewidth="getCircleWidth" loadingbarWidth="{{loadingbarWidth}}"
+            <control wx:if="{{renderControl}}" circleWidth="{{circleWidth}}" progressActive="{{progressActive}}"
+                     bindprogressactive="setProgressActive" bindprogressdisable="setProgressDisable"
+                     bindgetloadingbarsize="getLoadingbarSize" bindgetcirclewidth="getCircleWidth"
+                     loadingbarWidth="{{loadingbarWidth}}"
                      showHide="{{showHidePlayer}}" fullscreen="{{fullscreen}}" catchfullscreen="catchFullscreen"
                      time="{{time}}" play="{{playState}}" catchshowhide="catchShowHide" catchswitch="catchSwitch"
                      replayMode="{{replayMode}}" class="control"
@@ -57,7 +63,7 @@
 </view>
 
 <!--测试进度条-->
-<view style="position: absolute;bottom:0rpx;left:20px;width: 80%">
+<view style="position: absolute;bottom:100rpx;left:80px;width: 50%">
     <slider style="width: 100%" bindchange="bindChange" min="{{min}}" max="{{max}}" block-size="14"
             activeColor="#ff6633"></slider>
 </view>

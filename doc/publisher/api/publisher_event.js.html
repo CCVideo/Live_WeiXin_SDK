@@ -31,8 +31,8 @@
 */
 
 //公用方法模块
-var util = require('../module/util');
-var CONFIG = require('../module/config').PUBLISHER;
+var util = require("../module/util");
+var CONFIG = require("../module/config").PUBLISHER;
 
 var Event = function (loginData, io, stateMachine, observer) {
 
@@ -41,12 +41,12 @@ var Event = function (loginData, io, stateMachine, observer) {
     //     return false;
     // }
 
-    io.emit('room_context');
-    io.emit('room_user_count');
+    io.emit("room_context");
+    io.emit("room_user_count");
     //每隔1.5秒向服务器请求获得在线列表、在线人数
     setInterval(function () {
-        io.emit('room_context');
-        io.emit('room_user_count');
+        io.emit("room_context");
+        io.emit("room_user_count");
     }, CONFIG.TIME.ROME_INFO_TIME);
 
     /**
@@ -59,9 +59,9 @@ var Event = function (loginData, io, stateMachine, observer) {
      */
 
     //在线列表
-    io.on('room_context', function (data) {
-        util.log('room_context', data);
-        observer.emit('room_context', data);
+    io.on("room_context", function (data) {
+        util.log("room_context", data);
+        observer.emit("room_context", data);
     });
 
     /**
@@ -74,9 +74,9 @@ var Event = function (loginData, io, stateMachine, observer) {
      */
 
     //获得在线人数
-    io.on('room_user_count', function (data) {
-        util.log('room_user_count', data);
-        observer.emit('room_user_count', data);
+    io.on("room_user_count", function (data) {
+        util.log("room_user_count", data);
+        observer.emit("room_user_count", data);
     });
 
     /**
@@ -89,9 +89,9 @@ var Event = function (loginData, io, stateMachine, observer) {
      */
 
     //收到公聊信息
-    io.on('chat_message', function (data) {
-        util.log('chat_message', data);
-        observer.emit('chat_message', data);
+    io.on("chat_message", function (data) {
+        util.log("chat_message", data);
+        observer.emit("chat_message", data);
     });
 
     /**
@@ -104,9 +104,9 @@ var Event = function (loginData, io, stateMachine, observer) {
      */
 
     //接收私聊
-    io.on('private_chat', function (data) {
-        util.log('private_chat', data);
-        observer.emit('private_chat', data);
+    io.on("private_chat", function (data) {
+        util.log("private_chat", data);
+        observer.emit("private_chat", data);
     });
 
     /**
@@ -119,9 +119,9 @@ var Event = function (loginData, io, stateMachine, observer) {
      */
 
     //接收我发送的私聊
-    io.on('private_chat_self', function (data) {
-        util.log('private_chat_self', data);
-        observer.emit('private_chat_self', data);
+    io.on("private_chat_self", function (data) {
+        util.log("private_chat_self", data);
+        observer.emit("private_chat_self", data);
     });
 
     /**
@@ -133,9 +133,9 @@ var Event = function (loginData, io, stateMachine, observer) {
    * })
      */
 
-    io.on('kick_out', function (data) {
-        util.log('kick_out', data);
-        observer.emit('kick_out', data);
+    io.on("kick_out", function (data) {
+        util.log("kick_out", data);
+        observer.emit("kick_out", data);
     });
 
     /**
@@ -153,29 +153,29 @@ var Event = function (loginData, io, stateMachine, observer) {
    * })
      */
 
-    observer.sub('network_change', function (data) {
-        util.log('network_change', data);
-        observer.emit('network_change', data);
+    observer.sub("network_change", function (data) {
+        util.log("network_change", data);
+        observer.emit("network_change", data);
     });
 
     //服务器设置码率
     // observer.pub('bitrate', [100, 800])
 
-    observer.sub('send_chat_message', function (msg) {
+    observer.sub("send_chat_message", function (msg) {
         //发送聊天 
-        util.log('send_chat_message', msg);
-        io.emit('chat_message', msg);
+        util.log("send_chat_message", msg);
+        io.emit("chat_message", msg);
     });
 
-    observer.sub('send_private_chat', function (msg) {
+    observer.sub("send_private_chat", function (msg) {
         //发送聊天 
-        util.log('send_private_chat', msg);
-        io.emit('private_chat', msg);
+        util.log("send_private_chat", msg);
+        io.emit("private_chat", msg);
     });
 
-    observer.sub('loginData', function () {
+    observer.sub("loginData", function () {
         //登陆信息
-        util.log('event_loginData', loginData);
+        util.log("event_loginData", loginData);
 
         /**
          * @event user_info
@@ -189,14 +189,14 @@ var Event = function (loginData, io, stateMachine, observer) {
 
             //主播信息
         var templateData = loginData.user;
-        observer.emit('user_info', templateData);
+        observer.emit("user_info", templateData);
     });
 };
 
 var checkout = function (io, stateMachine) {
-    console.log(stateMachine.isLoginState());
-    console.log(stateMachine.isIoConnectState());
-    console.log(io);
+    // console.log(stateMachine.isLoginState());
+    // console.log(stateMachine.isIoConnectState());
+    // console.log(io);
     if (!stateMachine.isLoginState() ||
         !stateMachine.isIoConnectState() ||
         !io
@@ -223,7 +223,7 @@ module.exports = Event;</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Jan 23 2019 13:59:45 GMT+0800 (China Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Feb 18 2019 17:48:32 GMT+0800 (China Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

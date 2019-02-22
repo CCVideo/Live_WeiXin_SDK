@@ -277,367 +277,113 @@ Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmai
 </style>
 
 <style> @media print{ .hljs{overflow: visible; word-wrap: break-word !important;} }</style></head><body><div class="markdown-body">
-<h1 id="toc_0">云直播微信小程序回放SDK开发指南</h1>
+<h1 id="toc_0">微信小程序插件升级文档 v1.3.1 (2019-02-18)</h1>
 
-<h2 id="toc_1">1.概述</h2>
+<p>下面说明一下云直播微信小程序插件升级到v1.3.1版本的时候，需要注意的事情</p>
 
-<p>云直播微信小程序回放 SDK 是适用于微信小程序平台的云直播回放SDK，使用此SDK可以与CC视频云直播进行对接，在微信小程序中使用云直播回放端的功能。</p>
+<h1 id="toc_1">1、升级改动</h1>
 
-<h3 id="toc_2">1.1 功能特性</h3>
+<h3 id="toc_2">1.1 更新插件版本</h3>
+
+<ul>
+<li>更新引用微信小程序插件版本号 v1.3.0 =&gt; v1.3.1</li>
+</ul>
+
+<h3 id="toc_3">1.2 注意事项</h3>
+
+<ul>
+<li>微信小程序插件（WXCCLive）升级版本时，各版本之间兼容说明</li>
+</ul>
 
 <table>
 <thead>
 <tr>
-<th style="text-align: left">功能</th>
-<th style="text-align: left">描述</th>
+<th>当前版本</th>
+<th>升级至最新版本版本</th>
+<th>说明</th>
 </tr>
 </thead>
 
 <tbody>
 <tr>
-<td style="text-align: left">视频</td>
-<td style="text-align: left">支持观看回放视频</td>
+<td>v1.3.0</td>
+<td>v1.3.1</td>
+<td>兼容，可以直接升级</td>
 </tr>
 <tr>
-<td style="text-align: left">文档</td>
-<td style="text-align: left">支持观看回放文档和画板</td>
+<td>v1.2.0</td>
+<td>v1.3.0</td>
+<td>兼容，可以直接升级</td>
 </tr>
 <tr>
-<td style="text-align: left">聊天</td>
-<td style="text-align: left">支持聊天回放</td>
+<td>v1.1.2</td>
+<td>v1.2.0</td>
+<td>兼容，可以直接升级</td>
 </tr>
 <tr>
-<td style="text-align: left">问答</td>
-<td style="text-align: left">支持问答回放</td>
+<td>v1.1.1</td>
+<td>v1.1.2</td>
+<td>兼容，可以直接升级</td>
+</tr>
+<tr>
+<td>v1.1.0</td>
+<td>v1.1.1</td>
+<td>兼容，可以直接升级</td>
+</tr>
+<tr>
+<td>v1.0.0</td>
+<td>v1.1.0</td>
+<td>请参考 升级文档 v1.1.0 (2018-10-12)</td>
 </tr>
 </tbody>
 </table>
 
-<h3 id="toc_3">1.2 阅读对象</h3>
+<h1 id="toc_4">2、微信小程序插件改动及新特性</h1>
 
-<p>本文档为技术文档，需要阅读者：<br/>
-* 具备基本的微信小程序发能力<br/>
-* 准备接入CC视频云直播回放SDK功能<br/>
-* 对CC云直播产品使用方法有基础的了解，<a href="http://doc.bokecc.com/live/manual/introduction/">使用帮助地址</a>。<br/>
-* 微信公众平台：<a href="https://mp.weixin.qq.com/">https://mp.weixin.qq.com/</a><br/>
-* 微信公众平台小程序开发文档：<a href="https://developers.weixin.qq.com/miniprogram/dev/quickstart/basic/getting-started.html">https://developers.weixin.qq.com/miniprogram/dev/quickstart/basic/getting-started.html</a></p>
-
-<h2 id="toc_4">2.开发准备</h2>
-
-<h3 id="toc_5">2.1 开发环境</h3>
+<h3 id="toc_5">2.1 修复画板组件bug，优化性能</h3>
 
 <ul>
-<li>微信开发者工具: 微信小程序开发IDE</li>
-<li>微信公众平台小程序开发者账号: 开发账号</li>
+<li>v1.3.1版本插件更新主要内容为微信小程序观看回放、观看直播drawingBoard组件（文档画笔）优化</li>
+<li>优化微信小程序ccsdk_demo</li>
 </ul>
 
-<h3 id="toc_6">2.2 开发配置</h3>
+<h1 id="toc_6">3、Demo改动及新特</h1>
 
-<p>微信小程序直播回放demo中使用了video组件。</p>
-
-<h3 id="toc_7">2.3 配置服务器域名</h3>
-
-<p>登陆微信公众平台小程序开发平台 - 设置 - 开发者设置 - 服务器域名 - 配置服务器信息</p>
-
-<pre><code>request合法域名
-https://view.csslcloud.net
-https://zeus.csslcloud.net
-https://eva.csslcloud.net
-socket合法域名  
-wss://io-cc1.csslcloud.net
-wss://io-cc2.csslcloud.net
-wss://sio-1.csslcloud.net
-wss://sio-2.csslcloud.net
-wss://sio-3.csslcloud.net
-wss://sio-4.csslcloud.net
-downloadFile合法域名    
-https://image.csslcloud.net
-</code></pre>
-
-<h3 id="toc_8">3.快速集成</h3>
-
-<p>微信小程序直播回放SDK以小程序插件的形式提供接口服务，无需下载安装。<br/>
-微信小程序插件使用参考：<a href="https://developers.weixin.qq.com/miniprogram/dev/framework/plugin/using.html">https://developers.weixin.qq.com/miniprogram/dev/framework/plugin/using.html</a></p>
-
-<h3 id="toc_9">3.1 添加插件</h3>
-
-<p>登陆微信公众平台小程序开发平台 - 设置 - 第三方服务 - 插件管理 - 添加插件 - 搜索：(插件名称：WXCCLive)或(appid：wxf7200395f7f6b071) - 添加</p>
-
-<h3 id="toc_10">3.2 引入插件代码包</h3>
-
-<p>app.json文件中加入plugins字段</p>
-
-<pre><code class="language-json">{
-  &quot;pages&quot;: [
-    &quot;pages/replay/replay&quot;
-  ],
-  &quot;window&quot;: { 
-  },
-  &quot;plugins&quot;: {
-    &quot;ccsdk&quot;: {
-      &quot;version&quot;: &quot;x.x.x&quot;,
-      &quot;provider&quot;: &quot;wxf7200395f7f6b071&quot;
-    }
-  }
-}
-</code></pre>
-
-<p>version：插件版本请使用最新版本，登陆微信公众平台小程序开发平台 - 设置 - 第三方服务 - 插件管理 - WXCCLive - 详情 - 基本信息 - 更新记录，查询插件最新版本。</p>
-
-<p>（微信小程序2018.05.15 更新日志：新增 小程序使用的插件有更新时，在控制台提示插件更新）</p>
-
-<h3 id="toc_11">3.3 使用插件的 js 接口</h3>
-
-<p>在js文件中引入ccsdk模块，ccsdk观看回放的方法和事件在replay对象中，使用ccsdk.replay.init方法初始化观看回放。</p>
-
-<pre><code class="language-javascript">var ccsdk = requirePlugin(&#39;ccsdk&#39;);
-cc.replay.init({
-      userId: userId,
-      roomId: roomId,
-      recordId: recordId,
-      viewername: viewername,
-      viewertoken: viewertoken,
-      wx: wx,
-      success: function (res) {
-        console.log(&#39;登录成功回掉&#39;, res);
-      },
-      fail: function (res) {
-        console.log(&#39;登录失败回掉&#39;, res);
-      }
-});
-</code></pre>
-
-<p>参数说明：</p>
-
-<table>
-<thead>
-<tr>
-<th style="text-align: left">参数</th>
-<th style="text-align: left">说明</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td style="text-align: left">userId</td>
-<td style="text-align: left">用户 id</td>
-</tr>
-<tr>
-<td style="text-align: left">roomId</td>
-<td style="text-align: left">直播间id</td>
-</tr>
-<tr>
-<td style="text-align: left">recordId</td>
-<td style="text-align: left">回放id</td>
-</tr>
-<tr>
-<td style="text-align: left">viewername</td>
-<td style="text-align: left">用户名称</td>
-</tr>
-<tr>
-<td style="text-align: left">viewertoken</td>
-<td style="text-align: left">需要密码验证方式时</td>
-</tr>
-<tr>
-<td style="text-align: left">wx</td>
-<td style="text-align: left">微信全局对象</td>
-</tr>
-<tr>
-<td style="text-align: left">success</td>
-<td style="text-align: left">初始化成功回掉函数，可选</td>
-</tr>
-<tr>
-<td style="text-align: left">fail</td>
-<td style="text-align: left">初始化失败回掉函数，可选</td>
-</tr>
-</tbody>
-</table>
-
-<h3 id="toc_12">3.4 配置回放模块</h3>
-
-<p>在wxml中创建video组件，id为player，src的值绑定为playerUrl。</p>
-
-<pre><code class="language-html">&lt;video id=&quot;player&quot; src=&quot;{{playerUrl}}&quot; /&gt;
-</code></pre>
-
-<p>在js文件data对象中添加playerUrl属性，在onLoad中调用cc.replay.configPlayer(this, wx)方法配置video组件</p>
-
-<pre><code class="language-javascript">var ccsdk = requirePlugin(&#39;ccsdk&#39;);
-Page({
-  data: {
-    //video观看回放地址
-    playerUrl: &#39;&#39;
-  },
-  onLoad: function () {
-    //返回video组件实例
-    this.ctx = cc.replay.configPlayer(this, wx);
-  },
-})
-</code></pre>
-
-<p>当用户调用ccsdk.replay.init初始化完成，ccsdk会将观看回放链接赋值给playerUrl，并根据id=&quot;player&quot;返回video实例。<br/>
-video组件的原生属性，事件，方法等功能均可正常使用，参考微信小程序文档：<a href="https://developers.weixin.qq.com/miniprogram/dev/component/video.html">https://developers.weixin.qq.com/miniprogram/dev/component/video.html</a><br/>
-（如原生方法与ccsdk方法重复，推荐使用ccsdk封装的方法，避免兼容问题）</p>
-
-<h3 id="toc_13">3.5 开始播放</h3>
-
-<p>调用cc.replay.play方法开始播放。</p>
-
-<pre><code class="language-javascript">cc.replay.play();
-</code></pre>
-
-<h3 id="toc_14">3.6 player组件</h3>
+<h3 id="toc_7">3.1 进度条优化</h3>
 
 <ul>
-<li>为了简化用户开发，ccsdk-demo中将video组件封装成自定义组件，推荐用户使用player组件进行观看回放开发。</li>
-<li>自定义组件使用方法：</li>
-<li>将components文件内容拷贝到小程序项目根目录</li>
-<li>在json文件中引入自定义组件</li>
+<li>ccsdk_demo观看回放control组件中，对进度条进行了优化。由于进度条使用了touchmove事件，会频繁触发setData方法，是造成卡顿的主要原因。减少了setData的使用，优化了进度条卡顿问题。</li>
 </ul>
 
-<pre><code class="language-json">{
-  &quot;usingComponents&quot;: {
-    &quot;player&quot;: &quot;../../../components/replay/player/player&quot;
-  }
-}
-</code></pre>
+<h3 id="toc_8">3.2 修复iOS系统中，video播放视频，15分左右卡顿，停止播放问题</h3>
 
-<ol>
-<li>在wxml文件中创建player组件</li>
-</ol>
+<ul>
+<li>由于微信小程序在iOS系统中，video播放mp4格式流地址回放视频，15分左右卡顿，停止播放。在ccsdk_demo中（微信开发者工具调试基础库v2.5.2、微信小程序插件版本v1.3.1、微信版本7.0.3）加入了解决方案。</li>
+<li>经过测试ios系统微信小程序video播放m3u8格式回放视频无此问题，解决此问题修改了观看回放流地址格式 mp4=&gt;m3u8。</li>
+</ul>
 
-<pre><code class="language-wxml"> &lt;player player-class=&quot;player&quot;&gt;&lt;/player&gt; 
-</code></pre>
+<h1 id="toc_9">4、更新日志</h1>
 
-<pre><code class="language-wxss">.player{
-    width:750rpx;
-    height:422rpx;
-}
-</code></pre>
+<ul>
+<li>微信小程序观看回放、观看直播drawingBoard组件（文档画笔）优化
 
-<ol>
-<li>在components/replay/player/player.js文件中引入ccsdk</li>
-</ol>
+<ul>
+<li>弃用video的timeupdate事件，使用setInterval作为全局定时器，同步视频与画板内容</li>
+<li>修复微信小程序插件提供观看直播、观看回放自定义文档组件(drawingBoard)组件无法正确清空，释放内存问题</li>
+<li>减少 setTimeout、setInterval ，整理定时器，让每一个定时器可控</li>
+<li>优化观看直播、观看回放中drawingBoard组件渲染画笔和文字的方式</li>
+<li>优化观看直播、观看回放drawingBoard组件中的激光笔功能</li>
+<li>优化观看直播文档下载机制，如果用户快速翻页，只下载用户想展示的最后一页</li>
+</ul></li>
+<li>优化微信小程序ccsdk_demo
 
-<pre><code class="language-javascript">var cc = require(&#39;plugin/ccsdk&#39;);
-</code></pre>
-
-<ol>
-<li>至此就可以调用ccsdk.replay.init方法初始化观看回放，调用ccsdk.replay.play()方法播放回放</li>
-</ol>
-
-<p>replay自定义组件属性和方法参考player自定义组件源码，可以根据自己需求进行扩展，尽量避免删减，插件需要封装好的自定义组件提供相应的数据支持。</p>
-
-<h3 id="toc_15">3.7 文档画板模块</h3>
-
-<p>ccsdk插件提供了文档画板自定义组件<code>&lt;drawingBoard&gt;&lt;/drawingBoard&gt;</code>，使用文档画板功能是需要引入ccsdk插件及其提供的自定义组件，在wxml中使用即可。</p>
-
-<p>在需要使用drawingBoard组件的Page页面的json文件中引入组件</p>
-
-<pre><code class="language-json">{
-  &quot;navigationBarTitleText&quot;: &quot;观看直播&quot;,
-    &quot;usingComponents&quot;: {
-      &quot;drawingBoard&quot;:&quot;plugin://ccsdk/drawingBoardReplay&quot;
-    }
-}
-</code></pre>
-
-<p>在wxml文件中使用 drawingBoard 组件</p>
-
-<pre><code class="language-wxml">&lt;drawingBoard db-class=&quot;drawingBoard&quot;&gt;&lt;/drawingBoard&gt;
-</code></pre>
-
-<pre><code class="language-wxss">.drawingBoard{
-    width:750rpx;
-    height:422rpx;
-}
-</code></pre>
-
-<p>使用drawingBoardReplay组件必须使用cc.replay提供的对应方法监听微信小程序原生组件video的相关事件</p>
-
-<pre><code class="language-javascript">cc.replay.listenerplay(e);//监听bindplay事件，e为事件参数
-cc.replay.listenerended(e);//监听bindended事件，e为事件参数
-cc.replay.timeupdate(e);//监听bindtimeupdate事件，e为事件参数
-cc.replay.waiting(e);//监听bindwaiting事件，e为事件参数
-cc.replay.error(e);//监听binderror事件，e为事件参数
-</code></pre>
-
-<p>Tip:</p>
-
-<ol>
-<li>可以通过db-class属性指定类名，在wxss通过类名选择器选定组件，绑定样式。</li>
-<li>drawingBoard 文档画板自定义组件基于canvas组件，层级属性与canvas一致，是最高的，不能通过 z-index 控制层级。</li>
-<li>注意ccsdk插件提供的组件名称为drawingBoardReplay，用户应用可自定义名称。</li>
-<li>drawingBoardReplay 文档画板自定义组件基于canvas组件，如果需要在文档画板上添加元素，只能在drawingBoardReplay 组件中使用cover-view和cover-image</li>
-</ol>
-
-<pre><code class="language-html">&lt;drawingBoard&gt;
-    &lt;cover-view&gt;&lt;cover-view/&gt;
-    &lt;cover-image&gt;&lt;cover-image/&gt;
-&lt;/drawingBoard&gt;
-</code></pre>
-
-<h3 id="toc_16">3.8 快速集成说明</h3>
-
-<p>完成上面的步骤后，基本上我们就能够使用CC的SDK进行观看回放了，也就基本完成了CC直播的核心功能的集成。后续在第4节会对CC直播回放SDK提供的其他的功能特性的使用做详细的说明。</p>
-
-<h2 id="toc_17">4. 功能使用</h2>
-
-<p>功能使用时相关的核心类：ccsdk.live（观看直播核心对象），ccsdk.live.on（观看直播事件方法）。<br/>
-除init外，其他方法需要在登录以后才能成功调用，返回true,失败返回false。<br/>
-通过on方法监听事件必须是唯一的，重复监听同一事件，只有最后一次监听函数有效。</p>
-
-<h3 id="toc_18">4.1 播放</h3>
-
-<pre><code>ccsdk.replay.play();//播放视频，返回true调用成功，返回false发送失败
-</code></pre>
-
-<h3 id="toc_19">4.2 跳转到指定位置</h3>
-
-<pre><code>ccsdk.replay.seek(60);//跳转到指定位置，单位 s
-</code></pre>
-
-<h3 id="toc_20">4.3 倍速播放</h3>
-
-<pre><code>ccsdk.replay.playbackRate(n);//倍速播放，支持的倍率有 0.5/0.8/1.0/1.25/1.5
-</code></pre>
-
-<h3 id="toc_21">4.4 全屏</h3>
-
-<pre><code>ccsdk.replay.requestFullScreen(dir);//可传入{direction}参数（1.7.0起支持），详见video组件文档
-</code></pre>
-
-<h3 id="toc_22">4.5 获取房间信息</h3>
-
-<pre><code>ccsdk.replay.on(&#39;room_info&#39;, function (data) {
-      console.log(&#39;room_info&#39;, data);
-    });
-</code></pre>
-
-<h3 id="toc_23">4.6 问题信息</h3>
-
-<pre><code>ccsdk.replay.on(&#39;questions_info&#39;, function (data) {
-      console.log(&#39;questions_info&#39;, data);
-    });
-</code></pre>
-
-<h3 id="toc_24">4.7 回答信息</h3>
-
-<pre><code>ccsdk.replay.on(&#39;answers_info&#39;, function (data) {
-      console.log(&#39;answers_info&#39;, data);
-    });
-</code></pre>
-
-<h3 id="toc_25">4.8 同步现实聊天信息</h3>
-
-<pre><code>ccsdk.replay.on(&#39;chat_msg_sync&#39;, function (data) {
-      console.log(&#39;chat_msg_sync&#39;, data);
-    });
-</code></pre>
-
-<h2 id="toc_26">5.API查询</h2>
-
-<p>详见 replay/api/index.html</p>
+<ul>
+<li>优化大量的setData方法会造成ccsdk_demo卡顿，所以最新ccsdk_demo优化代码，减少了setData的使用，只有在必要时才使用setData</li>
+<li>修复微信小程序ccsdk_demo在部分安卓系统手机中，无法隐藏视频</li>
+<li>修复微信小程序在iOS系统中，video播放回放时，15分左右卡顿，停止播放问题</li>
+<li>修改聊天渲染条数从最后20条，改为只渲染一堆数据的最后20条，减少setData操作</li>
+</ul></li>
+</ul>
 
 <br><br><br><br>
 

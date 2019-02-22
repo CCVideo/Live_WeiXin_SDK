@@ -50,8 +50,9 @@ Page({
         renderControl: true,
         groupid: 0,
         viewerid: "",
-        togglePlayer:true,
-        isDocuemntFullScreen:false
+        togglePlayer: true,
+        isDocuemntFullScreen: false,
+        _stopInterval:false
     },
     setProgressActive: function () {
         var self = this;
@@ -115,7 +116,7 @@ Page({
         this.setData({
             fullDocument: "full-document",
             isPlayerDocument: "video",
-            isDocuemntFullScreen:true
+            isDocuemntFullScreen: true
         });
         this.hidePlayer();
         this.alignCenter();
@@ -129,7 +130,7 @@ Page({
             fullDocument: "",
             isPlayerDocument: "document",
             documentHeight: "100%",
-            isDocuemntFullScreen:false
+            isDocuemntFullScreen: false
         });
         this.showPlayer();
         this.alignTop();
@@ -151,16 +152,9 @@ Page({
 
     //测试进度条
     bindChange: function (e) {
-        var self = this;
         clearTimeout(this.timer);
         this.timer = setTimeout(function () {
             cc.replay.seek(e.detail.value);
-            // console.log('getCurrentTime', cc.replay.getCurrentTime());
-            //canvas渲染性能差，每次seek，重新渲染canvas，已达到优化效果，防止canvas越来越卡
-            self.setData({
-                renderer: false
-            });
-            self.rendererDocument();
         }, 1500);
     },
 
@@ -199,12 +193,15 @@ Page({
             renderControl: true
         });
     },
-
+    isPristineDuration: true,
     bindTimeupdate: function (e) {
-        //测试进度条
-        this.setData({
-            max: e.detail.duration
-        });
+        if (e.detail.duration > 0 && this.isPristineDuration) {
+            this.setData({
+                max: e.detail.duration
+            });
+            this.isPristineDuration = false;
+        }
+
         this.setData({
             time: e
         });
@@ -336,14 +333,6 @@ Page({
                     togglePlayer: true,
                 });
             }, 100);
-        } else {
-            // self.setData({
-            //     togglePlayer: true,
-            //     showHidePlayer: true,
-            // });
-            // setTimeout(function(){
-            //     cc.replay.play();
-            // },1000)
         }
     },
 
@@ -605,7 +594,9 @@ Page({
      * 生命周期函数--监听页面卸载
      */
     onUnload: function () {
-
+        this.setData({
+            _stopInterval: true
+        });
     },
 
     /**

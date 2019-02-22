@@ -30,9 +30,9 @@
   直播模块
 */
 
-var util = require('../module/util');
-var CONFIG = require('../module/config').PUBLISHER;
-var http = require('../module/http');
+var util = require("../module/util");
+var CONFIG = require("../module/config").PUBLISHER;
+var http = require("../module/http");
 
 var Live = function (stateMachine, observer) {
 
@@ -65,18 +65,18 @@ var Live = function (stateMachine, observer) {
         if (stateMachine.isLoginState()) {
             //设置推流地址
             _client.setData({
-                publisherUrl: _loginData.live.publishUrls[0].publishUrl + '?token=' + _loginData.live.publishUrls[0].token
+                publisherUrl: _loginData.live.publishUrls[0].publishUrl + "?token=" + _loginData.live.publishUrls[0].token
             });
         }
 
-        observer.sub('configLivePublisher', function (data) {
+        observer.sub("configLivePublisher", function (data) {
             //设置推流地址
             _client.setData({
-                publisherUrl: data.live.publishUrls[0].publishUrl + '?token=' + data.live.publishUrls[0].token
+                publisherUrl: data.live.publishUrls[0].publishUrl + "?token=" + data.live.publishUrls[0].token
             });
         });
 
-        _ctx = wx.createLivePusherContext('publisher');
+        _ctx = wx.createLivePusherContext("publisher");
 
         return _ctx;
 
@@ -97,7 +97,7 @@ var Live = function (stateMachine, observer) {
             systemversion: info.system, //操作系统版本号
             sdkversion: CONFIG.CREATELIVEID_SDKVERSION, //插件版本号
             bitrate: _loginData.bitrate, //码率
-            resolution: info.windowWidth + '*' + info.windowHeight, //分辨率
+            resolution: info.windowWidth + "*" + info.windowHeight, //分辨率
             devicetype: CONFIG.CREATELIVEID_DEVICETYPE, //设备类型
             kernelversion: info.version, //微信版本号
         };
@@ -107,13 +107,13 @@ var Live = function (stateMachine, observer) {
         var send = function (resolve, reject) {
             http.request({
                 data: data,
-                method: 'GET',
+                method: "GET",
                 url: url,
-                log: 'createLiveId_data',
+                log: "createLiveId_data",
                 callback: {
                     code: CONFIG.CODE_CREATELIVEID,
                     errorcode: CONFIG.ERRORCODE_CREATELIVEID,
-                    message: '创建liveId',
+                    message: "创建liveId",
                     fail: liveStartCallback.fail,
                     success: liveStartCallback.success,
                 },
@@ -146,14 +146,14 @@ var Live = function (stateMachine, observer) {
                 success: function (res) {
                     resolve();
                     util.log({
-                        message: '推流成功',
+                        message: "推流成功",
                         code: CONFIG.CODE_STARTSTREAM,
-                        result: 'ok'
+                        result: "ok"
                     });
                 },
                 fail: function (res) {
                     stateMachine.setToggleLiveState(false);
-                    util.callbackUser(liveStartCallback.fail, CONFIG.ERRORCODE_STARTSTREAM, '推流失败', 'error');
+                    util.callbackUser(liveStartCallback.fail, CONFIG.ERRORCODE_STARTSTREAM, "推流失败", "error");
                 }
             });
         };
@@ -177,13 +177,13 @@ var Live = function (stateMachine, observer) {
         var send = function (resolve, reject) {
             http.request({
                 data: data,
-                method: 'GET',
+                method: "GET",
                 url: url,
-                log: 'liveStart_data',
+                log: "liveStart_data",
                 callback: {
                     code: CONFIG.CODE_LIVESTART,
                     errorcode: CONFIG.ERRORCODE_LIVESTART,
-                    message: '开通直播',
+                    message: "开通直播",
                     fail: liveStartCallback.fail,
                     success: liveStartCallback.success,
                 },
@@ -195,17 +195,17 @@ var Live = function (stateMachine, observer) {
 
                     //判断pusher是否已链接
                     if (!stateMachine.isIoConnectState()) {
-                        util.log('发送心跳失败');
+                        util.log("发送心跳失败");
                         return;
                     }
 
                     clearInterval(_timer);
                     // 发送心跳
                     _timer = setInterval(function () {
-                        _io.emitWithoutBuffer('pi');
+                        _io.emitWithoutBuffer("pi");
                     }, 3000);
-                    _io.on('po', function (data) {
-                        util.log('发送心跳成功');
+                    _io.on("po", function (data) {
+                        util.log("发送心跳成功");
                     });
 
                     resolve();
@@ -248,8 +248,8 @@ var Live = function (stateMachine, observer) {
     this.liveStart = function (liveStartCallback) {
 
         // //参数、状态校验
-        if (checkoutLiveStart(liveStartCallback) !== 'ok') {
-            util.callbackUser(liveStartCallback.fail, CONFIG.ERRORCODE_STARTSTREAM, checkoutLiveStart(liveStartCallback), 'error');
+        if (checkoutLiveStart(liveStartCallback) !== "ok") {
+            util.callbackUser(liveStartCallback.fail, CONFIG.ERRORCODE_STARTSTREAM, checkoutLiveStart(liveStartCallback), "error");
             return;
         }
 
@@ -267,7 +267,7 @@ var Live = function (stateMachine, observer) {
                 stateMachine.setLiveState(true);
                 stateMachine.setToggleLiveState(false);
                 if (liveStartCallback.success) {
-                    util.callbackUser(liveStartCallback.success, CONFIG.CODE_LIVESTART, '开始直播成功', 'ok');
+                    util.callbackUser(liveStartCallback.success, CONFIG.CODE_LIVESTART, "开始直播成功", "ok");
                 }
             });
 
@@ -275,33 +275,33 @@ var Live = function (stateMachine, observer) {
 
     var checkoutLiveStart = function (liveStartCallback) {
 
-        if (typeof liveStartCallback !== 'object') {
-            return '参数不正确';
+        if (typeof liveStartCallback !== "object") {
+            return "参数不正确";
         }
 
         for (var index in liveStartCallback) {
-            if (liveStartCallback[index] &amp;&amp; typeof liveStartCallback[index] !== 'function') {
-                return '参数不正确';
+            if (liveStartCallback[index] &amp;&amp; typeof liveStartCallback[index] !== "function") {
+                return "参数不正确";
             }
         }
 
         if (stateMachine.isLiveState()) {
-            return '直播中';
+            return "直播中";
         }
 
         if (stateMachine.isToggleLiveState()) {
-            return '准备直播中';
+            return "准备直播中";
         }
 
         if (!stateMachine.isLoginState()) {
-            return '未登录';
+            return "未登录";
         }
 
         if (!stateMachine.isIoConnectState()) {
-            return 'socket链接异常，强检查网络';
+            return "socket链接异常，强检查网络";
         }
 
-        return 'ok';
+        return "ok";
 
     };
 
@@ -312,14 +312,14 @@ var Live = function (stateMachine, observer) {
                 //结束推流回掉
                 cb();
                 util.log({
-                    message: '停止推流成功',
+                    message: "停止推流成功",
                     code: CONFIG.CODE_STOPSTREAM,
-                    result: 'ok'
+                    result: "ok"
                 });
             },
             fail: function (res) {
                 stateMachine.setToggleLiveState(false);
-                util.callbackUser(live.liveStopCallBack.fail, ERRORCODE_STOPSTREAM, '停止推流失败', 'error');
+                util.callbackUser(live.liveStopCallBack.fail, ERRORCODE_STOPSTREAM, "停止推流失败", "error");
             }
         });
     };
@@ -357,13 +357,13 @@ var Live = function (stateMachine, observer) {
 
         http.request({
             data: data,
-            method: 'GET',
+            method: "GET",
             url: url,
-            log: 'liveStop_data',
+            log: "liveStop_data",
             callback: {
                 code: CONFIG.CODE_LIVESTOP,
                 errorcode: CONFIG.ERRORCODE_LIVESTOP,
-                message: '停止直播',
+                message: "停止直播",
                 fail: liveStopCallBack.fail,
                 success: liveStopCallBack.success,
             },
@@ -376,7 +376,7 @@ var Live = function (stateMachine, observer) {
 
                 //停止发送心跳
                 clearInterval(_timer);
-                util.log('停止发送心跳');
+                util.log("停止发送心跳");
 
                 stateMachine.setLiveState(false);
                 stateMachine.setToggleLiveState(false);
@@ -384,7 +384,7 @@ var Live = function (stateMachine, observer) {
                 //结束推流
                 stopStream(liveStopCallBack, function () {
                     if (liveStopCallBack.success) {
-                        util.callbackUser(liveStopCallBack.success, CONFIG.CODE_LIVESTOP, '停止直播成功', 'ok');
+                        util.callbackUser(liveStopCallBack.success, CONFIG.CODE_LIVESTOP, "停止直播成功", "ok");
                     }
                 });
 
@@ -398,12 +398,12 @@ var Live = function (stateMachine, observer) {
 
     var checkoutLiveStop = function (liveStopCallBack) {
 
-        if (typeof liveStopCallBack !== 'object') {
+        if (typeof liveStopCallBack !== "object") {
             return false;
         }
 
         for (var index in liveStopCallBack) {
-            if (liveStopCallBack[index] &amp;&amp; typeof liveStopCallBack[index] !== 'function') {
+            if (liveStopCallBack[index] &amp;&amp; typeof liveStopCallBack[index] !== "function") {
                 return false;
             }
         }
@@ -438,7 +438,7 @@ module.exports = Live;</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Jan 23 2019 13:59:45 GMT+0800 (China Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Feb 18 2019 17:48:31 GMT+0800 (China Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

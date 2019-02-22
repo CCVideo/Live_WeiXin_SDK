@@ -29,8 +29,8 @@
             <pre class="prettyprint source linenums"><code>/*
   方法模块
 */
-var util = require('../module/util');
-var CONFIG = require('../module/config').PUBLISHER;
+var util = require("../module/util");
+var CONFIG = require("../module/config").PUBLISHER;
 
 var Manager = function (stateMachine, observer) {
 
@@ -51,7 +51,7 @@ var Manager = function (stateMachine, observer) {
      */
 
     this.setDebug = function (b) {
-        if (typeof b !== 'boolean') {
+        if (typeof b !== "boolean") {
             return false;
         }
         CONFIG.CONSOLE_LOG = b;
@@ -96,18 +96,18 @@ var Manager = function (stateMachine, observer) {
     this.sendPublicChatMsg = function (msg) {
 
         if (!checkout()) {
-            util.log('sendPublicChatMsg', '状态不满足');
+            util.log("sendPublicChatMsg", "状态不满足");
             return false;
         }
 
         //参数校验
-        if (typeof msg !== 'string' || msg.length > 300 || !msg) {
-            util.log('聊天信息必须是字符串并小于300字且不能为空');
+        if (typeof msg !== "string" || msg.length > 300 || !msg) {
+            util.log("聊天信息必须是字符串并小于300字且不能为空");
             return false;
         }
 
         //发送聊天
-        observer.pub('send_chat_message', msg);
+        observer.pub("send_chat_message", msg);
 
         return true;
     };
@@ -124,26 +124,26 @@ var Manager = function (stateMachine, observer) {
     //发送私聊
     this.sendPrivateChatMsg = function (touserId, touserName, msg) {
         if (!checkout()) {
-            util.log('sendPrivateChatMsg', '状态不满足');
+            util.log("sendPrivateChatMsg", "状态不满足");
             return false;
         }
 
         //参数校验
-        if (typeof touserId !== 'string' || typeof touserName !== 'string' || typeof msg !== 'string' || msg.length > 300 || !msg) {
-            util.log('参数错误或聊天信息必须是字符串并小于300字且不能为空');
+        if (typeof touserId !== "string" || typeof touserName !== "string" || typeof msg !== "string" || msg.length > 300 || !msg) {
+            util.log("参数错误或聊天信息必须是字符串并小于300字且不能为空");
             return false;
         }
 
         var json = {
-            'fromuserid': _loginData.user.id,
-            'fromusername': _loginData.user.name,
-            'touserid': touserId,
-            'tousername': touserName,
-            'msg': msg.trim(),
-            'time': util.formatTime(new Date())
+            "fromuserid": _loginData.user.id,
+            "fromusername": _loginData.user.name,
+            "touserid": touserId,
+            "tousername": touserName,
+            "msg": msg.trim(),
+            "time": util.formatTime(new Date())
         };
 
-        observer.pub('send_private_chat', JSON.stringify(json));
+        observer.pub("send_private_chat", JSON.stringify(json));
 
         return true;
     };
@@ -162,7 +162,7 @@ var Manager = function (stateMachine, observer) {
             return false;
         }
         setTimeout(function () {
-            observer.emit('switchCamera');
+            observer.emit("switchCamera");
         }, 500);
         return true;
     };
@@ -184,13 +184,13 @@ var Manager = function (stateMachine, observer) {
         }
 
         if (aspect === CONFIG.METHOD_ASPECT_34) {
-            util.log('宽高比', aspect);
+            util.log("宽高比", aspect);
         } else if (aspect === CONFIG.METHOD_ASPECT_916) {
-            util.log('宽高比', aspect);
+            util.log("宽高比", aspect);
         } else {
             return false;
         }
-        observer.emit('aspect', aspect);
+        observer.emit("aspect", aspect);
         return true;
     };
 
@@ -210,13 +210,13 @@ var Manager = function (stateMachine, observer) {
             return false;
         }
         if (mode === CONFIG.METHOD_MODE_SD) {
-            util.log('分辨率', mode);
+            util.log("分辨率", mode);
         } else if (mode === CONFIG.METHOD_MODE_HD) {
-            util.log('分辨率', mode);
+            util.log("分辨率", mode);
         } else {
             return false;
         }
-        observer.emit('resolution', mode);
+        observer.emit("resolution", mode);
         return true;
     };
 
@@ -236,13 +236,13 @@ var Manager = function (stateMachine, observer) {
             return false;
         }
         if (orientation === CONFIG.METHOD_ORIENTATION_VERTICAL) {
-            util.log('横竖屏', orientation);
+            util.log("横竖屏", orientation);
         } else if (orientation === CONFIG.METHOD_ORIENTATION_HORIZONTAL) {
-            util.log('横竖屏', orientation);
+            util.log("横竖屏", orientation);
         } else {
             return false;
         }
-        observer.emit('orientation', orientation);
+        observer.emit("orientation", orientation);
         return true;
     };
 
@@ -263,13 +263,13 @@ var Manager = function (stateMachine, observer) {
             return false;
         }
         if (muted == CONFIG.METHOD_MUTED_TRUE) {
-            util.log('静音', muted);
+            util.log("静音", muted);
         } else if (muted == CONFIG.METHOD_MUTED_FALSE) {
-            util.log('静音', muted);
+            util.log("静音", muted);
         } else {
             return false;
         }
-        observer.emit('muted', muted);
+        observer.emit("muted", muted);
         return true;
     };
 
@@ -289,10 +289,10 @@ var Manager = function (stateMachine, observer) {
         if (!checkout()) {
             return false;
         }
-        if (typeof beauty !== 'number' || beauty &lt; 0 || beauty > 10) {
+        if (typeof beauty !== "number" || beauty &lt; 0 || beauty > 10) {
             return false;
         }
-        observer.emit('beauty', beauty);
+        observer.emit("beauty", beauty);
         return true;
     };
 
@@ -312,10 +312,10 @@ var Manager = function (stateMachine, observer) {
         if (!checkout()) {
             return false;
         }
-        if (typeof whiteness !== 'number' || whiteness &lt; 0 || whiteness > 10) {
+        if (typeof whiteness !== "number" || whiteness &lt; 0 || whiteness > 10) {
             return false;
         }
-        observer.emit('whiteness', whiteness);
+        observer.emit("whiteness", whiteness);
         return true;
     };
 
@@ -337,7 +337,7 @@ module.exports = Manager;</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Jan 23 2019 13:59:45 GMT+0800 (China Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Feb 18 2019 17:48:32 GMT+0800 (China Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

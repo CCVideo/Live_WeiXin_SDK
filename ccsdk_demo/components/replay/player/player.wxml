@@ -1,4 +1,4 @@
-<video id="player" class="player-class" src="{{playerUrl}}" show-center-play-btn="{{showCenterPlayBtn}}"
+<video wx:if="{{togglePlayer}}" id="player" class="player-class" src="{{playerUrl}}" show-center-play-btn="{{showCenterPlayBtn}}"
        initial-time="initialTime" autoplay="{{autoplay}}" duration="{{duration}}"
        controls="{{controls}}" loop="{{loop}}" muted="{{muted}}" objectFit="{{objectFit}}" bindplay="bindPlay"
        bindpause="bindPause" bindended="bindEnded" bindtimeupdate="bindTimeupdate"

@@ -34,10 +34,10 @@ Page({
         self.checkOutBtnType();
 
         // //打印日志
-        cc.replay.setDebug(false);
+        cc.replay.setDebug(true);
 
         // //开启实时绘线功能
-        // cc.replay.setRealtimeFirst(true);
+        cc.replay.setRealtimeFirst(true);
 
         //开启分段加载画笔数据
         // cc.replay.setDrawRequestTime(true);

@@ -33,6 +33,9 @@ Page({
 
         var self = this;
 
+        //开启实时绘线
+        // cc.live.setRealtimeFirst(true);
+
         self.setOpts();
 
         //按钮状态

@@ -89,7 +89,7 @@ Page({
             [15, 16, 17, 18, 19, 20, 21]
         ],
         toggleLiveControlsTimer: {},
-        chatLengthMax: -30,
+        chatLengthMax: -20,
         fullDocument: "",//文档全屏
         pageHeight: 0,
         pageWidth: 0,

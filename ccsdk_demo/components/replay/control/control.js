@@ -9,7 +9,7 @@ Component({
     properties: {
         replayMode: {
             type: String,
-            value: 'document'
+            value: "document"
         },
         showHide: {
             type: Boolean,
@@ -17,12 +17,12 @@ Component({
         },
         play: {
             type: String,
-            value: ''
+            value: ""
         },
         time: {
             type: Object,
             value: {},
-            observer: '_setTime'
+            observer: "_setTime"
         },
         fullscreen: {
             type: Boolean,
@@ -49,8 +49,8 @@ Component({
         toggleControl: true,
         timer: {},
         touchendDelay: {},
-        currentTime: '00:00',
-        duration: '00:00',
+        currentTime: "00:00",
+        duration: "00:00",
         Duration: 0,
         togglePlay: true,
         percent: 0,
@@ -78,34 +78,41 @@ Component({
                     minuteTime = parseInt(minuteTime % 60);
                 }
             }
-            var result = '' + secondTime;
-            result = result < 10 ? '0' + result : result;
-            secondTime = secondTime < 10 ? '0' + secondTime : secondTime;
+            var result = "" + secondTime;
+            result = result < 10 ? "0" + result : result;
+            secondTime = secondTime < 10 ? "0" + secondTime : secondTime;
 
             if (minuteTime > 0) {
-                minuteTime = minuteTime < 10 ? '0' + minuteTime : minuteTime;
-                result = '' + minuteTime + ':' + result;
+                minuteTime = minuteTime < 10 ? "0" + minuteTime : minuteTime;
+                result = "" + minuteTime + ":" + result;
             } else {
-                minuteTime = '00';
-                result = '' + minuteTime + ':' + result;
+                minuteTime = "00";
+                result = "" + minuteTime + ":" + result;
             }
 
             if (hourTime > 0) {
-                hourTime = hourTime < 10 ? '0' + hourTime : hourTime;
-                result = '' + hourTime + ':' + result;
+                hourTime = hourTime < 10 ? "0" + hourTime : hourTime;
+                result = "" + hourTime + ":" + result;
             }
             return result;
         },
         _setTime: function (newVal) {
-            if (JSON.stringify(newVal) === '{}') {
+            if (JSON.stringify(newVal) === "{}") {
                 return;
             }
 
             this.setData({
-                currentTime: this._formatSeconds(newVal.detail.currentTime),
-                duration: this._formatSeconds(newVal.detail.duration),
-                Duration: newVal.detail.duration,
+                currentTime: this._formatSeconds(newVal.detail.currentTime)
             });
+
+            if (newVal.detail.duration > 0 && this.isPristineDuration) {
+                this.setData({
+                    duration: this._formatSeconds(newVal.detail.duration),
+                    Duration: newVal.detail.duration,
+                });
+                this.isPristineDuration = false;
+            }
+
             if (this.data.progressActive) {
                 this.setData({
                     percent: this._formatePercent(newVal.detail.currentTime, newVal.detail.duration)
@@ -154,7 +161,7 @@ Component({
             if (this.data.progressActive) {
                 var myEventDetail = e.detail;
                 var myEventOption = {};
-                this.triggerEvent('switch', myEventDetail, myEventOption);
+                this.triggerEvent("switch", myEventDetail, myEventOption);
             }
         },
         _catchShowHide: function (e) {
@@ -169,7 +176,7 @@ Component({
             }
             var myEventDetail = e.detail;
             var myEventOption = {};
-            this.triggerEvent('showhide', myEventDetail, myEventOption);
+            this.triggerEvent("showhide", myEventDetail, myEventOption);
         },
         _catchPlay: function () {
             if (this.data.togglePlay) {
@@ -187,38 +194,38 @@ Component({
         _catchFullscreen: function (e) {
             var myEventDetail = e.detail;
             var myEventOption = {};
-            this.triggerEvent('fullscreen', myEventDetail, myEventOption);
+            this.triggerEvent("fullscreen", myEventDetail, myEventOption);
         },
         _getLoadingBarSize: function () {
             var self = this;
             var query = wx.createSelectorQuery().in(self);
-            query.select('#loadingbar').boundingClientRect(function (res) {
+            query.select("#loadingbar").boundingClientRect(function (res) {
                 if (!res || !res.width) {
                     return false;
                 }
                 self.setData({
                     toggleControl: false
                 });
-                self.triggerEvent('getloadingbarsize', res.width, {});
+                self.triggerEvent("getloadingbarsize", res.width, {});
             }).exec();
         },
         _getCircleWidth: function () {
             var self = this;
             var query = wx.createSelectorQuery().in(self);
-            query.select('#circle').boundingClientRect(function (res) {
+            query.select("#circle").boundingClientRect(function (res) {
                 if (!res || !res.width) {
                     return false;
                 }
                 self.setData({
                     circleWidth: res.width
                 });
-                self.triggerEvent('getcirclewidth', res.width, {});
+                self.triggerEvent("getcirclewidth", res.width, {});
             }).exec();
         },
         _catchtouchstart: function () {
             clearTimeout(this.data.timer);
             clearTimeout(this.data.touchendDelay);
-            this.triggerEvent('progressdisable', {}, {});
+            this.triggerEvent("progressdisable", {}, {});
         },
         _catchtouchend: function () {
             var self = this;
@@ -228,7 +235,7 @@ Component({
                 var s = parseFloat(self.data.percent) * self.data.Duration;
                 cc.replay.seek(s);
 
-                self.triggerEvent('progressactive', {}, {});
+                self.triggerEvent("progressactive", {}, {});
 
                 self.data.timer = setTimeout(function () {
                     self._hideControl();
@@ -236,6 +243,11 @@ Component({
             }, 1500);
         },
         _catchLoadingbarTouchmove: function (e) {
+            this.moveIndex++;
+            if (this.moveIndex <= 4) {
+                return;
+            }
+            this.moveIndex = 0;
             var getParcent = this._getParcent(e);
             if (getParcent.percent >= 0 && getParcent.percent <= 100) {
                 this.setData({
@@ -243,9 +255,7 @@ Component({
                     left: getParcent.left
                 });
             }
-            console.log(this.data.circleWidth);
             if (getParcent.left >= this.data.loadingbarWidth - this.data.circleWidth) {
-
                 this.setData({
                     left: this.data.loadingbarWidth - this.data.circleWidth
                 });
@@ -266,7 +276,8 @@ Component({
     },
     ready: function () {
         var self = this;
-
+        self.isPristineDuration = true;
+        self.moveIndex = 0;
         self._getLoadingBarSize();
         self._getCircleWidth();
     }
