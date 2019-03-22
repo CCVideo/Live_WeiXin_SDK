@@ -4,6 +4,7 @@
     "drawingBoard": "plugin://ccsdk/drawingBoard",
     "live": "../../../components/live/live/live",
     "practice": "../../../components/live/practice/practice",
+    "prize": "../../../components/live/prize/prize",
     "lottery": "../../../components/live/lottery/lottery"
   },
   "disableScroll": false

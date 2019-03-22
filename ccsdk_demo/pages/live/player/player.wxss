@@ -899,3 +899,11 @@
     width: 100%;
     flex: 1;
 }
+
+/*奖杯*/
+.container .chat .prize{
+    position: absolute;
+    height: 65%;
+    width: 100%;
+    flex: 1;
+}

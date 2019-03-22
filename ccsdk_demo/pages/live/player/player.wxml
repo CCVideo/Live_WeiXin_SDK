@@ -336,6 +336,8 @@
                  bindstartlottery="startLottery" bindwinlottery="winLottery" bindmisslottery="missLottery"></lottery>
         <!--随堂测-->
         <!--<practice></practice>-->
+        <!--奖杯-->
+        <prize class="prize" prizeDate="{{prizeDate}}" style="display: {{prizeDate?'block':'none'}}" bindhideprize="bindHidePrize"></prize>
     </view>
 </view>
 

@@ -109,6 +109,7 @@ Page({
         groupid: "",//分组信息
         toggleLottery: "none",
         toggleDocument: "block",
+        prizeDate: ""
     },
 
     alignCenter: function () {
@@ -771,6 +772,12 @@ Page({
         self.configHistoryPublishing = null;
     },
 
+    bindHidePrize: function () {
+        this.setData({
+            prizeDate: ""
+        });
+    },
+
     onLoad: function (options) {
 
         // console.log(options);
@@ -796,6 +803,22 @@ Page({
         self.configWX();
         self.configSwiper();
         self.configLiveMode();
+        //奖杯
+        cc.live.on("prize_send", function (data) {
+            var data = JSON.parse(data);
+            var result = "";
+            if (data.viewerId == self.data.viewerId) {
+                result = 1;
+            } else {
+                result = 0;
+            }
+            self.setData({
+                prizeDate: {
+                    viewerName: data.viewerName,
+                    result: result//是否中奖
+                }
+            });
+        });
 
         cc.live.on("switch_source", function (data) {
             console.log(data);
@@ -1072,7 +1095,7 @@ Page({
             for (var i = 0; i < message.length; i++) {
                 if (message[i].chatId == data.chatIds[0]) {
                     message[i].status = data.status;
-                    if ( message[i].userId == self.data.viewerId) {
+                    if (message[i].userId == self.data.viewerId) {
                         message[i].status = 0;
                     }
                     break;
@@ -1232,15 +1255,13 @@ Page({
 
     statechange: function (e) {
         this.replay(e);
-        // cc.live.statechange(e);
         //统计上报功能
-        // cc.live.reportPlayResult(e);
+        cc.live.reportPlayResult(e);
     },
 
     netstatus: function (e) {
-        // cc.live.netstatus(e);
-        //统计上报功能
-        // cc.live.reportPlaying(e);
+        //统计心跳上报功能
+        cc.live.reportPlaying(e);
     },
 
     /// 按钮触摸开始触发的事件

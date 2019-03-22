@@ -34,15 +34,7 @@ Page({
         self.checkOutBtnType();
 
         // //打印日志
-        cc.replay.setDebug(true);
-
-        // //开启实时绘线功能
-        cc.replay.setRealtimeFirst(true);
-
-        //开启分段加载画笔数据
-        // cc.replay.setDrawRequestTime(true);
-
-        // console.log('isRealtimeFirst', cc.replay.isRealtimeFirst());
+        // cc.replay.setDebug(true);
 
         cc.replay.on("player_load", function (data) {
             // console.log('player_load', data);

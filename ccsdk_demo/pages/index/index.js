@@ -5,7 +5,7 @@ Page({
     data: {},
 
     onLoad: function () {
-        cc.live.setDebug(true);
+        // cc.live.setDebug(true);
     },
 
     //推流端

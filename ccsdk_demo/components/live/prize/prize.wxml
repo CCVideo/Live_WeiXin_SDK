@@ -1,0 +1,9 @@
+<view class="container" style="display: {{toggle}}">
+    <view class="prize-wrap">
+        <image class="prize" src="../../../components/img/live/player/prize/prize.png"></image>
+        <view class="prize-text-wrap">
+            <view class="prize-text" style="display: {{prizeDate.result?'none':'block'}}">恭喜<text class="name">{{prizeDate.viewerName}}</text>获得奖杯</view>
+            <view class="prize-text" style="display: {{prizeDate.result?'block':'none'}}">太棒了，恭喜你获得奖杯</view>
+        </view>
+    </view>
+</view>
