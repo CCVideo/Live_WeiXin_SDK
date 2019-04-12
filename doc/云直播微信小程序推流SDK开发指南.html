@@ -404,10 +404,10 @@ cc.publisher.init({
       password: password,
       wx: wx,
       success: function (res) {
-        console.log(&#39;登录成功回掉&#39;, res);
+        console.log(&#39;登录成功回调&#39;, res);
       },
       fail: function (res) {
-        console.log(&#39;登录失败回掉&#39;, res);
+        console.log(&#39;登录失败回调&#39;, res);
       }
 });
 </code></pre>
@@ -445,11 +445,11 @@ cc.publisher.init({
 </tr>
 <tr>
 <td style="text-align: left">success</td>
-<td style="text-align: left">初始化成功回掉函数，可选</td>
+<td style="text-align: left">初始化成功回调函数，可选</td>
 </tr>
 <tr>
 <td style="text-align: left">fail</td>
-<td style="text-align: left">初始化失败回掉函数，可选</td>
+<td style="text-align: left">初始化失败回调函数，可选</td>
 </tr>
 </tbody>
 </table>
@@ -486,10 +486,10 @@ live-pusher组件的原生属性，事件，方法等功能均可正常使用，
 
 <pre><code class="language-javascript">cc.publisher.liveStart({
       success: function (res) {
-        console.log(&#39;开始直播成功回掉&#39;, res);
+        console.log(&#39;开始直播成功回调&#39;, res);
       },
       fail: function (res) {
-        console.log(&#39;开始直播失败回掉&#39;, res);
+        console.log(&#39;开始直播失败回调&#39;, res);
       }
 });
 </code></pre>
@@ -698,10 +698,10 @@ live-pusher组件的原生属性，事件，方法等功能均可正常使用，
 
 <pre><code>ccsdk.publisher.liveStart({
       success: function (res) {
-        console.log(&#39;开始直播成功回掉&#39;, res);
+        console.log(&#39;开始直播成功回调&#39;, res);
       },
       fail: function (res) {
-        console.log(&#39;开始直播失败回掉&#39;, res);
+        console.log(&#39;开始直播失败回调&#39;, res);
       }
     });
 </code></pre>
@@ -710,10 +710,10 @@ live-pusher组件的原生属性，事件，方法等功能均可正常使用，
 
 <pre><code>ccsdk.publisher.liveStop({
       success: function (res) {
-        console.log(&#39;停止直播成功回掉&#39;, res);
+        console.log(&#39;停止直播成功回调&#39;, res);
       },
       fail: function (res) {
-        console.log(&#39;停止直播失败回掉&#39;, res);
+        console.log(&#39;停止直播失败回调&#39;, res);
       }
     });
 </code></pre>

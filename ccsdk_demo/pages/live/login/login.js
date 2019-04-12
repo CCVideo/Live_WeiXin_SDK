@@ -79,6 +79,11 @@ Page({
                 groupid: data
             });
         });
+
+        //live_time_info
+        cc.live.on("live_time_info", function (data) {
+            console.log("live_time_info", data);
+        });
     },
 
     //设置userId

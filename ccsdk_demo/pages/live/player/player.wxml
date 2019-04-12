@@ -233,7 +233,7 @@
                     <view class="input-box">
                         <input disabled="{{!netConnectState.state}}"
                                placeholder='{{netConnectState.state?"请输入文字":"网络已断开，无法输入聊天"}}' value="{{chatMsg}}"
-                               adjust-position="" bindfocus="bindChatInputFocus"
+                               adjust-position="{{adjustPosition}}" bindfocus="bindChatInputFocus"
                                bindblur="bindChatInputBlur" bindinput='bindChatInput'/>
                         <image src="../../../components/img/live/player/{{emoji}}.png"
                                bindtap="bindToggleEmoji"></image>
@@ -304,7 +304,7 @@
                             <image src="../../../components/img/live/player/{{eye}}.png"></image>
                         </view>
                         <input disabled="{{!netConnectState.state}}"
-                               placeholder='{{netConnectState.state?"请输入文字":"网络已断开，无法输入聊天"}}' adjust-position=""
+                               placeholder='{{netConnectState.state?"请输入文字":"网络已断开，无法输入聊天"}}' adjust-position="{{adjustPosition}}"
                                bindfocus="bindQuestionInputFocus"
                                bindblur="bindQuestionInputBlur" bindinput='bindQuestionAnswerInput'
                                value="{{question}}"/>

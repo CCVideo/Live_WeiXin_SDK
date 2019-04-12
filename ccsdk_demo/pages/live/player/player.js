@@ -109,7 +109,9 @@ Page({
         groupid: "",//分组信息
         toggleLottery: "none",
         toggleDocument: "block",
-        prizeDate: ""
+        prizeDate: "",
+        adjustPosition: false,
+        systemInfo: {}
     },
 
     alignCenter: function () {
@@ -595,6 +597,22 @@ Page({
         self.setData({
             windowHeight: systemInfo.windowHeight,
             windowWidth: systemInfo.windowWidth
+        });
+
+        wx.getSystemInfo({
+            success(res) {
+                // console.log(res.model)
+                // console.log(res.pixelRatio)
+                // console.log(res.windowWidth)
+                // console.log(res.windowHeight)
+                // console.log(res.language)
+                // console.log(res.version)
+                // console.log(res.platform)
+
+                self.setData({
+                    systemInfo: res
+                });
+            }
         });
     },
 
@@ -1498,6 +1516,14 @@ Page({
             emoji: "emoji",
             toggleEmoji: false
         });
+
+        if (this.data.systemInfo.model == "MI 5") {
+            setTimeout(() => {
+                this.setData({
+                    chatMsg: ""
+                });
+            }, 200);
+        }
     },
 
     //输入聊天信息

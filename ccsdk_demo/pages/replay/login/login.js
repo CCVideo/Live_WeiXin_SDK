@@ -36,6 +36,10 @@ Page({
         // //打印日志
         // cc.replay.setDebug(true);
 
+        cc.replay.on("live_time_info", function (data) {
+            console.log("live_time_info", data);
+        });
+
         cc.replay.on("player_load", function (data) {
             // console.log('player_load', data);
         });
