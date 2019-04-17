@@ -101,6 +101,8 @@ Component({
             clearTimeout(chatTimer);
 
             showChatMsgs(cacheMsgs);
+
+            // cc.replay.deleteEvent("chat_msg_sync");
         });
 
         function showChatMsgs(data) {

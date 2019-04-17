@@ -33,7 +33,7 @@ Page({
                         if (res.confirm) {
                             cc.publisher.liveStart({
                                 success: function (res) {
-                                    console.log('开始直播成功回掉', res);
+                                    console.log('开始直播成功回调', res);
                                     //配置直播参数
                                     if (data.beauty) {
                                         cc.publisher.setBeauty(8);
@@ -48,7 +48,7 @@ Page({
                                     cc.publisher.setResolution(data.resolution.resolution);
                                 },
                                 fail: function (res) {
-                                    console.log('开始直播失败回掉', res);
+                                    console.log('开始直播失败回调', res);
                                     wx.navigateBack({
                                         url: '../setting/setting'
                                     });
@@ -132,10 +132,10 @@ Page({
     onUnload: function () {
         cc.publisher.liveStop({
             success: function (res) {
-                console.log('停止直播成功回掉', res);
+                console.log('停止直播成功回调', res);
             },
             fail: function (res) {
-                console.log('停止直播失败回掉', res);
+                console.log('停止直播失败回调', res);
             }
         });
     }

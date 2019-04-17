@@ -162,7 +162,7 @@ Page({
                 if (!self.data.isLogin) {
                     return false;
                 }
-                console.log('登录成功回掉', res);
+                console.log('登录成功回调', res);
 
                 getApp().globalData.name = self.data.userName;
 
@@ -175,7 +175,7 @@ Page({
 
             },
             fail: function (res) {
-                console.log('登录失败回掉', res);
+                console.log('登录失败回调', res);
                 self.hint(res.message);
             }
         });

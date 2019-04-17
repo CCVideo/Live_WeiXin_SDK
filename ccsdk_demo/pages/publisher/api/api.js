@@ -57,10 +57,10 @@ Page({
             wx: wx,
             success: function (res) {
                 getApp().globalData.name = self.data.name;
-                console.log('登录成功回掉', res);
+                console.log('登录成功回调', res);
             },
             fail: function (res) {
-                console.log('登录失败回掉', res);
+                console.log('登录失败回调', res);
             }
         });
     },
@@ -68,10 +68,10 @@ Page({
     liveStart: function () {
         cc.publisher.liveStart({
             success: function (res) {
-                console.log('开始直播成功回掉', res);
+                console.log('开始直播成功回调', res);
             },
             fail: function (res) {
-                console.log('开始直播失败回掉', res);
+                console.log('开始直播失败回调', res);
             }
         });
     },
@@ -79,10 +79,10 @@ Page({
     liveStop: function () {
         cc.publisher.liveStop({
             success: function (res) {
-                console.log('停止直播成功回掉', res);
+                console.log('停止直播成功回调', res);
             },
             fail: function (res) {
-                console.log('停止直播失败回掉', res);
+                console.log('停止直播失败回调', res);
             }
         });
     },

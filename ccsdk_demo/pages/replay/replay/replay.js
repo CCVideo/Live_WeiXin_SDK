@@ -597,6 +597,7 @@ Page({
         this.setData({
             _stopInterval: true
         });
+        // cc.replay.deleteAllEvents();
     },
 
     /**

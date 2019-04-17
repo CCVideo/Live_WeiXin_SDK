@@ -41,108 +41,108 @@ var util = require("../module/util");
 var CONFIG = require("../module/config").LIVE;
 
 exports.ListenerEvent = function (loginData, io, stateMachine, observer, manager) {
-    //返回登陆信息
-    observer.sub("loginData", function () {
-        util.log("event_loginData", loginData);
+  //返回登陆信息
+  observer.sub("loginData", function () {
+    util.log("event_loginData", loginData);
 
-        /**
-         * @event live_time_info
-         * @description 获取直播开始时间
-         * @example
-         * ccsdk.live.on('live_time_info',function(data){
+    /**
+     * @event live_time_info
+     * @description 获取直播开始时间
+     * @example
+     * ccsdk.live.on('live_time_info',function(data){
          *    //console.log(data);
          * })
-         * 参数说明:
-         * {
+     * 参数说明:
+     * {
          *  liveDuration: 89,//开始直播绝对时间
          *  liveStartTime: "2019-04-11 17:11:35"//开始直播相对时间
          * }
-         *
-         */
+     *
+     */
 
-        var liveTimeData = loginData.datas.live;
-        observer.emit("live_time_info", liveTimeData);
+    var liveTimeData = loginData.datas.live;
+    observer.emit("live_time_info", liveTimeData);
 
-        /**
-         * @event template_info
-         * @description 模版信息
-         * @example
-         * ccsdk.live.on('template_info',function(data){
+    /**
+     * @event template_info
+     * @description 模版信息
+     * @example
+     * ccsdk.live.on('template_info',function(data){
          *    //必须在cc.live.init登录成功之前监听
          *    //console.log(data);
          * })
-         */
+     */
 
-        var templateData = loginData.datas.template;
-        observer.emit("template_info", templateData);
+    var templateData = loginData.datas.template;
+    observer.emit("template_info", templateData);
 
-        /**
-         * @event room_info
-         * @description 简介
-         * @example
-         * ccsdk.live.on('room_info',function(data){
+    /**
+     * @event room_info
+     * @description 简介
+     * @example
+     * ccsdk.live.on('room_info',function(data){
          * //必须在cc.live.init登录成功之前监听
    *    //console.log(data);
    * })
-         */
+     */
 
-        var roomData = loginData.datas.room;
-        roomData.desc = aspectFit(roomData.desc);
-        observer.emit("room_info", roomData);
+    var roomData = loginData.datas.room;
+    roomData.desc = aspectFit(roomData.desc);
+    observer.emit("room_info", roomData);
 
-        /**
-         * @event announcement_info
-         * @description 公告信息
-         * @example
-         * ccsdk.live.on('announcement_info',function(data){
+    /**
+     * @event announcement_info
+     * @description 公告信息
+     * @example
+     * ccsdk.live.on('announcement_info',function(data){
          * //必须在cc.live.init登录成功之前监听
    *    //console.log(data);
    * })
-         */
+     */
 
-        var announcement = loginData.datas.announcement;
-        observer.emit("announcement_info", announcement || "");
+    var announcement = loginData.datas.announcement;
+    observer.emit("announcement_info", announcement || "");
 
-        /**
-         * @event viewer_info
-         * @description 观看者信息
-         * @example
-         * ccsdk.live.on('viewer_info',function(data){
+    /**
+     * @event viewer_info
+     * @description 观看者信息
+     * @example
+     * ccsdk.live.on('viewer_info',function(data){
          * //必须在cc.live.init登录成功之前监听
    *    //console.log(data);
    * })
-         */
+     */
 
-        var viewerData = loginData.datas.viewer;
-        observer.emit("viewer_info", viewerData);
+    var viewerData = loginData.datas.viewer;
+    observer.emit("viewer_info", viewerData);
 
-        /**
-         * @event groupid_info
-         * @description 分组信息
-         * @example
-         * ccsdk.live.on('groupid_info',function(data){
+    /**
+     * @event groupid_info
+     * @description 分组信息
+     * @example
+     * ccsdk.live.on('groupid_info',function(data){
          * //必须在cc.live.init登录成功之前监听
    *    //console.log(data);
    * })
-         */
+     */
 
-        var groupid = loginData.datas.viewer.groupId;
-        observer.emit("groupid_info", groupid || "");
+    var groupid = loginData.datas.viewer.groupId;
+    observer.emit("groupid_info", groupid || "");
 
-    });
+  });
 
-    //处理socket事件
-    io.on("authorized", function () {
-            var events = CONFIG.PUBLIC_EVENT;
-            for (var i = 0; i &lt; events.length; i++) {
-                io.removeAllListeners(events[i]);
-            }
+  //处理socket事件
+  io.on("authorized", function () {
+      var events = CONFIG.PUBLIC_EVENT;
+      for (var i = 0; i &lt; events.length; i++) {
+        io.removeAllListeners(events[i]);
+      }
 
-            /**
-             * @event network_change
-             * @description 插件网络链接状态
-             * @example
-             * ccsdk.live.on('network_change',function(data){
+      /**
+       * @event network_change
+       * @description 插件网络链接状态
+       * @example
+       * ccsdk.live.on('network_change',function(data){
              *    //console.log(data);
              *    //state:链接状态 （true网络链接正常 ，false网络链接异常）
              *    //type：类型 connect登录链接成功 connect_error链接失败 reconnect断网重联成功 disconnect退出成功事件（quit）
@@ -151,103 +151,103 @@ exports.ListenerEvent = function (loginData, io, stateMachine, observer, manager
              *    //    type:'connect'
              *    //}
              * })
-             */
+       */
 
-            observer.sub("network_change", function (data) {
-                util.log("network_change", data);
-                observer.emit("network_change", data);
-            });
+      observer.sub("network_change", function (data) {
+        util.log("network_change", data);
+        observer.emit("network_change", data);
+      });
 
-            /**
-             * @event prize_send
-             * @description 发送奖品
-             * @example
-             * ccsdk.live.on('prize_send',function(data){
+      /**
+       * @event prize_send
+       * @description 发送奖品
+       * @example
+       * ccsdk.live.on('prize_send',function(data){
              *    //console.log(data);
              * })
-             * 参数说明：
-             * {
+       * 参数说明：
+       * {
              *      "viewerId": "qwer123123",//中奖者ID
              *      "viewerName": "张大大",//中奖者姓名
              *      "type": 1 // 1 奖杯 2 其他(后续扩展使用)
              *  }
-             */
+       */
 
-            io.on("prize_send", function (data) {
-                util.log("prize_send", data);
-                observer.emit("prize_send", data);
-            });
+      io.on("prize_send", function (data) {
+        util.log("prize_send", data);
+        observer.emit("prize_send", data);
+      });
 
-            /**
-             * @event ban_stream
-             * @description 禁播
-             * @example
-             * ccsdk.live.on('ban_stream',function(data){
+      /**
+       * @event ban_stream
+       * @description 禁播
+       * @example
+       * ccsdk.live.on('ban_stream',function(data){
              *    //console.log(data);
              * })
-             */
+       */
 
-            io.on("ban_stream", function (data) {
-                util.log("ban_stream", data);
-                observer.emit("ban_stream", data);
-            });
+      io.on("ban_stream", function (data) {
+        util.log("ban_stream", data);
+        observer.emit("ban_stream", data);
+      });
 
-            /**
-             * @event unban_stream
-             * @description 直播间解禁
-             * @example
-             * ccsdk.live.on('unban_stream',function(data){
+      /**
+       * @event unban_stream
+       * @description 直播间解禁
+       * @example
+       * ccsdk.live.on('unban_stream',function(data){
              *    //console.log(data);
              * })
-             */
+       */
 
-            io.on("unban_stream", function (data) {
-                util.log("unban_stream", data);
-                observer.emit("unban_stream", data);
-            });
+      io.on("unban_stream", function (data) {
+        util.log("unban_stream", data);
+        observer.emit("unban_stream", data);
+      });
 
-            setTimeout(function () {
-                io.emit("room_teachers");
-                io.emit("room_user_count");
-            }, CONFIG.TIME.ROOM_INFO_MIN_TIME);
-            setInterval(function () {
-                io.emit("room_teachers");
-                io.emit("room_user_count");
-            }, CONFIG.TIME.ROOM_INFO_MAX_TIME);
+      setTimeout(function () {
+        io.emit("room_teachers");
+        io.emit("room_user_count");
+      }, CONFIG.TIME.ROOM_INFO_MIN_TIME);
+      setInterval(function () {
+        io.emit("room_teachers");
+        io.emit("room_user_count");
+      }, CONFIG.TIME.ROOM_INFO_MAX_TIME);
 
-            /**
-             * @event room_teachers
-             * @description 获取讲师列表
-             * @example
-             * ccsdk.live.on('room_teachers',function(data){
+      /**
+       * @event room_teachers
+       * @description 获取讲师列表
+       * @example
+       * ccsdk.live.on('room_teachers',function(data){
              *    //console.log(data);
              * })
-             */
+       */
 
-            io.on("room_teachers", function (data) {
-                util.log("room_teachers", data);
-                observer.emit("room_teachers", data);
-            });
+      io.on("room_teachers", function (data) {
+        util.log("room_teachers", data);
+        observer.emit("room_teachers", data);
+      });
 
-            /**
-             * @event room_user_count
-             * @description 获得在线人数
-             * @example
-             * ccsdk.live.on('room_user_count',function(data){
+      /**
+       * @event room_user_count
+       * @description 获得在线人数
+       * @example
+       * ccsdk.live.on('room_user_count',function(data){
              *    //console.log(data);
              * })
-             */
+       */
 
-            io.on("room_user_count", function (data) {
-                util.log("room_user_count", data);
-                observer.emit("room_user_count", data);
-            });
+      io.on("room_user_count", function (data) {
+        util.log("room_user_count", data);
+        observer.emit("room_user_count", data);
+      });
 
-            /**
-             * @event switch_source
-             * @description 讲师切换观看直播数据源
-             * @example
-             * ccsdk.live.on('switch_source',function(data){
+      /**
+       * @event switch_source
+       * @description 讲师切换观看直播数据源
+       * @example
+       * ccsdk.live.on('switch_source',function(data){
              *    //console.log(data);
              *    //数据源类型|数据源值|应用场景
              *    //source_type| 0|默认值，无意义（待定）
@@ -259,80 +259,80 @@ exports.ListenerEvent = function (loginData, io, stateMachine, observer, manager
              *    //source_type|50|适用于主播将数据源切换为桌面共享模式
              *    //source_type|60|当以上场景无法满足要求时，主播可自定义场景（待定）
              * })
-             */
+       */
 
-            io.on("switch_source", function (data) {
-                util.log("switch_source", data);
-                observer.emit("switch_source", data);
-            });
+      io.on("switch_source", function (data) {
+        util.log("switch_source", data);
+        observer.emit("switch_source", data);
+      });
 
 
-            /**
-             * @event publish_stream
-             * @description 开始推流
-             * @example
-             * ccsdk.live.on('publish_stream',function(data){
+      /**
+       * @event publish_stream
+       * @description 开始推流
+       * @example
+       * ccsdk.live.on('publish_stream',function(data){
              *    //console.log(data);
              * })
-             */
+       */
 
-            io.on("publish_stream", function (j) {
-                var data = JSON.parse(j);
-                setTimeout(function () {
-                    util.log("publish_stream", data);
-                    observer.emit("publish_stream", data);
-                }, CONFIG.TIME.LIVE_DELAY);
-            });
+      io.on("publish_stream", function (j) {
+        var data = JSON.parse(j);
+        setTimeout(function () {
+          util.log("publish_stream", data);
+          observer.emit("publish_stream", data);
+        }, CONFIG.TIME.LIVE_DELAY);
+      });
 
-            /**
-             * @event end_stream
-             * @description 结束推流
-             * @example
-             * ccsdk.live.on('end_stream',function(data){
+      /**
+       * @event end_stream
+       * @description 结束推流
+       * @example
+       * ccsdk.live.on('end_stream',function(data){
              *    //console.log(data);
              * })
-             */
+       */
 
-            io.on("end_stream", function (j) {
-                var data = JSON.parse(j);
-                util.log("end_stream getDelayTime", getDelayTime(loginData));
-                setTimeout(function () {
-                    util.log("end_stream", data);
-                    observer.emit("end_stream", data);
-                    observer.pub("end_stream", data);
-                    hitoryMeta = {
-                        animation: [],
-                        answer: [],
-                        broadcast: [],
-                        chatLog: [],
-                        draw: [],
-                        isPublishing: "0",
-                        pageChange: [],
-                        question: []
-                    };
-                }, getDelayTime(loginData));
-            });
+      io.on("end_stream", function (j) {
+        var data = JSON.parse(j);
+        util.log("end_stream getDelayTime", getDelayTime(loginData));
+        setTimeout(function () {
+          util.log("end_stream", data);
+          observer.emit("end_stream", data);
+          observer.pub("end_stream", data);
+          hitoryMeta = {
+            animation: [],
+            answer: [],
+            broadcast: [],
+            chatLog: [],
+            draw: [],
+            isPublishing: "0",
+            pageChange: [],
+            question: []
+          };
+        }, getDelayTime(loginData));
+      });
 
-            /**
-             * @event announcement
-             * @description 公告
-             * @example
-             * ccsdk.live.on('announcement',function(data){
+      /**
+       * @event announcement
+       * @description 公告
+       * @example
+       * ccsdk.live.on('announcement',function(data){
              *    //console.log(data);
              * })
-             */
+       */
 
-            io.on("announcement", function (j) {
-                var data = JSON.parse(j);
-                util.log("announcement", data);
-                observer.emit("announcement", data);
-            });
+      io.on("announcement", function (j) {
+        var data = JSON.parse(j);
+        util.log("announcement", data);
+        observer.emit("announcement", data);
+      });
 
-            /**
-             * @event page_change
-             * @description 文档翻页
-             * @example
-             * ccsdk.live.on('page_change',function(data){
+      /**
+       * @event page_change
+       * @description 文档翻页
+       * @example
+       * ccsdk.live.on('page_change',function(data){
              *    //console.log(data);
              *    // 返回值说明
              *    // {
@@ -351,38 +351,38 @@ exports.ListenerEvent = function (loginData, io, stateMachine, observer, manager
              *    //    }
              *    //  }
              * })
-             */
+       */
 
-            io.on("page_change", function (j) {
-                var data = JSON.parse(j);
-                setTimeout(function () {
-                    observer.emit("page_change", data);
-                    observer.pub("draw_board_page_change", data);
-                }, getDelayTime(loginData));
-            });
+      io.on("page_change", function (j) {
+        var data = JSON.parse(j);
+        setTimeout(function () {
+          observer.emit("page_change", data);
+          observer.pub("draw_board_page_change", data);
+        }, getDelayTime(loginData));
+      });
 
-            /**
-             * @event draw
-             * @description 画板信息
-             * @example
-             * ccsdk.live.on('draw',function(data){
+      /**
+       * @event draw
+       * @description 画板信息
+       * @example
+       * ccsdk.live.on('draw',function(data){
              *    //console.log(data);
              * })
-             */
+       */
 
-            io.on("draw", function (j) {
-                var data = JSON.parse(j);
-                setTimeout(function () {
-                    observer.emit("draw", data);
-                    observer.pub("draw_board_draw", data);
-                }, getDelayTime(loginData));
-            });
+      io.on("draw", function (j) {
+        var data = JSON.parse(j);
+        setTimeout(function () {
+          observer.emit("draw", data);
+          observer.pub("draw_board_draw", data);
+        }, getDelayTime(loginData));
+      });
 
-            /**
-             * @event chat_message
-             * @description 收到公聊信息
-             * @example
-             * ccsdk.live.on('chat_message',function(data){
+      /**
+       * @event chat_message
+       * @description 收到公聊信息
+       * @example
+       * ccsdk.live.on('chat_message',function(data){
              *    //console.log(data);
              *    //返回值说明
              *    //{
@@ -399,18 +399,18 @@ exports.ListenerEvent = function (loginData, io, stateMachine, observer, manager
              *    //  "usercustommark": ""  // 聊天自定义参数
              *    //}
              * })
-             */
+       */
 
-            io.on("chat_message", function (data) {
-                util.log("chat_message", data);
-                observer.emit("chat_message", data);
-            });
+      io.on("chat_message", function (data) {
+        util.log("chat_message", data);
+        observer.emit("chat_message", data);
+      });
 
-            /**
-             * @event chat_log_manage
-             * @description 收到聊天管理列表
-             * @example
-             * ccsdk.live.on('chat_log_manage',function(data){
+      /**
+       * @event chat_log_manage
+       * @description 收到聊天管理列表
+       * @example
+       * ccsdk.live.on('chat_log_manage',function(data){
              *    //console.log(data);
              *    {
              *   "status": "0", // 聊天消息的状态 0 显示 1 不不显示 说明: 该参数值后续可能会进⾏行行扩
@@ -422,18 +422,18 @@ exports.ListenerEvent = function (loginData, io, stateMachine, observer, manager
              *    ]
              *    }
              * })
-             */
+       */
 
-            io.on("chat_log_manage", function (data) {
-                util.log("chat_log_manage", data);
-                observer.emit("chat_log_manage", data);
-            });
+      io.on("chat_log_manage", function (data) {
+        util.log("chat_log_manage", data);
+        observer.emit("chat_log_manage", data);
+      });
 
-            /**
-             * @event private_chat
-             * @description 接收私聊
-             * @example
-             * ccsdk.live.on('private_chat',function(data){
+      /**
+       * @event private_chat
+       * @description 接收私聊
+       * @example
+       * ccsdk.live.on('private_chat',function(data){
              *    //console.log(data);
              *    //返回值说明
              *    //{
@@ -446,18 +446,18 @@ exports.ListenerEvent = function (loginData, io, stateMachine, observer, manager
              *    //  "time":"17:26:24"  // 发送时间
              *    //}
              * })
-             */
+       */
 
-            io.on("private_chat", function (data) {
-                util.log("private_chat", data);
-                observer.emit("private_chat", data);
-            });
+      io.on("private_chat", function (data) {
+        util.log("private_chat", data);
+        observer.emit("private_chat", data);
+      });
 
-            /**
-             * @event private_chat_self
-             * @description 接收我发送的私聊
-             * @example
-             * ccsdk.live.on('private_chat_self',function(data){
+      /**
+       * @event private_chat_self
+       * @description 接收我发送的私聊
+       * @example
+       * ccsdk.live.on('private_chat_self',function(data){
              *    //console.log(data);
              *    //返回值说明
              *    //{
@@ -469,18 +469,18 @@ exports.ListenerEvent = function (loginData, io, stateMachine, observer, manager
              *    //  "time":"17:22:15"   // 发送时间
              *    //}
              * })
-             */
+       */
 
-            io.on("private_chat_self", function (data) {
-                util.log("private_chat_self", data);
-                observer.emit("private_chat_self", data);
-            });
+      io.on("private_chat_self", function (data) {
+        util.log("private_chat_self", data);
+        observer.emit("private_chat_self", data);
+      });
 
-            /**
-             * @event question
-             * @description 收到问题
-             * @example
-             * ccsdk.live.on('question',function(data){
+      /**
+       * @event question
+       * @description 收到问题
+       * @example
+       * ccsdk.live.on('question',function(data){
              *    //console.log(data);
              *    //返回值说明
              *    //{
@@ -496,32 +496,32 @@ exports.ListenerEvent = function (loginData, io, stateMachine, observer, manager
              *    //  }
              *    //}
              * })
-             */
+       */
 
-            io.on("question", function (contant) {
-                util.log("question", contant);
-                observer.emit("question", contant);
-            });
+      io.on("question", function (contant) {
+        util.log("question", contant);
+        observer.emit("question", contant);
+      });
 
-            /**
-             * @event publish_question
-             * @description 发布问答
-             * @example
-             * ccsdk.live.on('publish_question',function(data){
+      /**
+       * @event publish_question
+       * @description 发布问答
+       * @example
+       * ccsdk.live.on('publish_question',function(data){
              *    //console.log(data);
              * })
-             */
+       */
 
-            io.on("publish_question", function (contant) {
-                util.log("publish_question", contant);
-                observer.emit("publish_question", contant);
-            });
+      io.on("publish_question", function (contant) {
+        util.log("publish_question", contant);
+        observer.emit("publish_question", contant);
+      });
 
-            /**
-             * @event answer
-             * @description 收到回答
-             * @example
-             * ccsdk.live.on('answer',function(data){
+      /**
+       * @event answer
+       * @description 收到回答
+       * @example
+       * ccsdk.live.on('answer',function(data){
              *    //console.log(data);
              *    //返回值说明
              *    //{
@@ -540,422 +540,422 @@ exports.ListenerEvent = function (loginData, io, stateMachine, observer, manager
              *    //  }
              *    //}
              * })
-             */
+       */
 
-            io.on("answer", function (contant) {
-                util.log("answer", contant);
-                observer.emit("answer", contant);
-            });
+      io.on("answer", function (contant) {
+        util.log("answer", contant);
+        observer.emit("answer", contant);
+      });
 
-            /**
-             * @event ban_chat
-             * @description 直播间禁止个人聊天/直播间禁止聊天
-             * @example
-             * ccsdk.live.on('ban_chat',function(data){
+      /**
+       * @event ban_chat
+       * @description 直播间禁止个人聊天/直播间禁止聊天
+       * @example
+       * ccsdk.live.on('ban_chat',function(data){
              *    //直播间禁止个人聊天 : {"mode":1}
              *    //直播间禁止聊天 : {"mode":2}
              *    //console.log(data);
              * })
-             */
+       */
 
-            //直播间禁止个人聊天/直播间禁止聊天
-            io.on("ban_chat", function (contant) {
-                util.log("ban_chat", contant);
-                observer.emit("ban_chat", contant);
-            });
+      //直播间禁止个人聊天/直播间禁止聊天
+      io.on("ban_chat", function (contant) {
+        util.log("ban_chat", contant);
+        observer.emit("ban_chat", contant);
+      });
 
-            /**
-             * @event unban_chat
-             * @description 直播间解禁个人聊天/直播间解禁聊天
-             * @example
-             * ccsdk.live.on('unban_chat',function(data){
+      /**
+       * @event unban_chat
+       * @description 直播间解禁个人聊天/直播间解禁聊天
+       * @example
+       * ccsdk.live.on('unban_chat',function(data){
              *    //直播间解禁个人聊天 : {"mode":1}
              *    //直播间解禁聊天 : {"mode":2}
              *    //console.log(data);
              * })
-             */
+       */
 
-            //直播间禁止个人聊天/直播间解禁聊天
-            io.on("unban_chat", function (contant) {
-                util.log("unban_chat", contant);
-                observer.emit("unban_chat", contant);
-            });
+      //直播间禁止个人聊天/直播间解禁聊天
+      io.on("unban_chat", function (contant) {
+        util.log("unban_chat", contant);
+        observer.emit("unban_chat", contant);
+      });
 
-            /**
-             * @event information
-             * @description 全体禁言
-             * @example
-             * ccsdk.live.on('information',function(data){
+      /**
+       * @event information
+       * @description 全体禁言
+       * @example
+       * ccsdk.live.on('information',function(data){
              *    //console.log(data);
              * })
-             */
+       */
 
-            //全体禁言
-            io.on("information", function (contant) {
-                util.log("information", contant);
-                observer.emit("information", contant);
-            });
+      //全体禁言
+      io.on("information", function (contant) {
+        util.log("information", contant);
+        observer.emit("information", contant);
+      });
 
-            /**
-             * @event silence_user_chat_message
-             * @description 禁言
-             * @example
-             * ccsdk.live.on('silence_user_chat_message',function(data){
+      /**
+       * @event silence_user_chat_message
+       * @description 禁言
+       * @example
+       * ccsdk.live.on('silence_user_chat_message',function(data){
              *    //console.log(data);
              * })
-             */
+       */
 
-            //禁言
-            io.on("silence_user_chat_message", function (contant) {
-                util.log("silence_user_chat_message", contant);
-                observer.emit("silence_user_chat_message", contant);
-            });
+      //禁言
+      io.on("silence_user_chat_message", function (contant) {
+        util.log("silence_user_chat_message", contant);
+        observer.emit("silence_user_chat_message", contant);
+      });
 
-            /**
-             * @event kick_out
-             * @description 踢出事件
-             * @example
-             * ccsdk.live.on('kick_out',function(data){
+      /**
+       * @event kick_out
+       * @description 踢出事件
+       * @example
+       * ccsdk.live.on('kick_out',function(data){
              *    //console.log(data);
              * })
-             * 返回值说明：
-             * {
+       * 返回值说明：
+       * {
              *  "viewerid":"030329ad9b95457bb8b420e60b026483",//踢出id
              *  "kick_out_type":"20"
              * }
-             *
-             */
+       *
+       */
 
-            io.on("kick_out", function (data) {
-                util.log("kick_out", data);
-                observer.emit("kick_out", data);
-            });
+      io.on("kick_out", function (data) {
+        util.log("kick_out", data);
+        observer.emit("kick_out", data);
+      });
 
-            /**
-             * @event on_switch_video_doc
-             * @description 切换视频文档区域
-             * @example
-             * ccsdk.live.on('on_switch_video_doc',function(isVideoMain){
+      /**
+       * @event on_switch_video_doc
+       * @description 切换视频文档区域
+       * @example
+       * ccsdk.live.on('on_switch_video_doc',function(isVideoMain){
              *    //console.log(isVideoMain);
              *    //isVideoMain：视频是否为主区域
              * })
-             */
-            var once = true;
-            io.on("room_setting", function (json) {
-                if (once) {
-                    once = false;
-                    return;
-                }
-                util.log("on_switch_video_doc", json);
-                var obj = JSON.parse(json);
-                var data = {};
-                data.layout_video_main = obj.layout_video_main === "true" ? true : false;
-                observer.emit("on_switch_video_doc", data);
-            });
+       */
+      var once = true;
+      io.on("room_setting", function (json) {
+        if (once) {
+          once = false;
+          return;
+        }
+        util.log("on_switch_video_doc", json);
+        var obj = JSON.parse(json);
+        var data = {};
+        data.layout_video_main = obj.layout_video_main === "true" ? true : false;
+        observer.emit("on_switch_video_doc", data);
+      });
 
-            /**
-             * @event practice_publish
-             * @description 发布随堂测事件
-             * @example
-             * ccsdk.live.on('practice_publish',function(data){
+      /**
+       * @event practice_publish
+       * @description 发布随堂测事件
+       * @example
+       * ccsdk.live.on('practice_publish',function(data){
              *    //console.log(data);
              * })
-             * 返回值说明：
-             * {
+       * 返回值说明：
+       * {
              *  "practiceId": "XXXX2345" // 随堂测ID
              * }
-             *
-             */
+       *
+       */
 
-            io.on("practice_publish", function (data) {
-                util.log("practice_publish", data);
-                observer.emit("practice_publish", data);
-            });
+      io.on("practice_publish", function (data) {
+        util.log("practice_publish", data);
+        observer.emit("practice_publish", data);
+      });
 
-            /**
-             * @event practice_stop
-             * @description 停止随堂测
-             * @example
-             * ccsdk.live.on('practice_stop',function(data){
+      /**
+       * @event practice_stop
+       * @description 停止随堂测
+       * @example
+       * ccsdk.live.on('practice_stop',function(data){
              *    //console.log(data);
              * })
-             * 返回值说明：
-             * {
+       * 返回值说明：
+       * {
              *  "practiceId": "231312343" // 随堂测ID
              * }
-             *
-             */
+       *
+       */
 
-            io.on("practice_stop", function (data) {
-                util.log("practice_stop", data);
-                observer.emit("practice_stop", data);
-            });
+      io.on("practice_stop", function (data) {
+        util.log("practice_stop", data);
+        observer.emit("practice_stop", data);
+      });
 
-            /**
-             * @event practice_close
-             * @description 关闭随堂测
-             * @example
-             * ccsdk.live.on('practice_close',function(data){
+      /**
+       * @event practice_close
+       * @description 关闭随堂测
+       * @example
+       * ccsdk.live.on('practice_close',function(data){
              *    //console.log(data);
              * })
-             * 返回值说明：
-             * {
+       * 返回值说明：
+       * {
              *  "practiceId": "231312343" // 随堂测ID
              * }
-             *
-             */
+       *
+       */
 
-            io.on("practice_close", function (data) {
-                util.log("practice_close", data);
-                observer.emit("practice_close", data);
-            });
+      io.on("practice_close", function (data) {
+        util.log("practice_close", data);
+        observer.emit("practice_close", data);
+      });
 
-            /**
-             * @event start_lottery
-             * @description 开始抽奖
-             * @example
-             * ccsdk.live.on('start_lottery',function(data){
+      /**
+       * @event start_lottery
+       * @description 开始抽奖
+       * @example
+       * ccsdk.live.on('start_lottery',function(data){
              *    //console.log(data);
              * })
-             * 返回值说明：
-             * "{\"lotteryId\":\"20190115104237294\"}"//抽奖ID
-             *
-             */
+       * 返回值说明：
+       * "{\"lotteryId\":\"20190115104237294\"}"//抽奖ID
+       *
+       */
 
-            io.on("start_lottery", function (data) {
-                util.log("start_lottery", data);
-                observer.emit("start_lottery", data);
-            });
+      io.on("start_lottery", function (data) {
+        util.log("start_lottery", data);
+        observer.emit("start_lottery", data);
+      });
 
-            /**
-             * @event win_lottery
-             * @description 中奖结果
-             * @example
-             * ccsdk.live.on('win_lottery',function(data){
+      /**
+       * @event win_lottery
+       * @description 中奖结果
+       * @example
+       * ccsdk.live.on('win_lottery',function(data){
              *    //console.log(data);
              * })
-             * 返回值说明：
-             * {
+       * 返回值说明：
+       * {
              *  "lotteryCode": "4993",//中奖码
              *  "lotteryId": "20190115104237294",//抽奖ID
              *  "remainNum": "0",
              *  "viewerId": "aa0617146ab04ef3b110177ca46276d4",//中奖者ID
              *  "viewerName": "sdfdd"//中奖者昵称
              * };
-             *
-             */
+       *
+       */
 
-            io.on("win_lottery", function (data) {
-                util.log("win_lottery", data);
-                observer.emit("win_lottery", data);
-            });
+      io.on("win_lottery", function (data) {
+        util.log("win_lottery", data);
+        observer.emit("win_lottery", data);
+      });
 
-            /**
-             * @event stop_lottery
-             * @description 结束抽奖
-             * @example
-             * ccsdk.live.on('stop_lottery',function(data){
+      /**
+       * @event stop_lottery
+       * @description 结束抽奖
+       * @example
+       * ccsdk.live.on('stop_lottery',function(data){
              *    //console.log(data);
              * })
-             * 返回值说明：
-             * "{\"lotteryId\":\"20190115104237294\"}"//抽奖ID
-             *
-             */
+       * 返回值说明：
+       * "{\"lotteryId\":\"20190115104237294\"}"//抽奖ID
+       *
+       */
 
-            io.on("stop_lottery", function (data) {
-                util.log("stop_lottery", data);
-                observer.emit("stop_lottery", data);
-            });
+      io.on("stop_lottery", function (data) {
+        util.log("stop_lottery", data);
+        observer.emit("stop_lottery", data);
+      });
 
-            observer.sub("send_chat_message", function (msg) {
-                //发送聊天
-                util.log("send_chat_message", msg);
-                io.emit("chat_message", msg);
-            });
+      observer.sub("send_chat_message", function (msg) {
+        //发送聊天
+        util.log("send_chat_message", msg);
+        io.emit("chat_message", msg);
+      });
 
-            observer.sub("send_private_chat", function (msg) {
-                //发送聊天
-                util.log("send_private_chat", msg);
-                io.emit("private_chat", msg);
-            });
+      observer.sub("send_private_chat", function (msg) {
+        //发送聊天
+        util.log("send_private_chat", msg);
+        io.emit("private_chat", msg);
+      });
 
-            //提问
-            observer.sub("send_question", function (contant) {
-                util.log("send_question", contant);
-                io.emit("question", contant);
-            });
-        }
-    );
+      //提问
+      observer.sub("send_question", function (contant) {
+        util.log("send_question", contant);
+        io.emit("question", contant);
+      });
+    }
+  );
 
-    //返回历史消息
-    var hitoryMeta = {};
-    var drawboardReady = false;
-    var isRealtimeFirst = false;
-    observer.sub("historyData", function (data) {
+  //返回历史消息
+  var hitoryMeta = {};
+  var drawboardReady = false;
+  var isRealtimeFirst = false;
+  observer.sub("historyData", function (data) {
 
-        util.log("event_historyData", data);
+    util.log("event_historyData", data);
 
-        hitoryMeta = data.datas.meta;
+    hitoryMeta = data.datas.meta;
 
-        isRealtimeFirst = manager.isRealtimeFirst();
+    isRealtimeFirst = manager.isRealtimeFirst();
 
-        var options = {
-            hitoryMeta: hitoryMeta,
-            isRealtimeFirst: isRealtimeFirst
-        };
+    var options = {
+      hitoryMeta: hitoryMeta,
+      isRealtimeFirst: isRealtimeFirst
+    };
 
-        observer.sub("drawingboard_init", function () {
-            observer.pub("draw_board_history", options);
-            drawboardReady = true;
-        });
-
-        if (drawboardReady) {
-            observer.pub("draw_board_history", options);
-        }
-
-        /**
-         * @event isBan_log
-         * @description 是否封禁，1 表示封禁 0 表示未封禁
-         * @example
-         * ccsdk.live.on('isBan_log',function(data){
-     *    //console.log(data);
-     * })
-         */
-
-        var isBanMeta = data.datas.room.isBan;
-        // var isBanMeta = 0;
-        observer.emit("isBan_log", isBanMeta);
-
-        /**
-         * @event page_change_log
-         * @description 文档翻页历史信息
-         * @example
-         * ccsdk.live.on('page_change_log',function(data){
-     *    //console.log(data);
-     * })
-         */
-
-            //文档翻页
-        var pageMeta = getPageMeta(data);
-        if (pageMeta) {
-            observer.emit("page_change_log", pageMeta);
-        }
-
-        /**
-         * @event draw_log
-         * @description 画板历史信息
-         * @example
-         * ccsdk.live.on('draw_log',function(data){
-     *    //console.log(data);
-     * })
-         */
-
-            //画笔信息
-        var drawMeta = data.datas.meta.draw;
-        observer.emit("draw_log", drawMeta);
-
-        /**
-         * @event question_log
-         * @description 提问历史信息
-         * @example
-         * ccsdk.live.on('question_log',function(data){
-     *    //console.log(data);
-     * })
-         */
-
-            //提问
-        var questionMeta = data.datas.meta.question;
-        observer.emit("question_log", questionMeta);
-
-        /**
-         * @event answer_log
-         * @description 答案历史信息
-         * @example
-         * ccsdk.live.on('answer_log',function(data){
-     *    //console.log(data);
-     * })
-         */
-
-            //回答
-        var answerMeta = data.datas.meta.answer;
-        observer.emit("answer_log", answerMeta);
-
-        /**
-         * @event chat_log
-         * @description 聊天历史信息
-         * @example
-         * ccsdk.live.on('chat_log',function(data){
-         *    //console.log(data);
-         * })
-         */
-
-            //聊天
-        var chatLogMeta = data.datas.meta.chatLog;
-        observer.emit("chat_log", chatLogMeta);
-
-        /**
-         * @event isPublishing_log
-         * @description 是否开始直播
-         * @example
-         * ccsdk.live.on('isPublishing_log',function(data){
-         *    //console.log(data);
-         * })
-         */
-
-            //直播是否开始 isPublishing 0、1
-        var isPublishingMeta = data.datas.meta.isPublishing;
-        observer.emit("isPublishing_log", isPublishingMeta);
+    observer.sub("drawingboard_init", function () {
+      observer.pub("draw_board_history", options);
+      drawboardReady = true;
     });
+
+    if (!drawboardReady) {
+      observer.pub("draw_board_history", options);
+    }
+
+    /**
+     * @event isBan_log
+     * @description 是否封禁，1 表示封禁 0 表示未封禁
+     * @example
+     * ccsdk.live.on('isBan_log',function(data){
+     *    //console.log(data);
+     * })
+     */
+
+    var isBanMeta = data.datas.room.isBan;
+    // var isBanMeta = 0;
+    observer.emit("isBan_log", isBanMeta);
+
+    /**
+     * @event page_change_log
+     * @description 文档翻页历史信息
+     * @example
+     * ccsdk.live.on('page_change_log',function(data){
+     *    //console.log(data);
+     * })
+     */
+
+      //文档翻页
+    var pageMeta = getPageMeta(data);
+    if (pageMeta) {
+      observer.emit("page_change_log", pageMeta);
+    }
+
+    /**
+     * @event draw_log
+     * @description 画板历史信息
+     * @example
+     * ccsdk.live.on('draw_log',function(data){
+     *    //console.log(data);
+     * })
+     */
+
+      //画笔信息
+    var drawMeta = data.datas.meta.draw;
+    observer.emit("draw_log", drawMeta);
+
+    /**
+     * @event question_log
+     * @description 提问历史信息
+     * @example
+     * ccsdk.live.on('question_log',function(data){
+     *    //console.log(data);
+     * })
+     */
+
+      //提问
+    var questionMeta = data.datas.meta.question;
+    observer.emit("question_log", questionMeta);
+
+    /**
+     * @event answer_log
+     * @description 答案历史信息
+     * @example
+     * ccsdk.live.on('answer_log',function(data){
+     *    //console.log(data);
+     * })
+     */
+
+      //回答
+    var answerMeta = data.datas.meta.answer;
+    observer.emit("answer_log", answerMeta);
+
+    /**
+     * @event chat_log
+     * @description 聊天历史信息
+     * @example
+     * ccsdk.live.on('chat_log',function(data){
+         *    //console.log(data);
+         * })
+     */
+
+      //聊天
+    var chatLogMeta = data.datas.meta.chatLog;
+    observer.emit("chat_log", chatLogMeta);
+
+    /**
+     * @event isPublishing_log
+     * @description 是否开始直播
+     * @example
+     * ccsdk.live.on('isPublishing_log',function(data){
+         *    //console.log(data);
+         * })
+     */
+
+      //直播是否开始 isPublishing 0、1
+    var isPublishingMeta = data.datas.meta.isPublishing;
+    observer.emit("isPublishing_log", isPublishingMeta);
+  });
 };
 
 var getDelayTime = function (loginData) {
-    var b = loginData.datas.room.delayTime;
+  var b = loginData.datas.room.delayTime;
 
-    if (isNaN(b) || b &lt; 0) {
-        b = 0;
-    }
+  if (isNaN(b) || b &lt; 0) {
+    b = 0;
+  }
 
-    if (b) {
-        // util.log("非低延迟模式");
-    } else {
-        // util.log("低延迟模式");
-    }
+  if (b) {
+    // util.log("非低延迟模式");
+  } else {
+    // util.log("低延迟模式");
+  }
 
-    if (b === 0) {
-        return 1300;
-    } else {
-        return 3000;
-    }
+  if (b === 0) {
+    return 1300;
+  } else {
+    return 3000;
+  }
 };
 
 var getPageMeta = function (data) {
-    var meta = data.datas.meta;
-    var pageChange = meta.pageChange;
-    if (pageChange &amp;&amp; pageChange.length) {
-        pageChange.sort(function (p1, p2) {
-            return parseInt(p1.time) - parseInt(p2.time);
-        });
-        var lastPage = pageChange[pageChange.length - 1];
-        return lastPage;
-    }
+  var meta = data.datas.meta;
+  var pageChange = meta.pageChange;
+  if (pageChange &amp;&amp; pageChange.length) {
+    pageChange.sort(function (p1, p2) {
+      return parseInt(p1.time) - parseInt(p2.time);
+    });
+    var lastPage = pageChange[pageChange.length - 1];
+    return lastPage;
+  }
 };
 
 var aspectFit = function (desc) {
-    if (typeof desc !== "string") {
-        util.log("简介格式有误");
-        return false;
-    }
-    var _desc = desc;
-    var isImg = /&lt;img/ig;
-    if (!isImg.test(_desc)) {
-        util.log("简介无图片，无需适配处理");
-        return _desc;
-    }
-    var info = wx.getSystemInfoSync();
-    var windowWidth = info.windowWidth - 30;
-    var aspect = " style=\"max-width: " + windowWidth + "px;height: auto\" ";
-    _desc = _desc.replace(/&lt;img/gi, "&lt;img" + aspect);
+  if (typeof desc !== "string") {
+    util.log("简介格式有误");
+    return false;
+  }
+  var _desc = desc;
+  var isImg = /&lt;img/ig;
+  if (!isImg.test(_desc)) {
+    util.log("简介无图片，无需适配处理");
     return _desc;
+  }
+  var info = wx.getSystemInfoSync();
+  var windowWidth = info.windowWidth - 30;
+  var aspect = " style=\"max-width: " + windowWidth + "px;height: auto\" ";
+  _desc = _desc.replace(/&lt;img/gi, "&lt;img" + aspect);
+  return _desc;
 };
 
 </code></pre>
@@ -968,13 +968,13 @@ var aspectFit = function (desc) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:announcement">announcement</a></li><li><a href="global.html#event:announcement_info">announcement_info</a></li><li><a href="global.html#event:answer">answer</a></li><li><a href="global.html#event:answer_log">answer_log</a></li><li><a href="global.html#event:ban_chat">ban_chat</a></li><li><a href="global.html#event:ban_stream">ban_stream</a></li><li><a href="global.html#event:chat_log">chat_log</a></li><li><a href="global.html#event:chat_log_manage">chat_log_manage</a></li><li><a href="global.html#event:chat_message">chat_message</a></li><li><a href="global.html#event:draw">draw</a></li><li><a href="global.html#event:draw_log">draw_log</a></li><li><a href="global.html#event:end_stream">end_stream</a></li><li><a href="global.html#event:groupid_info">groupid_info</a></li><li><a href="global.html#event:information">information</a></li><li><a href="global.html#event:isBan_log">isBan_log</a></li><li><a href="global.html#event:isPublishing_log">isPublishing_log</a></li><li><a href="global.html#event:kick_out">kick_out</a></li><li><a href="global.html#event:live_time_info">live_time_info</a></li><li><a href="global.html#event:network_change">network_change</a></li><li><a href="global.html#event:on_switch_video_doc">on_switch_video_doc</a></li><li><a href="global.html#event:page_change">page_change</a></li><li><a href="global.html#event:page_change_log">page_change_log</a></li><li><a href="global.html#event:practice_close">practice_close</a></li><li><a href="global.html#event:practice_publish">practice_publish</a></li><li><a href="global.html#event:practice_stop">practice_stop</a></li><li><a href="global.html#event:private_chat">private_chat</a></li><li><a href="global.html#event:private_chat_self">private_chat_self</a></li><li><a href="global.html#event:prize_send">prize_send</a></li><li><a href="global.html#event:publish_question">publish_question</a></li><li><a href="global.html#event:publish_stream">publish_stream</a></li><li><a href="global.html#event:question">question</a></li><li><a href="global.html#event:question_log">question_log</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:room_teachers">room_teachers</a></li><li><a href="global.html#event:room_user_count">room_user_count</a></li><li><a href="global.html#event:silence_user_chat_message">silence_user_chat_message</a></li><li><a href="global.html#event:start_lottery">start_lottery</a></li><li><a href="global.html#event:stop_lottery">stop_lottery</a></li><li><a href="global.html#event:switch_source">switch_source</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:unban_chat">unban_chat</a></li><li><a href="global.html#event:unban_stream">unban_stream</a></li><li><a href="global.html#event:viewer_info">viewer_info</a></li><li><a href="global.html#event:win_lottery">win_lottery</a></li></ul><h3>Global</h3><ul><li><a href="global.html#configLivePlayer">configLivePlayer</a></li><li><a href="global.html#getPracticeInfo">getPracticeInfo</a></li><li><a href="global.html#getPracticeRank">getPracticeRank</a></li><li><a href="global.html#getPracticeStatis">getPracticeStatis</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isRealtimeFirst">isRealtimeFirst</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#reportPlaying">reportPlaying</a></li><li><a href="global.html#reportPlayResult">reportPlayResult</a></li><li><a href="global.html#sendPrivateChatMsg">sendPrivateChatMsg</a></li><li><a href="global.html#sendPublicChatMsg">sendPublicChatMsg</a></li><li><a href="global.html#sendQuestionMsg">sendQuestionMsg</a></li><li><a href="global.html#setDebug">setDebug</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#streamMode">streamMode</a></li><li><a href="global.html#streamRoute">streamRoute</a></li><li><a href="global.html#submitPractice">submitPractice</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:announcement">announcement</a></li><li><a href="global.html#event:announcement_info">announcement_info</a></li><li><a href="global.html#event:answer">answer</a></li><li><a href="global.html#event:answer_log">answer_log</a></li><li><a href="global.html#event:ban_chat">ban_chat</a></li><li><a href="global.html#event:ban_stream">ban_stream</a></li><li><a href="global.html#event:chat_log">chat_log</a></li><li><a href="global.html#event:chat_log_manage">chat_log_manage</a></li><li><a href="global.html#event:chat_message">chat_message</a></li><li><a href="global.html#event:draw">draw</a></li><li><a href="global.html#event:draw_log">draw_log</a></li><li><a href="global.html#event:end_stream">end_stream</a></li><li><a href="global.html#event:groupid_info">groupid_info</a></li><li><a href="global.html#event:information">information</a></li><li><a href="global.html#event:isBan_log">isBan_log</a></li><li><a href="global.html#event:isPublishing_log">isPublishing_log</a></li><li><a href="global.html#event:kick_out">kick_out</a></li><li><a href="global.html#event:live_time_info">live_time_info</a></li><li><a href="global.html#event:network_change">network_change</a></li><li><a href="global.html#event:on_switch_video_doc">on_switch_video_doc</a></li><li><a href="global.html#event:page_change">page_change</a></li><li><a href="global.html#event:page_change_log">page_change_log</a></li><li><a href="global.html#event:practice_close">practice_close</a></li><li><a href="global.html#event:practice_publish">practice_publish</a></li><li><a href="global.html#event:practice_stop">practice_stop</a></li><li><a href="global.html#event:private_chat">private_chat</a></li><li><a href="global.html#event:private_chat_self">private_chat_self</a></li><li><a href="global.html#event:prize_send">prize_send</a></li><li><a href="global.html#event:publish_question">publish_question</a></li><li><a href="global.html#event:publish_stream">publish_stream</a></li><li><a href="global.html#event:question">question</a></li><li><a href="global.html#event:question_log">question_log</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:room_teachers">room_teachers</a></li><li><a href="global.html#event:room_user_count">room_user_count</a></li><li><a href="global.html#event:silence_user_chat_message">silence_user_chat_message</a></li><li><a href="global.html#event:start_lottery">start_lottery</a></li><li><a href="global.html#event:stop_lottery">stop_lottery</a></li><li><a href="global.html#event:switch_source">switch_source</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:unban_chat">unban_chat</a></li><li><a href="global.html#event:unban_stream">unban_stream</a></li><li><a href="global.html#event:viewer_info">viewer_info</a></li><li><a href="global.html#event:win_lottery">win_lottery</a></li></ul><h3>Global</h3><ul><li><a href="global.html#configLivePlayer">configLivePlayer</a></li><li><a href="global.html#deleteAllEvents">deleteAllEvents</a></li><li><a href="global.html#deleteEvent">deleteEvent</a></li><li><a href="global.html#getPracticeInfo">getPracticeInfo</a></li><li><a href="global.html#getPracticeRank">getPracticeRank</a></li><li><a href="global.html#getPracticeStatis">getPracticeStatis</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isRealtimeFirst">isRealtimeFirst</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#reportPlaying">reportPlaying</a></li><li><a href="global.html#reportPlayResult">reportPlayResult</a></li><li><a href="global.html#sendPrivateChatMsg">sendPrivateChatMsg</a></li><li><a href="global.html#sendPublicChatMsg">sendPublicChatMsg</a></li><li><a href="global.html#sendQuestionMsg">sendQuestionMsg</a></li><li><a href="global.html#setDebug">setDebug</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#streamMode">streamMode</a></li><li><a href="global.html#streamRoute">streamRoute</a></li><li><a href="global.html#submitPractice">submitPractice</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Apr 11 2019 17:56:55 GMT+0800 (China Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Apr 16 2019 17:04:31 GMT+0800 (China Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

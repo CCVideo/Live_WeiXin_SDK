@@ -999,7 +999,7 @@ Page({
             self.configQA();
         });
 
-        //禁止播放回掉
+        //禁止播放回调
         cc.live.on("ban_stream", function () {
             self.banStream();
         });
@@ -1021,11 +1021,14 @@ Page({
 
         //在线人数
         cc.live.on("room_user_count", function (data) {
+            console.log("room_user_count",data);
             //人数长度限制
             var n = data.length > 8 ? data.split("").splice(0, 8).join("") + "+" : data;
             self.setData({
                 peoples: n
             });
+            //删除监听事件
+            // cc.live.deleteEvent("room_user_count");
         });
 
         //禁言
@@ -1637,7 +1640,7 @@ Page({
         }
     },
 
-    //全屏事件回掉
+    //全屏事件回调
     bindFullScreenChange: function (e) {
         if (e.detail.fullScreen) {
             this.setData({
