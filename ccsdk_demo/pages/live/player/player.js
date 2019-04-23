@@ -1019,6 +1019,11 @@ Page({
             self.endStream();
         });
 
+        //聊天支持获取自定义消息
+        cc.live.on("custom_message", function (data) {
+          console.log("custom_message",data)
+        });
+
         //在线人数
         cc.live.on("room_user_count", function (data) {
             console.log("room_user_count",data);
