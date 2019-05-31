@@ -8,7 +8,7 @@
   },
   "plugins": {
     "ccsdk": {
-      "version": "1.3.5",
+      "version": "1.3.6",
       "provider": "wxf7200395f7f6b071"
     }
   },
@@ -41,5 +41,6 @@
         "api/api"
       ]
     }
-  ]
+  ],
+  "sitemapLocation": "sitemap.json"
 }

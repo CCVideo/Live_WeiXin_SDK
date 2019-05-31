@@ -12,15 +12,17 @@
 		"nodeModules": false
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.6.5",
+	"libVersion": "2.7.1",
 	"appid": "wx245c121cc7c4028d",
-	"projectname": "wxapp_demo_1.3.5",
+	"projectname": "wxapp_demo_1.3.6",
 	"isGameTourist": false,
 	"scripts": {
 		"beforeCompile": "",
 		"beforePreview": "",
 		"beforeUpload": ""
 	},
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
 	"condition": {
 		"search": {
 			"current": -1,
