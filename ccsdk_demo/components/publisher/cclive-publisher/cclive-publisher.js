@@ -99,6 +99,17 @@ Component({
             var myEventOption = {};
             this.triggerEvent('Close', myEventDetail, myEventOption);
         },
+        setChatContentHeight () {
+          const self = this
+          const query = wx.createSelectorQuery().in(self)
+          query.select('#chatContent').boundingClientRect(function (res) {
+            wx.nextTick(() => {
+              self.setData({
+                chatContentHeight: res.height
+              })
+            })
+          }).exec()
+        }
     },
     //组件的初始数据
     data: {
@@ -115,6 +126,7 @@ Component({
         name: 'name',
         number: 0,
         chatData: [],
+        chatContentHeight: 0,
         scrollHeight: 0,
         chatLengthMax: -30,
         netConnectState: {
@@ -200,6 +212,8 @@ Component({
             });
         });
 
+        this.setChatContentHeight()
+
         var chatMsg = [];
         //收到公聊
         cc.publisher.on('chat_message', function (data) {
@@ -221,21 +235,20 @@ Component({
         }
 
         function scrollChatList() {
-            getScrollHeight(function (height) {
-                self.setData({
-                    scrollHeight: height
-                });
-            });
+            getScrollHeight();
         }
 
-        function getScrollHeight(fn) {
-            var scrollHeight = 0;
+        function getScrollHeight() {
             var query = wx.createSelectorQuery().in(self);
-            query.selectAll('.chat-cell').boundingClientRect(function (res) {
-                for (var i = 0; i < res.length; i++) {
-                    scrollHeight += res[i].height + 10;
+            query.select('#chatWrapper').boundingClientRect(function (res) {
+                const top = res.height - self.data.chatContentHeight
+                if (top > 0) {
+                    wx.nextTick(() => {
+                        self.setData({
+                          scrollHeight: top
+                        })
+                    })
                 }
-                fn(scrollHeight);
             }).exec();
         }
 

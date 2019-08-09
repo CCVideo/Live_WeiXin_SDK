@@ -10,8 +10,6 @@ Page({
         lastTapTimeoutFunc: null,
         //直播模式：视频模式、文档模式 videoModel documentModel
         model: "videoModel",
-        minCache: 0,
-        maxCache: 1,
         dbView: true,
         dbWidth: "100%",
         dbHeight: "423rpx",
@@ -111,7 +109,9 @@ Page({
         toggleDocument: "block",
         prizeDate: "",
         adjustPosition: false,
-        systemInfo: {}
+        systemInfo: {},
+        minCache: 1,
+        maxCache: 2
     },
 
     alignCenter: function () {
@@ -1167,9 +1167,9 @@ Page({
         var updateQuestion = function () {
             var arr = [];
             for (var i = 0; i < questionsCache.length; i++) {
-                if (questionsCache[i].display) {
+                // if (questionsCache[i].display) {
                     arr.push(questionsCache[i]);
-                }
+                // }
             }
             showQuestionAnswer(arr);
         };
@@ -1480,6 +1480,14 @@ Page({
     bindSendQuestionMsg: function () {
         if (!this.checkoutInput(this.data.question)) {
             return;
+        }
+        if (!this.data.isPublishing) {
+          wx.showToast({
+            title: '直播未开始，无法提问',
+            icon: 'none',
+            duration: 2000
+          })
+          return false
         }
         cc.live.sendQuestionMsg(this.data.question);
         this.setData({

@@ -23,15 +23,15 @@
 
             <cover-view class="body" style="visibility:{{chat}}">
 
-                <cover-view class="chat-content" scroll-top="{{scrollHeight}}">
-
-                    <cover-view class="chat-cell" wx:for="{{chatData}}" wx:key="">
-                        <!--({{item.time}})-->
-                        <cover-view class="message">
-                            {{item.fromusername?item.fromusername+'对'+item.tousername+'说':item.username}}：{{item.msg}}
+                <cover-view class="chat-content" id="chatContent" scroll-top="{{scrollHeight}}">
+                    <cover-view id="chatWrapper">
+                        <cover-view class="chat-cell" wx:for="{{chatData}}" wx:key="">
+                            <!--({{item.time}})-->
+                            <cover-view class="message">
+                                {{item.fromusername?item.fromusername+'对'+item.tousername+'说':item.username}}：{{item.msg}}
+                            </cover-view>
                         </cover-view>
                     </cover-view>
-
                 </cover-view>
 
                 <cover-view class="footer" style="visibility:{{control}}">

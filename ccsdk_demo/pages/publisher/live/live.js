@@ -7,6 +7,13 @@ Page({
         beautySwitch: true
     },
 
+    onShow: function () {
+        //保持常亮状态
+        wx.setKeepScreenOn({
+            keepScreenOn: true
+        });
+    },
+
     onLoad: function (options) {
 
         //保持常亮状态

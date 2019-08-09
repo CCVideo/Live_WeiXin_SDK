@@ -101,17 +101,28 @@ Component({
                 return;
             }
 
+            if(this.data.Duration != newVal.detail.duration){
+                this.setData({
+                  duration: this._formatSeconds(newVal.detail.duration),
+                  Duration: newVal.detail.duration,
+                });
+            }
+
+            if (newVal.detail.duration > 0 && this.isPristineDuration) {
+              this.setData({
+                duration: this._formatSeconds(newVal.detail.duration),
+                Duration: newVal.detail.duration,
+              });
+              this.isPristineDuration = false;
+            }
+
+            if (this.data.Duration && newVal.detail.currentTime >= this.data.Duration) {
+                newVal.detail.currentTime = this.data.Duration
+            }
+
             this.setData({
                 currentTime: this._formatSeconds(newVal.detail.currentTime)
             });
-
-            if (newVal.detail.duration > 0 && this.isPristineDuration) {
-                this.setData({
-                    duration: this._formatSeconds(newVal.detail.duration),
-                    Duration: newVal.detail.duration,
-                });
-                this.isPristineDuration = false;
-            }
 
             if (this.data.progressActive) {
                 this.setData({
