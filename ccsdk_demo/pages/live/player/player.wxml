@@ -109,7 +109,7 @@
           bindstatechange="statechange"
           bindnetstatus="netstatus"
           min-cache="{{minCache}}"
-          max-cache="{{maxCache}}}"
+          max-cache="{{maxCache}}"
       >
         <!--网络链接信息-->
         <cover-view class="net-info"

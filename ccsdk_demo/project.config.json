@@ -6,15 +6,27 @@
 	"setting": {
 		"urlCheck": true,
 		"es6": true,
+		"enhance": true,
 		"postcss": true,
 		"minified": true,
 		"newFeature": true,
-		"nodeModules": false
+		"coverView": true,
+		"nodeModules": true,
+		"autoAudits": true,
+		"uglifyFileName": true,
+		"checkInvalidKey": true,
+		"checkSiteMap": true,
+		"uploadWithSourceMap": true,
+		"babelSetting": {
+			"ignore": [],
+			"disablePlugins": [],
+			"outputPath": ""
+		}
 	},
 	"compileType": "miniprogram",
 	"libVersion": "2.8.0",
 	"appid": "wx245c121cc7c4028d",
-	"projectname": "wxapp_demo_1.3.7",
+	"projectname": "wxapp_demo_1.3.8",
 	"isGameTourist": false,
 	"scripts": {
 		"beforeCompile": "",
