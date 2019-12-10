@@ -1,0 +1,7 @@
+/* components/live/punch.wxss */
+
+.punch-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+}

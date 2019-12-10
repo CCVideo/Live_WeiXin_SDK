@@ -344,11 +344,13 @@
     <!--抽奖-->
     <lottery style="display: {{toggleLottery}}" class="lottery" viewerId="{{viewerId}}" bindclose="bindClose"
              bindstartlottery="startLottery" bindwinlottery="winLottery" bindmisslottery="missLottery"></lottery>
-    <!--随堂测-->
-    <!--<practice></practice>-->
+    <!--随堂测beta-->
+    <practice></practice>
     <!--奖杯-->
     <prize class="prize" prizeDate="{{prizeDate}}" style="display: {{prizeDate?'block':'none'}}"
            bindhideprize="bindHidePrize"></prize>
+    <!--打卡-->
+    <punch></punch>
   </view>
 </view>
 

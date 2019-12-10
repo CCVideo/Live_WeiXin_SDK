@@ -89,7 +89,92 @@ function Manager(stateMachine, observer) {
     };
 
     /**
-     * @description 获取随堂测信息
+     * @description 获取随堂测信息v2
+     * @param {Object} options 获取随堂测信息参数对象
+     * @property {String} options.practiceId 随堂测ID，如果为空，则默认为当前正在发布随堂测信息，可选
+     * @property {String} options.mark 0：旧版 1：新版(后进入者在随堂测停止未关闭状态下，也可获取统计和排行信息)，默认为 1，可选
+     * @property {Function} options.success 获取随堂测信息成功回调函数，可选
+     * @property {Function} options.fail 获取随堂测信息失败回调函数，可选
+     * @example
+     * cc.live.getPracticeInformation({
+     *     practiceId: "XXXX2345",
+     *     mark: 1,
+     *     success: function (res) {
+     *         console.log("getPracticeInfo success", res);
+     *         //成功返回数据示例及说明:
+     *         {
+     *           "datas": {
+     *               "isExist": 1, // 是否存在正在发布的随堂测 1 存在 0 不存在
+     *               "practice": {
+     *                   "id": "xxx", // 随堂测ID
+     *                   "isAnswered": "false",//是否回答过随堂测
+     *                   "type": 2, // 随堂测类型: 0 判断 1 单选 2 多选
+     *                   "status": 1, // 随堂测状态: 1 发布中 2 停止发布
+     *                   "options": [
+     *                       {
+     *                           "id": "xxx", // 选项ID
+     *                           "index": 0 // 选项索引 0 代表第一个选项,其他依次类推
+     *                       },
+     *                       {
+     *                           "id": "xxxy",
+     *                           "index": 1
+     *                       }
+     *                   ]
+     *               }
+     *           },
+     *           "errorCode": 0,
+     *           "msg": "操作成功",
+     *           "success": true
+     *       }
+     *
+     *       //失败返回数据示例及说明:
+     *       {
+     *           "datas": {},
+     *           "errorCode": 具体的错误码,
+     *           "msg": "具体的错误信息",
+     *           "success": false
+     *       }
+     *     },
+     *     fail: function (error) {
+     *         console.log("getPracticeInfo fail", error);
+     *     }
+     * });
+     */
+
+    this.getPracticeInformation = function (options) {
+        if (typeof options !== "object") {
+            return false;
+        }
+        var sessionId = _login.getData().datas.viewer.key;
+        var mark = (typeof options.mark !== 'undefined') ? options.mark : 1
+        var param = {
+            practiceId: options.practiceId || "",
+            sessionId: sessionId,
+            mark: mark
+        };
+        wx.request({
+            data: param,
+            method: "GET",
+            url: CONFIG.URL.PRACTICE,
+            success: function (res) {
+                util.log("getPracticeInfo success", res);
+                if (options.success) {
+                    options.success(res);
+                }
+            },
+
+            //请求超时
+            fail: function (error) {
+                util.log("getPracticeInfo fail", error);
+                if (options.fail) {
+                    options.fail(error);
+                }
+            }
+        });
+    };
+
+    /**
+     * @description 获取随堂测信息（已废弃，请使用getPracticeInformation方法）
      * @param {Object} options 获取随堂测信息参数对象
      * @property {String} options.practiceId 随堂测ID，如果为空，则默认为当前正在发布随堂测信息，可选
      * @property {Function} options.success 获取随堂测信息成功回调函数，可选
@@ -144,7 +229,6 @@ function Manager(stateMachine, observer) {
             return false;
         }
         var sessionId = _login.getData().datas.viewer.key;
-
         var param = {
             practiceId: options.practiceId || "",
             sessionId: sessionId
@@ -434,6 +518,140 @@ function Manager(stateMachine, observer) {
     };
 
     /**
+     * @description 观看端查询打卡，后进入者错过实时打卡消息时，需要通过主动请求的方式获取打卡信息
+     * @param {Object} options 查询打卡参数对象
+     * @property {Function} options.success 查询打卡成功回调
+     * @property {Function} options.fail 查询打卡超时回调
+     * @example
+     * cc.live.viewerPunch({
+     *  success: function() {
+     *  },
+     *  fail: function() {
+     *  }
+     * })
+     *
+     * //返回示例
+     *
+     * //成功
+     * {
+     *    "success": true, // 接口处理结果。true=成功；false=失败。
+     *    "error": {
+     *      code: 10000014, // 错误代码
+     *      message: "存在无效入参" // 错误描述
+     *    },
+     *    "data": { // 成功时返回的数据。当success=true时存在。
+     *      "isExists": true, // 是否存在进行中的打卡互动。 true=存在；false=不存在。
+     *      "punch": { // 打卡信息。当isExists=true时存在。
+     *        "id": "ASASDAWADFWQASDF", // 打卡ID。
+     *        "expireTime": "2019-10-23 10:05:00", // 打卡到期时间，格式为yyyy-MM-dd HH:mm:ss。当打卡没有设置时长时，返回结果没有该项。
+     *        "remainDuration": 236 // 打卡剩余时长，单位：秒。-1表示没有设置打卡时长，剩余无限时长。
+     *      }
+     *    }
+     * }
+     *
+     * //错误代码说明
+     * 10000015 |	platform invalid liveroom |	某些操作只能操作直播平台的直播间，如果传入非直播平台的直播间则报该错误信息
+     * 10000007 |	live not exists	| 不是正在进行的直播
+     * 10000013 |	component error	| 数据库异常
+     * 10000014 |	exist invalid param	| 存在无效入参
+     * 10000017 |	third-party component error	| 请求第三方组件错误
+     */
+
+    this.viewerPunch = function (options) {
+        if (typeof options !== "object") {
+            return false;
+        }
+        var datas = _login.getData().datas;
+        var sessionId = datas.viewer.key;
+        var params = {
+            sessionId: sessionId
+        };
+        wx.request({
+            data: params,
+            method: "GET",
+            url: CONFIG.URL.VIEWER_PUNCH,
+            success: function (res) {
+                util.log("viewerPunch success", res);
+                options.success &amp;&amp; options.success(res.data)
+            },
+            //请求超时
+            fail: function (error) {
+                util.log("viewerPunch fail", error);
+                options.fail &amp;&amp; options.fail(error)
+            }
+        });
+        return true;
+    };
+
+    /**
+     * @description 提交打卡
+     * @param {Object} options 提交打卡参数对象
+     * @property {String} options.punchId 打卡ID
+     * @property {Function} options.success 打卡成功回调
+     * @property {Function} options.fail 打卡超时回调
+     * @example
+     * cc.live.commitPunch({
+     *  punchId: 'XXXXXX'
+     *  success: function() {
+     *  },
+     *  fail: function() {
+     *  }
+     * })
+     *
+     * //返回示例
+     *
+     * //成功
+     * {
+     *    "success": true, // 接口处理结果。true=成功；false=失败。
+     *    "error": { // 失败时的错误信息。当success=false时存在。
+     *      "code": 10000013, // 错误代码。
+     *      "message": "component error" // 错误消息。
+     *    }
+     *    "data": { // 成功时返回的数据。当success=true时存在。
+     *      "isRepeat": false, // 是否重复提交打卡。 true=是；false=否。
+     *    }
+     * }
+     *
+     * //错误代码说明
+     * 10000015 |	platform invalid liveroom	| 某些操作只能操作直播平台的直播间，如果传入非直播平台的直播间则报该错误信息
+     * 10000007 |	live not exists	| 不是正在进行的直播
+     * 10000013 |	component error	| 数据库异常
+     * 10000014 |	exist invalid param	| 存在无效参数
+     * 10000017 |	third-party component error	| 请求第三方组件错误
+     * 20070004 |	punch not exists	| 打卡互动不存在
+     * 20070005 |	punch is stop	| 打卡互动已结束
+     * 20070006 |	punch is expired	| 打卡互动已过期，但未结束
+     * 20070007 |	not a punch viewer	| 不在打卡学员列表中
+     */
+
+    this.commitPunch = function (options) {
+        if (typeof options !== "object") {
+            return false;
+        }
+        var datas = _login.getData().datas
+        var sessionId = datas.viewer.key;
+        var params = {
+            sessionId: sessionId,
+            punchId: options.punchId
+        };
+        wx.request({
+            data: params,
+            method: "GET",
+            url: CONFIG.URL.COMMIT_PUNCH,
+            success: function (res) {
+                util.log("commitPunch success", res);
+                options.success &amp;&amp; options.success(res.data)
+            },
+            //请求超时
+            fail: function (error) {
+                util.log("commitPunch fail", error);
+                options.fail &amp;&amp; options.fail(error)
+            }
+        });
+        return true;
+    };
+
+    /**
      * @description 开启开发者调试功能
      * @param {Boolean} b 是否开启debug调试功能
      * @default false
@@ -493,6 +711,40 @@ function Manager(stateMachine, observer) {
 
     };
 
+    /*
+     * @description 主动获取流地址，自定义配置播放器时使用，如uni-app，调用此方法自定义播放器则不需要再调用configLivePlayer方法配置播放器
+     * @param {Object} options 获取流地址参数对象
+     * @property {Object} options.livePlayerContext live-player上下文LivePlayerContext对象，通过wx.createLivePlayerContext方法创建，可选，如果不传部分功能可能无法通过插件调用，需要自行封装
+     * @property {Function} options.success 获取流地址成功回调
+     * @property {Function} options.fail 获取流地址失败回调
+     * @example
+     * cc.live.getPlayerUrls({
+     *  success: function(datas) {
+     *      // datas 流地址信息
+     *  },
+     *  fail: function(error) {
+     *  }
+     * })
+     */
+
+    this.getPlayerUrls = function(options) {
+        if (typeof options !== "object") {
+            return false;
+        }
+        _player.getPlayerUrlAsync(function(urls) {
+            util.log("getPlayerUrlAsync", urls);
+            if (urls) {
+                options.success &amp;&amp; options.success(urls);
+                if (options.livePlayerContext) {
+                    util.log("livePlayerContext", options.livePlayerContext);
+                    setCtx(options.livePlayerContext);
+                }
+            } else {
+                options.fail &amp;&amp; options.fail(urls);
+            }
+        });
+    };
+
     /**
      * @description 发送公聊
      * @param {String} msg 聊天信息，聊天信息必须是字符串并小于300字且不能为空
@@ -513,7 +765,7 @@ function Manager(stateMachine, observer) {
             return false;
         }
 
-        //发送聊天 
+        //发送聊天
         observer.pub("send_chat_message", msg);
 
         return true;
@@ -841,7 +1093,8 @@ function Manager(stateMachine, observer) {
 
 }
 
-module.exports = Manager;</code></pre>
+module.exports = Manager;
+</code></pre>
         </article>
     </section>
 
@@ -851,13 +1104,13 @@ module.exports = Manager;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:announcement">announcement</a></li><li><a href="global.html#event:announcement_info">announcement_info</a></li><li><a href="global.html#event:answer">answer</a></li><li><a href="global.html#event:answer_log">answer_log</a></li><li><a href="global.html#event:ban_chat">ban_chat</a></li><li><a href="global.html#event:ban_stream">ban_stream</a></li><li><a href="global.html#event:chat_log">chat_log</a></li><li><a href="global.html#event:chat_log_manage">chat_log_manage</a></li><li><a href="global.html#event:chat_message">chat_message</a></li><li><a href="global.html#event:custom_message">custom_message</a></li><li><a href="global.html#event:draw">draw</a></li><li><a href="global.html#event:draw_log">draw_log</a></li><li><a href="global.html#event:end_stream">end_stream</a></li><li><a href="global.html#event:groupid_info">groupid_info</a></li><li><a href="global.html#event:information">information</a></li><li><a href="global.html#event:isBan_log">isBan_log</a></li><li><a href="global.html#event:isPublishing_log">isPublishing_log</a></li><li><a href="global.html#event:kick_out">kick_out</a></li><li><a href="global.html#event:live_time_info">live_time_info</a></li><li><a href="global.html#event:network_change">network_change</a></li><li><a href="global.html#event:on_switch_video_doc">on_switch_video_doc</a></li><li><a href="global.html#event:page_change">page_change</a></li><li><a href="global.html#event:page_change_log">page_change_log</a></li><li><a href="global.html#event:practice_close">practice_close</a></li><li><a href="global.html#event:practice_publish">practice_publish</a></li><li><a href="global.html#event:practice_stop">practice_stop</a></li><li><a href="global.html#event:private_chat">private_chat</a></li><li><a href="global.html#event:private_chat_self">private_chat_self</a></li><li><a href="global.html#event:prize_send">prize_send</a></li><li><a href="global.html#event:publish_question">publish_question</a></li><li><a href="global.html#event:publish_stream">publish_stream</a></li><li><a href="global.html#event:question">question</a></li><li><a href="global.html#event:question_log">question_log</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:room_teachers">room_teachers</a></li><li><a href="global.html#event:room_user_count">room_user_count</a></li><li><a href="global.html#event:silence_user_chat_message">silence_user_chat_message</a></li><li><a href="global.html#event:start_lottery">start_lottery</a></li><li><a href="global.html#event:stop_lottery">stop_lottery</a></li><li><a href="global.html#event:switch_source">switch_source</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:unban_chat">unban_chat</a></li><li><a href="global.html#event:unban_stream">unban_stream</a></li><li><a href="global.html#event:viewer_info">viewer_info</a></li><li><a href="global.html#event:win_lottery">win_lottery</a></li></ul><h3>Global</h3><ul><li><a href="global.html#configLivePlayer">configLivePlayer</a></li><li><a href="global.html#deleteAllEvents">deleteAllEvents</a></li><li><a href="global.html#deleteEvent">deleteEvent</a></li><li><a href="global.html#getPracticeInfo">getPracticeInfo</a></li><li><a href="global.html#getPracticeRank">getPracticeRank</a></li><li><a href="global.html#getPracticeStatis">getPracticeStatis</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isRealtimeFirst">isRealtimeFirst</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#reportPlaying">reportPlaying</a></li><li><a href="global.html#reportPlayResult">reportPlayResult</a></li><li><a href="global.html#sendPrivateChatMsg">sendPrivateChatMsg</a></li><li><a href="global.html#sendPublicChatMsg">sendPublicChatMsg</a></li><li><a href="global.html#sendQuestionMsg">sendQuestionMsg</a></li><li><a href="global.html#setDebug">setDebug</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#streamMode">streamMode</a></li><li><a href="global.html#streamRoute">streamRoute</a></li><li><a href="global.html#submitPractice">submitPractice</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:announcement">announcement</a></li><li><a href="global.html#event:announcement_info">announcement_info</a></li><li><a href="global.html#event:answer">answer</a></li><li><a href="global.html#event:answer_log">answer_log</a></li><li><a href="global.html#event:ban_chat">ban_chat</a></li><li><a href="global.html#event:ban_stream">ban_stream</a></li><li><a href="global.html#event:chat_log">chat_log</a></li><li><a href="global.html#event:chat_log_manage">chat_log_manage</a></li><li><a href="global.html#event:chat_message">chat_message</a></li><li><a href="global.html#event:custom_message">custom_message</a></li><li><a href="global.html#event:draw">draw</a></li><li><a href="global.html#event:draw_log">draw_log</a></li><li><a href="global.html#event:end_stream">end_stream</a></li><li><a href="global.html#event:groupid_info">groupid_info</a></li><li><a href="global.html#event:information">information</a></li><li><a href="global.html#event:isBan_log">isBan_log</a></li><li><a href="global.html#event:isPublishing_log">isPublishing_log</a></li><li><a href="global.html#event:kick_out">kick_out</a></li><li><a href="global.html#event:live_time_info">live_time_info</a></li><li><a href="global.html#event:network_change">network_change</a></li><li><a href="global.html#event:on_switch_video_doc">on_switch_video_doc</a></li><li><a href="global.html#event:page_change">page_change</a></li><li><a href="global.html#event:page_change_log">page_change_log</a></li><li><a href="global.html#event:practice_close">practice_close</a></li><li><a href="global.html#event:practice_publish">practice_publish</a></li><li><a href="global.html#event:practice_stop">practice_stop</a></li><li><a href="global.html#event:private_chat">private_chat</a></li><li><a href="global.html#event:private_chat_self">private_chat_self</a></li><li><a href="global.html#event:prize_send">prize_send</a></li><li><a href="global.html#event:publish_question">publish_question</a></li><li><a href="global.html#event:publish_stream">publish_stream</a></li><li><a href="global.html#event:question">question</a></li><li><a href="global.html#event:question_log">question_log</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:room_teachers">room_teachers</a></li><li><a href="global.html#event:room_user_count">room_user_count</a></li><li><a href="global.html#event:silence_user_chat_message">silence_user_chat_message</a></li><li><a href="global.html#event:start_lottery">start_lottery</a></li><li><a href="global.html#event:start_punch">start_punch</a></li><li><a href="global.html#event:stop_lottery">stop_lottery</a></li><li><a href="global.html#event:stop_punch">stop_punch</a></li><li><a href="global.html#event:switch_source">switch_source</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:unban_chat">unban_chat</a></li><li><a href="global.html#event:unban_stream">unban_stream</a></li><li><a href="global.html#event:viewer_info">viewer_info</a></li><li><a href="global.html#event:win_lottery">win_lottery</a></li></ul><h3>Global</h3><ul><li><a href="global.html#commitPunch">commitPunch</a></li><li><a href="global.html#configLivePlayer">configLivePlayer</a></li><li><a href="global.html#deleteAllEvents">deleteAllEvents</a></li><li><a href="global.html#deleteEvent">deleteEvent</a></li><li><a href="global.html#getPracticeInfo">getPracticeInfo</a></li><li><a href="global.html#getPracticeInformation">getPracticeInformation</a></li><li><a href="global.html#getPracticeRank">getPracticeRank</a></li><li><a href="global.html#getPracticeStatis">getPracticeStatis</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isRealtimeFirst">isRealtimeFirst</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#reportPlaying">reportPlaying</a></li><li><a href="global.html#reportPlayResult">reportPlayResult</a></li><li><a href="global.html#sendPrivateChatMsg">sendPrivateChatMsg</a></li><li><a href="global.html#sendPublicChatMsg">sendPublicChatMsg</a></li><li><a href="global.html#sendQuestionMsg">sendQuestionMsg</a></li><li><a href="global.html#setDebug">setDebug</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#streamMode">streamMode</a></li><li><a href="global.html#streamRoute">streamRoute</a></li><li><a href="global.html#submitPractice">submitPractice</a></li><li><a href="global.html#viewerPunch">viewerPunch</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Aug 16 2019 16:14:05 GMT+0800 (GMT+08:00)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Tue Dec 10 2019 10:37:20 GMT+0800 (GMT+08:00)
 </footer>
 
 <script> prettyPrint(); </script>

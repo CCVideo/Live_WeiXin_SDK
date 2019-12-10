@@ -1,6 +1,6 @@
-<button bindtap="toggleParctice" class="toggle-parctice">显/隐随堂测</button>
+<button bindtap="toggleParctice" class="toggle-parctice" wx:if="{{show}}">显/隐随堂测</button>
 <view class="container" style="display: {{toggleContainer}}">
-    <button bindtap="getPracticeInfo">获取随堂测信息</button>
+    <button bindtap="getPractice">获取随堂测信息</button>
     <button bindtap="submitPractice">提交随堂测</button>
     <button bindtap="getPracticeStatis">获取随堂测统计信息</button>
     <button bindtap="getPracticeRank">获取排名数据</button>

@@ -143,6 +143,15 @@ Component({
         //配置live-publisher
         self.ctx = cc.publisher.configLivePublisher(self, wx);
 
+        cc.publisher.getPusherUrls({
+            success: function(datas) {
+                console.log("getPlayerUrls success", datas);
+            },
+            fail: function(error) {
+                console.log("getPlayerUrls fail", error);
+            }
+        });
+
         //网络链接监听
         var netConnectStateTimer = {};
         cc.publisher.on('network_change', function (data) {

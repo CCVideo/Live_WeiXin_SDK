@@ -24,9 +24,9 @@
 		}
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.8.0",
+	"libVersion": "2.9.4",
 	"appid": "wx245c121cc7c4028d",
-	"projectname": "wxapp_demo_1.3.8",
+	"projectname": "wxapp-demo",
 	"isGameTourist": false,
 	"scripts": {
 		"beforeCompile": "",

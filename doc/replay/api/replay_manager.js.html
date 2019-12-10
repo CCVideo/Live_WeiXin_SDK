@@ -27,11 +27,13 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>var util = require("./util");
+var CONFIG = require("./config");
 
 function Manager(state, emitter, player) {
     var _videoContext = {};
     var _nowTime = {};
     var _io = {};
+    var _params = {};
 
     this.setIo = function (io) {
         _io = io;
@@ -40,6 +42,14 @@ function Manager(state, emitter, player) {
     var getIo = function () {
         return _io;
     };
+
+    this.setParams = function (params) {
+        _params = params;
+    }
+
+    var getParams = function () {
+        return _params;
+    }
 
     /**
      * @description 退出登录
@@ -151,10 +161,44 @@ function Manager(state, emitter, player) {
         });
 
         var videoContext = wx.createVideoContext("player", client);
-        var json = {videoContext: videoContext};
+        var json = { videoContext: videoContext };
         emitter.emit("player_load", json);
         _videoContext = videoContext;
         return videoContext;
+    };
+
+    /*
+     * @description 主动获取回放地址，自定义配置播放器时使用，如uni-app，调用此方法自定义播放器则不需要再调用configPlayer方法配置播放器
+     * @param {Object} options 获取回放地址参数对象
+     * @property {Object} options.videoContext video上下文VideoContext对象，通过wx.createVideoContext方法创建，可选，如果不传部分功能可能无法通过插件调用，需要自行封装
+     * @property {Function} options.success 获取回放地址成功回调
+     * @property {Function} options.fail 获取放回地址失败回调
+     * @example
+     * cc.replay.getPlayerUrls({
+     *  success: function(datas) {
+     *     // datas 流地址信息
+     *  },
+     *  fail: function(error) {
+     *  }
+     * })
+     */
+
+    this.getPlayerUrls = function(options) {
+        if (typeof options !== "object") {
+            return false;
+        }
+        player.getPlayerUrlAsync(function(urls) {
+            util.log("getPlayerUrlAsync", urls);
+            if (urls) {
+                options.success &amp;&amp; options.success(urls);
+                if (options.videoContext) {
+                    util.log("videoContext", options.videoContext);
+                    _videoContext = options.videoContext;
+                }
+            } else {
+                options.fail &amp;&amp; options.fail(urls);
+            }
+        });
     };
 
     /**
@@ -320,9 +364,147 @@ function Manager(state, emitter, player) {
         _videoContext.exitFullScreen();
         return true;
     };
+
+    /**
+     * @description 随堂测回放数据接口
+     * @param {Object} options 获取随堂测信息参数对象
+     * @property {String} options.recordId 回放ID，如果为空，默认为当前回放recordId，可选
+     * @property {Function} options.success 获取随堂测信息成功或失败回调函数，可选
+     * @property {Function} options.fail 获取随堂测信息超时回调函数，可选
+     * @example
+     * cc.replay.getPracticeInformation({
+     *     recordId: "B9AC45XXXXXX27C8",
+     *     success: function (res) {
+     *         console.log("getPracticeInformation success", res);
+     *     },
+     *     fail: function (error) {
+     *         console.log("getPracticeInformation fail", error);
+     *     }
+     * });
+     *
+     *  //成功返回数据示例及说明:
+     *  {
+     *     "data": {
+     *       "msg": "操作成功", "success": true, "datas": {
+     *         "practiceInfo": [{ // 随堂测信息
+     *           "statistic": { // 统计数据
+     *             "id": "74510692DA495409", // 随堂测ID
+     *             "type": 1, // 随堂测类型（判断：0，单选：1，多选：2）
+     *             "status": 2,
+     *             "stopTime": 23,
+     *             "answerPersonNum": 1, // 回答人数
+     *             "correctPersonNum": 0,// 回答正确人数
+     *             "correctRate": "0%",
+     *             "options": [
+     *               {
+     *                 "index": 0, // 选项（0,1,2,3）
+     *                 "id": "A7118944E2F19CDD", // 选项ID
+     *                 "isCorrect": 0, // 是否正确选项（1：是   0：否）
+     *                 "count": 0, // 此选项选择人数
+     *                 "percent": "0%" // 此选项选择人数百分比
+     *               },
+     *               {
+     *                 "index": 3,
+     *                 "id": "652E3C89F50B5663",
+     *                 "isCorrect": 0,
+     *                 "count": 0,
+     *                 "percent": "0%"
+     *               }]
+     *           },
+     *           "rank": { // 排名数据
+     *             "id": "74510692DA495409",
+     *             "ranking": [{
+     *               viewerId: "off",
+     *               viewerName: "officia aliqua",
+     *               costTime: 58643045.29621923
+     *             },
+     *               {
+     *                 viewerId: "enim nostrud in eiusmod",
+     *                 viewerName: "adipisicing occaecat irure",
+     *                 costTime: -21589241.096567407
+     *               }]
+     *           },
+     *           "base": { // 基础信息（选项，相对回放开始时间等）
+     *             "id": "74510692DA495409", // 随堂测ID
+     *             "type": 1, // 随堂测类型（判断：0，单选：1，多选：2）
+     *             "status": 3, // 状态（正在发布：1  已停止：2）
+     *             "publishTime": "2019-11-18 16:17:34", // 发布时间
+     *             "recordId": 0, // 回放ID
+     *             "recordTime": 1705, // 相对于回放开始时长
+     *             "stopRecordTime": 1728, // 相对于回放开始停止时长
+     *             "closeRecordTime": 1731, // 相对于回放开始关闭时长
+     *             "options": [ // 选项
+     *               {
+     *                 "index": 0, // 选项（0,1,2,3）
+     *                 "id": "A7118944E2F19CDD", // 选项ID
+     *                 "isCorrect": 0 // 是否正确（1：正确0：错误）
+     *               },
+     *               {
+     *                 "index": 1,
+     *                 "id": "AE18816786F40D0B",
+     *                 "isCorrect": 1
+     *               },
+     *               {
+     *                 "index": 2, "id": "45846C794FB51849", "isCorrect": 0
+     *               },
+     *               {
+     *                 "index": 3,
+     *                 "id": "652E3C89F50B5663",
+     *                 "isCorrect": 0
+     *               }
+     *             ]
+     *           }
+     *         }]
+     *       }, "errorCode": 0
+     *     },
+     *     "header": {
+     *       "Server": "nginx/1.6.2",
+     *       "Date": "Mon, 18 Nov 2019 08:35:50 GMT",
+     *       "Content-Type": "application/json;charset=UTF-8",
+     *       "Transfer-Encoding": "chunked",
+     *       "Connection": "keep-alive",
+     *       "Access-Control-Allow-Origin": "*",
+     *       "Access-Control-Allow-Credentials": "true",
+     *       "Content-Encoding": "gzip"
+     *     },
+     *     "statusCode": 200,
+     *     "cookies": [],
+     *     "errMsg": "request:ok"
+     *  };
+     */
+
+    this.getPracticeInformation = function (options) {
+        if (typeof options !== "object") {
+            return false;
+        }
+        var params = getParams();
+        var recordId = (typeof options.recordId !== "undefined") ? options.recordId : params.recordId;
+        var param = {
+            sessionId: params.sessionId,
+            recordId: recordId
+        };
+        wx.request({
+            data: param,
+            method: "GET",
+            url: CONFIG.URL.PRACTICE,
+            success: function (res) {
+                util.log("getPracticeInformation success", res);
+                if (options.success) {
+                    options.success(res.data);
+                }
+            },
+            fail: function (error) {
+                util.log("getPracticeInformation fail", error);
+                if (options.fail) {
+                    options.fail(error);
+                }
+            }
+        });
+    };
 }
 
-module.exports = Manager;</code></pre>
+module.exports = Manager;
+</code></pre>
         </article>
     </section>
 
@@ -332,13 +514,13 @@ module.exports = Manager;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:answers_info">answers_info</a></li><li><a href="global.html#event:chat_msg_info">chat_msg_info</a></li><li><a href="global.html#event:chat_msg_sync">chat_msg_sync</a></li><li><a href="global.html#event:groupid_info">groupid_info</a></li><li><a href="global.html#event:live_time_info">live_time_info</a></li><li><a href="global.html#event:meta_draws_ready">meta_draws_ready</a></li><li><a href="global.html#event:network_change">network_change</a></li><li><a href="global.html#event:pages_change_sync">pages_change_sync</a></li><li><a href="global.html#event:pages_info">pages_info</a></li><li><a href="global.html#event:questions_info">questions_info</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:viewerid_info">viewerid_info</a></li></ul><h3>Global</h3><ul><li><a href="global.html#configPlayer">configPlayer</a></li><li><a href="global.html#deleteAllEvents">deleteAllEvents</a></li><li><a href="global.html#deleteEvent">deleteEvent</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#exitFullScreen">exitFullScreen</a></li><li><a href="global.html#getCurrentTime">getCurrentTime</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isDrawRequestTime">isDrawRequestTime</a></li><li><a href="global.html#isRealtimeFirst">isRealtimeFirst</a></li><li><a href="global.html#listenerended">listenerended</a></li><li><a href="global.html#listenerplay">listenerplay</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#play">play</a></li><li><a href="global.html#playbackRate">playbackRate</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#requestFullScreen">requestFullScreen</a></li><li><a href="global.html#seek">seek</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#timeupdate">timeupdate</a></li><li><a href="global.html#waiting">waiting</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:answers_info">answers_info</a></li><li><a href="global.html#event:chat_msg_info">chat_msg_info</a></li><li><a href="global.html#event:chat_msg_sync">chat_msg_sync</a></li><li><a href="global.html#event:groupid_info">groupid_info</a></li><li><a href="global.html#event:live_time_info">live_time_info</a></li><li><a href="global.html#event:meta_draws_ready">meta_draws_ready</a></li><li><a href="global.html#event:network_change">network_change</a></li><li><a href="global.html#event:pages_change_sync">pages_change_sync</a></li><li><a href="global.html#event:pages_info">pages_info</a></li><li><a href="global.html#event:questions_info">questions_info</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:viewerid_info">viewerid_info</a></li></ul><h3>Global</h3><ul><li><a href="global.html#configPlayer">configPlayer</a></li><li><a href="global.html#deleteAllEvents">deleteAllEvents</a></li><li><a href="global.html#deleteEvent">deleteEvent</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#exitFullScreen">exitFullScreen</a></li><li><a href="global.html#getCurrentTime">getCurrentTime</a></li><li><a href="global.html#getPracticeInformation">getPracticeInformation</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isDrawRequestTime">isDrawRequestTime</a></li><li><a href="global.html#isRealtimeFirst">isRealtimeFirst</a></li><li><a href="global.html#listenerended">listenerended</a></li><li><a href="global.html#listenerplay">listenerplay</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#play">play</a></li><li><a href="global.html#playbackRate">playbackRate</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#requestFullScreen">requestFullScreen</a></li><li><a href="global.html#seek">seek</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#timeupdate">timeupdate</a></li><li><a href="global.html#waiting">waiting</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Aug 16 2019 16:14:06 GMT+0800 (GMT+08:00)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Tue Dec 10 2019 10:37:21 GMT+0800 (GMT+08:00)
 </footer>
 
 <script> prettyPrint(); </script>

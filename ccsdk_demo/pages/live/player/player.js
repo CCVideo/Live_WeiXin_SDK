@@ -805,6 +805,16 @@ Page({
         //初始化player播放器
         self.ctx = cc.live.configLivePlayer(self, wx);
 
+        //自定义配置live-player 获取播放地址
+        cc.live.getPlayerUrls({
+            success: function(datas) {
+                console.log("getPlayerUrls success", datas);
+            },
+            fail: function(error) {
+                console.log("getPlayerUrls fail", error);
+            }
+        });
+
         //初始化直播参数
         self.setData({
             roomTitle: decodeURIComponent(options.roomTitle),

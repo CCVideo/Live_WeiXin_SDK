@@ -726,6 +726,49 @@ exports.ListenerEvent = function (loginData, io, stateMachine, observer, manager
       });
 
       /**
+       * @event start_punch
+       * @description 开始打卡
+       * @example
+       * ccsdk.live.on('start_punch',function(data){
+       *    //console.log(data);
+       * })
+       * 返回值说明：
+       * {
+       *    "punchId": "asasdasdasdasd",
+       *    "expireTime": "2019-10-26 10:00:00",
+       *    "remainDuration": 124
+       * }
+       * 当没有设置时长，即无过期时间时，msg 格式如下：
+       * {
+       *   "punchId": "asasdasdasdasd",
+       *   "remainDuration": -1 // 其中-1表示剩余无限时间
+       * }
+       */
+
+      io.on("start_punch", function (data) {
+        util.log("start_punch", data);
+        observer.emit("start_punch", data);
+      });
+
+      /**
+       * @event stop_punch
+       * @description 开始打卡
+       * @example
+       * ccsdk.live.on('stop_punch',function(data){
+       *    //console.log(data);
+       * })
+       * 返回值说明：
+       * {
+       *    "punchId": "asasdasdasdasd"
+       * }
+       */
+
+      io.on("stop_punch", function (data) {
+        util.log("stop_punch", data);
+        observer.emit("stop_punch", data);
+      });
+
+      /**
        * @event start_lottery
        * @description 开始抽奖
        * @example
@@ -983,13 +1026,13 @@ var aspectFit = function (desc) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:announcement">announcement</a></li><li><a href="global.html#event:announcement_info">announcement_info</a></li><li><a href="global.html#event:answer">answer</a></li><li><a href="global.html#event:answer_log">answer_log</a></li><li><a href="global.html#event:ban_chat">ban_chat</a></li><li><a href="global.html#event:ban_stream">ban_stream</a></li><li><a href="global.html#event:chat_log">chat_log</a></li><li><a href="global.html#event:chat_log_manage">chat_log_manage</a></li><li><a href="global.html#event:chat_message">chat_message</a></li><li><a href="global.html#event:custom_message">custom_message</a></li><li><a href="global.html#event:draw">draw</a></li><li><a href="global.html#event:draw_log">draw_log</a></li><li><a href="global.html#event:end_stream">end_stream</a></li><li><a href="global.html#event:groupid_info">groupid_info</a></li><li><a href="global.html#event:information">information</a></li><li><a href="global.html#event:isBan_log">isBan_log</a></li><li><a href="global.html#event:isPublishing_log">isPublishing_log</a></li><li><a href="global.html#event:kick_out">kick_out</a></li><li><a href="global.html#event:live_time_info">live_time_info</a></li><li><a href="global.html#event:network_change">network_change</a></li><li><a href="global.html#event:on_switch_video_doc">on_switch_video_doc</a></li><li><a href="global.html#event:page_change">page_change</a></li><li><a href="global.html#event:page_change_log">page_change_log</a></li><li><a href="global.html#event:practice_close">practice_close</a></li><li><a href="global.html#event:practice_publish">practice_publish</a></li><li><a href="global.html#event:practice_stop">practice_stop</a></li><li><a href="global.html#event:private_chat">private_chat</a></li><li><a href="global.html#event:private_chat_self">private_chat_self</a></li><li><a href="global.html#event:prize_send">prize_send</a></li><li><a href="global.html#event:publish_question">publish_question</a></li><li><a href="global.html#event:publish_stream">publish_stream</a></li><li><a href="global.html#event:question">question</a></li><li><a href="global.html#event:question_log">question_log</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:room_teachers">room_teachers</a></li><li><a href="global.html#event:room_user_count">room_user_count</a></li><li><a href="global.html#event:silence_user_chat_message">silence_user_chat_message</a></li><li><a href="global.html#event:start_lottery">start_lottery</a></li><li><a href="global.html#event:stop_lottery">stop_lottery</a></li><li><a href="global.html#event:switch_source">switch_source</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:unban_chat">unban_chat</a></li><li><a href="global.html#event:unban_stream">unban_stream</a></li><li><a href="global.html#event:viewer_info">viewer_info</a></li><li><a href="global.html#event:win_lottery">win_lottery</a></li></ul><h3>Global</h3><ul><li><a href="global.html#configLivePlayer">configLivePlayer</a></li><li><a href="global.html#deleteAllEvents">deleteAllEvents</a></li><li><a href="global.html#deleteEvent">deleteEvent</a></li><li><a href="global.html#getPracticeInfo">getPracticeInfo</a></li><li><a href="global.html#getPracticeRank">getPracticeRank</a></li><li><a href="global.html#getPracticeStatis">getPracticeStatis</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isRealtimeFirst">isRealtimeFirst</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#reportPlaying">reportPlaying</a></li><li><a href="global.html#reportPlayResult">reportPlayResult</a></li><li><a href="global.html#sendPrivateChatMsg">sendPrivateChatMsg</a></li><li><a href="global.html#sendPublicChatMsg">sendPublicChatMsg</a></li><li><a href="global.html#sendQuestionMsg">sendQuestionMsg</a></li><li><a href="global.html#setDebug">setDebug</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#streamMode">streamMode</a></li><li><a href="global.html#streamRoute">streamRoute</a></li><li><a href="global.html#submitPractice">submitPractice</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:announcement">announcement</a></li><li><a href="global.html#event:announcement_info">announcement_info</a></li><li><a href="global.html#event:answer">answer</a></li><li><a href="global.html#event:answer_log">answer_log</a></li><li><a href="global.html#event:ban_chat">ban_chat</a></li><li><a href="global.html#event:ban_stream">ban_stream</a></li><li><a href="global.html#event:chat_log">chat_log</a></li><li><a href="global.html#event:chat_log_manage">chat_log_manage</a></li><li><a href="global.html#event:chat_message">chat_message</a></li><li><a href="global.html#event:custom_message">custom_message</a></li><li><a href="global.html#event:draw">draw</a></li><li><a href="global.html#event:draw_log">draw_log</a></li><li><a href="global.html#event:end_stream">end_stream</a></li><li><a href="global.html#event:groupid_info">groupid_info</a></li><li><a href="global.html#event:information">information</a></li><li><a href="global.html#event:isBan_log">isBan_log</a></li><li><a href="global.html#event:isPublishing_log">isPublishing_log</a></li><li><a href="global.html#event:kick_out">kick_out</a></li><li><a href="global.html#event:live_time_info">live_time_info</a></li><li><a href="global.html#event:network_change">network_change</a></li><li><a href="global.html#event:on_switch_video_doc">on_switch_video_doc</a></li><li><a href="global.html#event:page_change">page_change</a></li><li><a href="global.html#event:page_change_log">page_change_log</a></li><li><a href="global.html#event:practice_close">practice_close</a></li><li><a href="global.html#event:practice_publish">practice_publish</a></li><li><a href="global.html#event:practice_stop">practice_stop</a></li><li><a href="global.html#event:private_chat">private_chat</a></li><li><a href="global.html#event:private_chat_self">private_chat_self</a></li><li><a href="global.html#event:prize_send">prize_send</a></li><li><a href="global.html#event:publish_question">publish_question</a></li><li><a href="global.html#event:publish_stream">publish_stream</a></li><li><a href="global.html#event:question">question</a></li><li><a href="global.html#event:question_log">question_log</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:room_teachers">room_teachers</a></li><li><a href="global.html#event:room_user_count">room_user_count</a></li><li><a href="global.html#event:silence_user_chat_message">silence_user_chat_message</a></li><li><a href="global.html#event:start_lottery">start_lottery</a></li><li><a href="global.html#event:start_punch">start_punch</a></li><li><a href="global.html#event:stop_lottery">stop_lottery</a></li><li><a href="global.html#event:stop_punch">stop_punch</a></li><li><a href="global.html#event:switch_source">switch_source</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:unban_chat">unban_chat</a></li><li><a href="global.html#event:unban_stream">unban_stream</a></li><li><a href="global.html#event:viewer_info">viewer_info</a></li><li><a href="global.html#event:win_lottery">win_lottery</a></li></ul><h3>Global</h3><ul><li><a href="global.html#commitPunch">commitPunch</a></li><li><a href="global.html#configLivePlayer">configLivePlayer</a></li><li><a href="global.html#deleteAllEvents">deleteAllEvents</a></li><li><a href="global.html#deleteEvent">deleteEvent</a></li><li><a href="global.html#getPracticeInfo">getPracticeInfo</a></li><li><a href="global.html#getPracticeInformation">getPracticeInformation</a></li><li><a href="global.html#getPracticeRank">getPracticeRank</a></li><li><a href="global.html#getPracticeStatis">getPracticeStatis</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isRealtimeFirst">isRealtimeFirst</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#reportPlaying">reportPlaying</a></li><li><a href="global.html#reportPlayResult">reportPlayResult</a></li><li><a href="global.html#sendPrivateChatMsg">sendPrivateChatMsg</a></li><li><a href="global.html#sendPublicChatMsg">sendPublicChatMsg</a></li><li><a href="global.html#sendQuestionMsg">sendQuestionMsg</a></li><li><a href="global.html#setDebug">setDebug</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#streamMode">streamMode</a></li><li><a href="global.html#streamRoute">streamRoute</a></li><li><a href="global.html#submitPractice">submitPractice</a></li><li><a href="global.html#viewerPunch">viewerPunch</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Aug 16 2019 16:14:05 GMT+0800 (GMT+08:00)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Tue Dec 10 2019 10:37:20 GMT+0800 (GMT+08:00)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -104,6 +104,277 @@
     
 
     
+    <h4 class="name" id="commitPunch"><span class="type-signature"></span>commitPunch<span class="signature">(options)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    提交打卡
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">提交打卡参数对象</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options.punchId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">打卡ID</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options.success</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">打卡成功回调</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options.fail</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">打卡超时回调</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line599">line 599</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>cc.live.commitPunch({
+ punchId: 'XXXXXX'
+ success: function() {
+ },
+ fail: function() {
+ }
+})
+
+//返回示例
+
+//成功
+{
+   "success": true, // 接口处理结果。true=成功；false=失败。
+   "error": { // 失败时的错误信息。当success=false时存在。
+     "code": 10000013, // 错误代码。
+     "message": "component error" // 错误消息。
+   }
+   "data": { // 成功时返回的数据。当success=true时存在。
+     "isRepeat": false, // 是否重复提交打卡。 true=是；false=否。
+   }
+}
+
+//错误代码说明
+10000015 |	platform invalid liveroom	| 某些操作只能操作直播平台的直播间，如果传入非直播平台的直播间则报该错误信息
+10000007 |	live not exists	| 不是正在进行的直播
+10000013 |	component error	| 数据库异常
+10000014 |	exist invalid param	| 存在无效参数
+10000017 |	third-party component error	| 请求第三方组件错误
+20070004 |	punch not exists	| 打卡互动不存在
+20070005 |	punch is stop	| 打卡互动已结束
+20070006 |	punch is expired	| 打卡互动已过期，但未结束
+20070007 |	not a punch viewer	| 不在打卡学员列表中</code></pre>
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="configLivePlayer"><span class="type-signature"></span>configLivePlayer<span class="signature">(that, wx)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
@@ -228,7 +499,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line434">line 434</a>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line652">line 652</a>
     </li></ul></dd>
     
 
@@ -238,6 +509,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -353,6 +626,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -506,6 +781,8 @@
 
 
 
+
+
 <h5>Returns:</h5>
 
         
@@ -552,7 +829,7 @@
 
 
 <div class="description">
-    获取随堂测信息
+    获取随堂测信息（已废弃，请使用getPracticeInformation方法）
 </div>
 
 
@@ -743,7 +1020,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line114">line 114</a>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line199">line 199</a>
     </li></ul></dd>
     
 
@@ -770,10 +1047,317 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>cc.live.getPracticeInfo({
     practiceId: "XXXX2345",
+    success: function (res) {
+        console.log("getPracticeInfo success", res);
+        //成功返回数据示例及说明:
+        {
+          "datas": {
+              "isExist": 1, // 是否存在正在发布的随堂测 1 存在 0 不存在
+              "practice": {
+                  "id": "xxx", // 随堂测ID
+                  "isAnswered": "false",//是否回答过随堂测
+                  "type": 2, // 随堂测类型: 0 判断 1 单选 2 多选
+                  "status": 1, // 随堂测状态: 1 发布中 2 停止发布
+                  "options": [
+                      {
+                          "id": "xxx", // 选项ID
+                          "index": 0 // 选项索引 0 代表第一个选项,其他依次类推
+                      },
+                      {
+                          "id": "xxxy",
+                          "index": 1
+                      }
+                  ]
+              }
+          },
+          "errorCode": 0,
+          "msg": "操作成功",
+          "success": true
+      }
+
+      //失败返回数据示例及说明:
+      {
+          "datas": {},
+          "errorCode": 具体的错误码,
+          "msg": "具体的错误信息",
+          "success": false
+      }
+    },
+    fail: function (error) {
+        console.log("getPracticeInfo fail", error);
+    }
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getPracticeInformation"><span class="type-signature"></span>getPracticeInformation<span class="signature">(options)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    获取随堂测信息v2
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">获取随堂测信息参数对象</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options.practiceId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">随堂测ID，如果为空，则默认为当前正在发布随堂测信息，可选</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options.mark</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">0：旧版 1：新版(后进入者在随堂测停止未关闭状态下，也可获取统计和排行信息)，默认为 1，可选</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options.success</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">获取随堂测信息成功回调函数，可选</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options.fail</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">获取随堂测信息失败回调函数，可选</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line116">line 116</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>cc.live.getPracticeInformation({
+    practiceId: "XXXX2345",
+    mark: 1,
     success: function (res) {
         console.log("getPracticeInfo success", res);
         //成功返回数据示例及说明:
@@ -1022,7 +1606,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line377">line 377</a>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line461">line 461</a>
     </li></ul></dd>
     
 
@@ -1032,6 +1616,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -1304,7 +1890,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line292">line 292</a>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line376">line 376</a>
     </li></ul></dd>
     
 
@@ -1314,6 +1900,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -1778,6 +2366,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>cc.live.init({
@@ -1865,6 +2455,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -2067,6 +2659,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('something event',function(data){
@@ -2133,7 +2727,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line642">line 642</a>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line894">line 894</a>
     </li></ul></dd>
     
 
@@ -2143,6 +2737,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -2295,7 +2891,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line741">line 741</a>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line993">line 993</a>
     </li></ul></dd>
     
 
@@ -2305,6 +2901,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -2435,7 +3033,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line682">line 682</a>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line934">line 934</a>
     </li></ul></dd>
     
 
@@ -2445,6 +3043,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -2621,7 +3221,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line503">line 503</a>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line755">line 755</a>
     </li></ul></dd>
     
 
@@ -2631,6 +3231,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -2783,7 +3385,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line475">line 475</a>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line727">line 727</a>
     </li></ul></dd>
     
 
@@ -2793,6 +3395,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -2945,7 +3549,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line536">line 536</a>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line788">line 788</a>
     </li></ul></dd>
     
 
@@ -2955,6 +3559,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -3112,7 +3718,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line416">line 416</a>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line634">line 634</a>
     </li></ul></dd>
     
 
@@ -3122,6 +3728,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -3299,6 +3907,8 @@
 
 
 
+
+
 <h5>Returns:</h5>
 
         
@@ -3438,7 +4048,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line605">line 605</a>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line857">line 857</a>
     </li></ul></dd>
     
 
@@ -3448,6 +4058,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -3600,7 +4212,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line570">line 570</a>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line822">line 822</a>
     </li></ul></dd>
     
 
@@ -3610,6 +4222,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -3883,7 +4497,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line202">line 202</a>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line286">line 286</a>
     </li></ul></dd>
     
 
@@ -3893,6 +4507,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -3959,6 +4575,254 @@
       "msg": "具体的错误信息",
       "success": false
   }</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="viewerPunch"><span class="type-signature"></span>viewerPunch<span class="signature">(options)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    观看端查询打卡，后进入者错过实时打卡消息时，需要通过主动请求的方式获取打卡信息
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">查询打卡参数对象</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options.success</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">查询打卡成功回调</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options.fail</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">查询打卡超时回调</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="live_manager.js.html">live/manager.js</a>, <a href="live_manager.js.html#line532">line 532</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>cc.live.viewerPunch({
+ success: function() {
+ },
+ fail: function() {
+ }
+})
+
+//返回示例
+
+//成功
+{
+   "success": true, // 接口处理结果。true=成功；false=失败。
+   "error": {
+     code: 10000014, // 错误代码
+     message: "存在无效入参" // 错误描述
+   },
+   "data": { // 成功时返回的数据。当success=true时存在。
+     "isExists": true, // 是否存在进行中的打卡互动。 true=存在；false=不存在。
+     "punch": { // 打卡信息。当isExists=true时存在。
+       "id": "ASASDAWADFWQASDF", // 打卡ID。
+       "expireTime": "2019-10-23 10:05:00", // 打卡到期时间，格式为yyyy-MM-dd HH:mm:ss。当打卡没有设置时长时，返回结果没有该项。
+       "remainDuration": 236 // 打卡剩余时长，单位：秒。-1表示没有设置打卡时长，剩余无限时长。
+     }
+   }
+}
+
+//错误代码说明
+10000015 |	platform invalid liveroom |	某些操作只能操作直播平台的直播间，如果传入非直播平台的直播间则报该错误信息
+10000007 |	live not exists	| 不是正在进行的直播
+10000013 |	component error	| 数据库异常
+10000014 |	exist invalid param	| 存在无效入参
+10000017 |	third-party component error	| 请求第三方组件错误</code></pre>
 
 
 
@@ -4055,6 +4919,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('announcement',function(data){
@@ -4131,6 +4997,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -4242,6 +5110,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('answer',function(data){
@@ -4324,7 +5194,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line857">line 857</a>
+        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line900">line 900</a>
     </li></ul></dd>
     
 
@@ -4334,6 +5204,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -4427,6 +5299,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -4539,6 +5413,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('ban_stream',function(data){
@@ -4605,7 +5481,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line870">line 870</a>
+        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line913">line 913</a>
     </li></ul></dd>
     
 
@@ -4615,6 +5491,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -4725,6 +5603,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('chat_log_manage',function(data){
@@ -4810,6 +5690,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -4934,6 +5816,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('custom_message',function(data){
@@ -5027,6 +5911,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('draw',function(data){
@@ -5093,7 +5979,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line831">line 831</a>
+        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line874">line 874</a>
     </li></ul></dd>
     
 
@@ -5103,6 +5989,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -5213,6 +6101,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('end_stream',function(data){
@@ -5289,6 +6179,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -5400,6 +6292,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('information',function(data){
@@ -5466,7 +6360,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line803">line 803</a>
+        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line846">line 846</a>
     </li></ul></dd>
     
 
@@ -5476,6 +6370,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -5559,7 +6455,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line883">line 883</a>
+        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line926">line 926</a>
     </li></ul></dd>
     
 
@@ -5569,6 +6465,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -5662,6 +6560,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -5777,6 +6677,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('live_time_info',function(data){
@@ -5858,6 +6760,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -5974,6 +6878,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('on_switch_video_doc',function(isVideoMain){
@@ -6051,6 +6957,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -6150,7 +7058,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line816">line 816</a>
+        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line859">line 859</a>
     </li></ul></dd>
     
 
@@ -6160,6 +7068,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -6253,6 +7163,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -6367,6 +7279,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('practice_publish',function(data){
@@ -6464,6 +7378,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('practice_stop',function(data){
@@ -6544,6 +7460,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -6664,6 +7582,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('private_chat_self',function(data){
@@ -6749,6 +7669,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -6865,6 +7787,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('publish_question',function(data){
@@ -6941,6 +7865,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -7051,6 +7977,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('question',function(data){
@@ -7130,7 +8058,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line844">line 844</a>
+        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line887">line 887</a>
     </li></ul></dd>
     
 
@@ -7140,6 +8068,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -7233,6 +8163,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -7344,6 +8276,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('room_teachers',function(data){
@@ -7420,6 +8354,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -7530,6 +8466,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('silence_user_chat_message',function(data){
@@ -7553,6 +8491,103 @@
 
 <div class="description">
     开始抽奖
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line743">line 743</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>ccsdk.live.on('start_lottery',function(data){
+   //console.log(data);
+})
+返回值说明：
+"{\"lotteryId\":\"20190115104237294\"}"//抽奖ID</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="event:start_punch">start_punch</h4>
+    
+
+    
+
+
+
+<div class="description">
+    开始打卡
 </div>
 
 
@@ -7623,13 +8658,24 @@
 
 
 
+
+
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>ccsdk.live.on('start_lottery',function(data){
+    <pre class="prettyprint"><code>ccsdk.live.on('start_punch',function(data){
    //console.log(data);
 })
 返回值说明：
-"{\"lotteryId\":\"20190115104237294\"}"//抽奖ID</code></pre>
+{
+   "punchId": "asasdasdasdasd",
+   "expireTime": "2019-10-26 10:00:00",
+   "remainDuration": 124
+}
+当没有设置时长，即无过期时间时，msg 格式如下：
+{
+  "punchId": "asasdasdasdasd",
+  "remainDuration": -1 // 其中-1表示剩余无限时间
+}</code></pre>
 
 
 
@@ -7691,7 +8737,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line740">line 740</a>
+        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line783">line 783</a>
     </li></ul></dd>
     
 
@@ -7718,6 +8764,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('stop_lottery',function(data){
@@ -7725,6 +8773,105 @@
 })
 返回值说明：
 "{\"lotteryId\":\"20190115104237294\"}"//抽奖ID</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="event:stop_punch">stop_punch</h4>
+    
+
+    
+
+
+
+<div class="description">
+    开始打卡
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line725">line 725</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>ccsdk.live.on('stop_punch',function(data){
+   //console.log(data);
+})
+返回值说明：
+{
+   "punchId": "asasdasdasdasd"
+}</code></pre>
 
 
 
@@ -7796,6 +8943,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -7915,6 +9064,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('template_info',function(data){
@@ -7992,6 +9143,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -8104,6 +9257,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('unban_stream',function(data){
@@ -8197,6 +9352,8 @@
 
 
 
+
+
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>ccsdk.live.on('viewer_info',function(data){
@@ -8264,7 +9421,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line717">line 717</a>
+        <a href="live_event.js.html">live/event.js</a>, <a href="live_event.js.html#line760">line 760</a>
     </li></ul></dd>
     
 
@@ -8274,6 +9431,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -8319,13 +9478,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:announcement">announcement</a></li><li><a href="global.html#event:announcement_info">announcement_info</a></li><li><a href="global.html#event:answer">answer</a></li><li><a href="global.html#event:answer_log">answer_log</a></li><li><a href="global.html#event:ban_chat">ban_chat</a></li><li><a href="global.html#event:ban_stream">ban_stream</a></li><li><a href="global.html#event:chat_log">chat_log</a></li><li><a href="global.html#event:chat_log_manage">chat_log_manage</a></li><li><a href="global.html#event:chat_message">chat_message</a></li><li><a href="global.html#event:custom_message">custom_message</a></li><li><a href="global.html#event:draw">draw</a></li><li><a href="global.html#event:draw_log">draw_log</a></li><li><a href="global.html#event:end_stream">end_stream</a></li><li><a href="global.html#event:groupid_info">groupid_info</a></li><li><a href="global.html#event:information">information</a></li><li><a href="global.html#event:isBan_log">isBan_log</a></li><li><a href="global.html#event:isPublishing_log">isPublishing_log</a></li><li><a href="global.html#event:kick_out">kick_out</a></li><li><a href="global.html#event:live_time_info">live_time_info</a></li><li><a href="global.html#event:network_change">network_change</a></li><li><a href="global.html#event:on_switch_video_doc">on_switch_video_doc</a></li><li><a href="global.html#event:page_change">page_change</a></li><li><a href="global.html#event:page_change_log">page_change_log</a></li><li><a href="global.html#event:practice_close">practice_close</a></li><li><a href="global.html#event:practice_publish">practice_publish</a></li><li><a href="global.html#event:practice_stop">practice_stop</a></li><li><a href="global.html#event:private_chat">private_chat</a></li><li><a href="global.html#event:private_chat_self">private_chat_self</a></li><li><a href="global.html#event:prize_send">prize_send</a></li><li><a href="global.html#event:publish_question">publish_question</a></li><li><a href="global.html#event:publish_stream">publish_stream</a></li><li><a href="global.html#event:question">question</a></li><li><a href="global.html#event:question_log">question_log</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:room_teachers">room_teachers</a></li><li><a href="global.html#event:room_user_count">room_user_count</a></li><li><a href="global.html#event:silence_user_chat_message">silence_user_chat_message</a></li><li><a href="global.html#event:start_lottery">start_lottery</a></li><li><a href="global.html#event:stop_lottery">stop_lottery</a></li><li><a href="global.html#event:switch_source">switch_source</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:unban_chat">unban_chat</a></li><li><a href="global.html#event:unban_stream">unban_stream</a></li><li><a href="global.html#event:viewer_info">viewer_info</a></li><li><a href="global.html#event:win_lottery">win_lottery</a></li></ul><h3>Global</h3><ul><li><a href="global.html#configLivePlayer">configLivePlayer</a></li><li><a href="global.html#deleteAllEvents">deleteAllEvents</a></li><li><a href="global.html#deleteEvent">deleteEvent</a></li><li><a href="global.html#getPracticeInfo">getPracticeInfo</a></li><li><a href="global.html#getPracticeRank">getPracticeRank</a></li><li><a href="global.html#getPracticeStatis">getPracticeStatis</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isRealtimeFirst">isRealtimeFirst</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#reportPlaying">reportPlaying</a></li><li><a href="global.html#reportPlayResult">reportPlayResult</a></li><li><a href="global.html#sendPrivateChatMsg">sendPrivateChatMsg</a></li><li><a href="global.html#sendPublicChatMsg">sendPublicChatMsg</a></li><li><a href="global.html#sendQuestionMsg">sendQuestionMsg</a></li><li><a href="global.html#setDebug">setDebug</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#streamMode">streamMode</a></li><li><a href="global.html#streamRoute">streamRoute</a></li><li><a href="global.html#submitPractice">submitPractice</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:announcement">announcement</a></li><li><a href="global.html#event:announcement_info">announcement_info</a></li><li><a href="global.html#event:answer">answer</a></li><li><a href="global.html#event:answer_log">answer_log</a></li><li><a href="global.html#event:ban_chat">ban_chat</a></li><li><a href="global.html#event:ban_stream">ban_stream</a></li><li><a href="global.html#event:chat_log">chat_log</a></li><li><a href="global.html#event:chat_log_manage">chat_log_manage</a></li><li><a href="global.html#event:chat_message">chat_message</a></li><li><a href="global.html#event:custom_message">custom_message</a></li><li><a href="global.html#event:draw">draw</a></li><li><a href="global.html#event:draw_log">draw_log</a></li><li><a href="global.html#event:end_stream">end_stream</a></li><li><a href="global.html#event:groupid_info">groupid_info</a></li><li><a href="global.html#event:information">information</a></li><li><a href="global.html#event:isBan_log">isBan_log</a></li><li><a href="global.html#event:isPublishing_log">isPublishing_log</a></li><li><a href="global.html#event:kick_out">kick_out</a></li><li><a href="global.html#event:live_time_info">live_time_info</a></li><li><a href="global.html#event:network_change">network_change</a></li><li><a href="global.html#event:on_switch_video_doc">on_switch_video_doc</a></li><li><a href="global.html#event:page_change">page_change</a></li><li><a href="global.html#event:page_change_log">page_change_log</a></li><li><a href="global.html#event:practice_close">practice_close</a></li><li><a href="global.html#event:practice_publish">practice_publish</a></li><li><a href="global.html#event:practice_stop">practice_stop</a></li><li><a href="global.html#event:private_chat">private_chat</a></li><li><a href="global.html#event:private_chat_self">private_chat_self</a></li><li><a href="global.html#event:prize_send">prize_send</a></li><li><a href="global.html#event:publish_question">publish_question</a></li><li><a href="global.html#event:publish_stream">publish_stream</a></li><li><a href="global.html#event:question">question</a></li><li><a href="global.html#event:question_log">question_log</a></li><li><a href="global.html#event:room_info">room_info</a></li><li><a href="global.html#event:room_teachers">room_teachers</a></li><li><a href="global.html#event:room_user_count">room_user_count</a></li><li><a href="global.html#event:silence_user_chat_message">silence_user_chat_message</a></li><li><a href="global.html#event:start_lottery">start_lottery</a></li><li><a href="global.html#event:start_punch">start_punch</a></li><li><a href="global.html#event:stop_lottery">stop_lottery</a></li><li><a href="global.html#event:stop_punch">stop_punch</a></li><li><a href="global.html#event:switch_source">switch_source</a></li><li><a href="global.html#event:template_info">template_info</a></li><li><a href="global.html#event:unban_chat">unban_chat</a></li><li><a href="global.html#event:unban_stream">unban_stream</a></li><li><a href="global.html#event:viewer_info">viewer_info</a></li><li><a href="global.html#event:win_lottery">win_lottery</a></li></ul><h3>Global</h3><ul><li><a href="global.html#commitPunch">commitPunch</a></li><li><a href="global.html#configLivePlayer">configLivePlayer</a></li><li><a href="global.html#deleteAllEvents">deleteAllEvents</a></li><li><a href="global.html#deleteEvent">deleteEvent</a></li><li><a href="global.html#getPracticeInfo">getPracticeInfo</a></li><li><a href="global.html#getPracticeInformation">getPracticeInformation</a></li><li><a href="global.html#getPracticeRank">getPracticeRank</a></li><li><a href="global.html#getPracticeStatis">getPracticeStatis</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isRealtimeFirst">isRealtimeFirst</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#quit">quit</a></li><li><a href="global.html#reportPlaying">reportPlaying</a></li><li><a href="global.html#reportPlayResult">reportPlayResult</a></li><li><a href="global.html#sendPrivateChatMsg">sendPrivateChatMsg</a></li><li><a href="global.html#sendPublicChatMsg">sendPublicChatMsg</a></li><li><a href="global.html#sendQuestionMsg">sendQuestionMsg</a></li><li><a href="global.html#setDebug">setDebug</a></li><li><a href="global.html#showEm">showEm</a></li><li><a href="global.html#streamMode">streamMode</a></li><li><a href="global.html#streamRoute">streamRoute</a></li><li><a href="global.html#submitPractice">submitPractice</a></li><li><a href="global.html#viewerPunch">viewerPunch</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Aug 16 2019 16:14:05 GMT+0800 (GMT+08:00)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Tue Dec 10 2019 10:37:20 GMT+0800 (GMT+08:00)
 </footer>
 
 <script> prettyPrint(); </script>

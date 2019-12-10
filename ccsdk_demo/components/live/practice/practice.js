@@ -10,10 +10,11 @@ Component({
      * 组件的初始数据
      */
     data: {
-        practiceId: "XXXX2345",
+        practiceId: "",
         toggleContainer: "none",
         practice: "",
-        options: ""
+        options: "",
+        show: false
     },
 
     /**
@@ -31,9 +32,13 @@ Component({
                 });
             }
         },
+        getPractice: function () {
+            // 获取随堂测信息接口API
+            this.getPracticeInformation()
+        },
+        // 获取随堂测信息 v1 API
         getPracticeInfo: function () {
             var self = this;
-            //获取随堂测信息接口API
             cc.live.getPracticeInfo({
                 practiceId: self.data.practiceId,
                 success: function (res) {
@@ -44,7 +49,30 @@ Component({
                         showCancel: false,
                     });
                     self.setData({
-                        practice: res.data.datas.practice
+                        practice: res.data.datas.practice,
+                        practiceId: res.data.datas.practice.id
+                    });
+                },
+                fail: function (error) {
+                    console.log("getPracticeInfo fail", error);
+                }
+            });
+        },
+        // 获取随堂测信息 v2 API (停止答题未关闭随堂测时，后进入学员也可以获取随堂测信息，统计信息，排行榜信息)
+        getPracticeInformation: function () {
+            var self = this;
+            cc.live.getPracticeInformation({
+                practiceId: self.data.practiceId,
+                success: function (res) {
+                    console.log("getPracticeInformation success", res.data.datas);
+                    wx.showModal({
+                        title: "获取随堂测信息接口API",
+                        content: JSON.stringify(res.data.datas),
+                        showCancel: false,
+                    });
+                    self.setData({
+                        practice: res.data.datas.practice,
+                        practiceId: res.data.datas.practice.id
                     });
                 },
                 fail: function (error) {
@@ -145,6 +173,7 @@ Component({
             console.log("practice_publish", data);
             var _data = JSON.parse(data);
             self.setData({
+                show: true,
                 practiceId: _data.practiceId
             });
             wx.showModal({
@@ -176,6 +205,7 @@ Component({
             console.log("practice_close", data);
             var _data = JSON.parse(data);
             self.setData({
+                show: false,
                 practiceId: _data.practiceId
             });
             wx.showModal({

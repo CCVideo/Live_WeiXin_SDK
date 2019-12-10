@@ -169,6 +169,15 @@ Component({
         _this.currentTime = 0;
         _this.timestamp = {};
         _this._interval = 0;
+
+        cc.replay.getPlayerUrls({
+            success: function(datas) {
+                console.log("getPlayerUrls success", datas);
+            },
+            fail: function(error) {
+                console.log("getPlayerUrls fail", error);
+            }
+        });
     }
 });
 

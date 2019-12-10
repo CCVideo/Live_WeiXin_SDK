@@ -1,0 +1,7 @@
+<button bindtap="toggleParctice" class="toggle-parctice">显/隐随堂测</button>
+<view class="container" style="display: {{toggleContainer}}">
+    <button bindtap="getPracticeInfo">获取随堂测信息</button>
+    <view class="options">
+        {{info}}
+    </view>
+</view>

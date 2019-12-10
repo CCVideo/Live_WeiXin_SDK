@@ -6,7 +6,8 @@
     "swiper": "../../../components/replay/swiper/swiper",
     "chat": "../../../components/replay/chat/chat",
     "intro": "../../../components/replay/intro/intro",
-    "qa": "../../../components/replay/qa/qa"
+    "qa": "../../../components/replay/qa/qa",
+    "practice": "../../../components/replay/practice/practice"
   },
   "disableScroll": false
 }
