@@ -23,9 +23,9 @@
                          src="../../img/replay/replay/control/{{play!=='play'?'play':'pause'}}@2x.png"></cover-image>
         </cover-view>
         <cover-view class="time-box">
-            <cover-view class="time-current">{{currentTime}}  .</cover-view>
-            <cover-view style="color: #fff;font-size:28rpx;">/</cover-view>
-            <cover-view class="time-duration">{{duration}}  .</cover-view>
+            <cover-view class="time-current">{{currentTime}} .</cover-view>
+            <cover-view style="color: #fff;font-size:28rpx;padding-right: 5rpx">/</cover-view>
+            <cover-view class="time-duration">{{duration}} .</cover-view>
         </cover-view>
         <cover-view id="loadingbar" class="loadingbar-box" catchtouchstart="_catchtouchstart"
                     catchtouchend="_catchtouchend"

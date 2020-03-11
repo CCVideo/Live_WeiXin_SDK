@@ -68,7 +68,7 @@
           <cover-view class="switch-router" style="display:{{toggleSelectRoute?'block':'none'}}">
             <cover-view class="switch-router-select">
               <cover-view class="switch-router-option {{RouteOptionActive===index?'active':''}}"
-                          wx:for="{{options}}" wx:key="" wx:for-index="index" data-index="{{index}}"
+                          wx:for="{{options}}" wx:key="index" wx:for-index="index" data-index="{{index}}"
                           bindtap="bindSelectRoute">
                 {{item}}
               </cover-view>
@@ -219,7 +219,7 @@
                        lower-threshold="10" scroll-into-view="{{toChat}}">
             <!-- 聊天信息 -->
             <view class="message-box {{message[index].type?'message-box-right':''}}" wx:for="{{message}}"
-                  wx:for-index="index" wx:key="" id="{{index==(chatLength-1)?'lastChat':''}}"
+                  wx:for-index="index" wx:key="index" id="{{index==(chatLength-1)?'lastChat':''}}"
                   wx:if="{{message[index].status=='1'?false:true}}">
               <view class="left">
                 <view class="image-box {{message[index].type?'image-box-right':''}}">
@@ -274,7 +274,7 @@
           <scroll-view scroll-y bindscroll="bindQuestionAnswerScroll"
                        bindscrolltolower="bindQuestionAnswerScrollTolower" lower-threshold="10"
                        scroll-into-view="{{toQuestionAnswer}}">
-            <view class="catechism-box" wx:for="{{questions}}" wx:key="" wx:for-index="i" wx:for-item="qt"
+            <view class="catechism-box" wx:for="{{questions}}" wx:key="i" wx:for-index="i" wx:for-item="qt"
                   id="{{i==(questionAnswerLength-1)?'lastQuestionAnswer':''}}"
                   wx:if="{{(qt.type==1?true:toggleShowQuestion)&&qt.display}}">
               <view class="left">

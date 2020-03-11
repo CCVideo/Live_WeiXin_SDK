@@ -1,6 +1,6 @@
 <view class="container">
     <scroll-view class="scroll-view" scroll-y>
-        <view class="catechism-box" wx:for="{{qaData}}" wx:key="" wx:for-index="i" wx:for-item="qt"
+        <view class="catechism-box" wx:for="{{qaData}}" wx:key="i" wx:for-index="i" wx:for-item="qt"
               wx:if="{{qt.display}}">
             <view class="left">
                 <view class="image-box">
@@ -16,7 +16,7 @@
                     <text>{{qt.question}}</text>
                 </view>
                 <view class="answers">
-                    <view class="answer-box" wx:for="{{qt.answers}}" wx:key="" wx:for-index="j"
+                    <view class="answer-box" wx:for="{{qt.answers}}" wx:key="j" wx:for-index="j"
                           wx:for-item="as" wx:if="{{as.isPrivate===0}}">
                         <text class="name">{{as.name}}:</text>
                         <text class="answer">{{as.answer}}</text>

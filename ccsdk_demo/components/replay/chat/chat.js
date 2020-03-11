@@ -22,6 +22,7 @@ Component({
         //聊天信息 格式：{name: 'name', msg: 'msg'}
         chatMsg: [],
         toggleChatScroll: true,
+        chatMsgMax: -50,
         chatMsgLength: 0,
         toChatMsg: ""
     },
@@ -83,27 +84,23 @@ Component({
     ready: function () {
         var self = this;
         var chatMsgs = [];
-        var chatTimer = 0;
-        var cacheMsgs = [];
         cc.replay.on("chat_msg_sync", function (data) {
-            cacheMsgs = cacheMsgs.concat(data);
-
-            if (data.length >= 10) {
-                clearTimeout(chatTimer);
-                //聊天间隔频率最小是1秒，如果1秒内发送2条聊天信息，第二次无效。
-                //chat_msg_sync 事件返回聊天信息最小频率是0.5秒，如果快进，可能一下返回n条聊天信息，n条聊天信息会以500ms每次最大10条一组返回。
-                //加900延迟，是为了如果快进，之渲染最后20条，而不是之前所有聊天信息都渲染一遍，消耗性能，造成卡顿。
-                chatTimer = setTimeout(function () {
-                    showChatMsgs(cacheMsgs);
-                }, 900);
-                return;
-            }
-            clearTimeout(chatTimer);
-
-            showChatMsgs(cacheMsgs);
-
+            showChatMsgs(data);
             // cc.replay.deleteEvent("chat_msg_sync");
         });
+
+        // 节流函数，提高聊天渲染性能
+        var throttle = (function() {
+            var timer = 0
+            return function(callback, interval) {
+                if (!timer) {
+                    timer = setTimeout(function(){
+                        callback && callback()
+                        timer = 0
+                    }, interval)
+                }
+            }
+        })()
 
         function showChatMsgs(data) {
             for (var i = 0; i < data.length; i++) {
@@ -121,8 +118,11 @@ Component({
                 chatMsgs.push(CMS);
             }
 
-            chatMsgs = chatMsgs.splice(-20, 20);
-            srollChatMsgList(chatMsgs);
+            // 增加节流函数，防止大量聊天时页面卡死
+            throttle(function() {
+                chatMsgs = chatMsgs.slice(self.chatMsgMax);
+                srollChatMsgList(chatMsgs);
+            }, 1000)
         }
 
         function srollChatMsgList(chatMsg) {

@@ -1,0 +1,45 @@
+
+.content {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+.max {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 423rpx;
+	width: 100%;
+	border: 1px pink solid;
+}
+.min {
+	position: absolute;
+	top: 450rpx;
+	left: 50rpx;
+	height: 211rpx;
+	width: 300rpx;
+	border: 1px blue solid;
+}
+.btn {
+	position: absolute;
+	bottom: 250rpx;
+	width: 100%;
+}
+.info {
+	position: absolute;
+	bottom: 100rpx;
+	border: 1rpx green solid;
+	padding: 10px;
+	word-wrap: break-word;
+	word-break: break-all;
+	white-space: normal;
+}
+.live-player {
+	width: 100%;
+	height: 100%;
+}
+.drawing-board {
+	width: 100%;
+	height: 100%;
+}
+

@@ -73,7 +73,7 @@
     background:rgba(0,0,0,0.5);
     height:70rpx;
     align-items: center;
-    padding: 5rpx 20rpx;
+    padding: 5rpx 10rpx;
     box-sizing: border-box;
     width: 100%;
 }
@@ -95,21 +95,22 @@
 
 /*时间*/
 .container .bottom .time-box{
-    flex:6.5;
+    flex: 6.5;
     display: flex;
     justify-content: center;
     vertical-align: middle;
     width: 200rpx;
     height: 28rpx;
+    overflow-x: auto;
 }
 
-.container .bottom .time-box .time-current{
-    font-size:28rpx;
+.container .bottom .time-box .time-current {
+    font-size: 24rpx;
     color:#fff;
 }
 
-.container .bottom .time-box .time-duration{
-    font-size:28rpx;
+.container .bottom .time-box .time-duration {
+    font-size: 24rpx;
     color:rgba(255,255,255,0.6);
 }
 

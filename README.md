@@ -1,14 +1,40 @@
 # README
 
 ### 云直播微信小程序SDK版本
-* 日期：2019年11月28日
-* 版本：1.4.0
+* 日期：2020年03月10日
+* 版本：1.4.1
 
 ### 版本兼容
-* 微信开发工具：建议使用 1.02.1907160 及以上版本
-* 调试基础库：建议使用 2.8.0 及以上版本，最低兼容2.0.1
-* 微信：建议使用 7.0.5 及以上版本，最低兼容微信客户端6.7.2 及以上版本
+* 微信开发工具：建议使用 1.02.1912261 及以上版本
+* 调试基础库：建议使用 2.10.3 及以上版本，最低兼容2.0.1
+* 微信：建议使用 7.0.11 及以上版本，最低兼容微信客户端6.7.2 及以上版本
 
+### 小程序服务器域名配置
+登陆微信公众平台小程序开发平台 - 开发 - 开发设置 - 服务器域名 - 配置服务器信息
+
+request合法域名
+```
+https://eva.csslcloud.net
+https://report.csslcloud.net
+https://view.csslcloud.net
+https://zeus.csslcloud.net
+```
+
+socket合法域名
+```
+wss://io-cc1.csslcloud.net
+wss://io-cc2.csslcloud.net
+wss://sio-1.csslcloud.net
+wss://sio-2.csslcloud.net
+wss://sio-3.csslcloud.net
+wss://sio-4.csslcloud.net
+wss://sio-7.csslcloud.net
+```
+
+downloadFile合法域名
+```
+https://image.csslcloud.net
+```
 ### ccsdk_demo使用方法
 * WXCCLive小程序插件是CC云直播提供的小程序SDK，使用此插件可以快速实现与CC云直播对接。
 * ccsdk_demo 是通过WXCCLive插件实现的直播推流、观看直播、观看回放的demo。
@@ -70,12 +96,5 @@
 #### 登录微信公众平台添加WXCCLive插件
 使用ccsdk_demo必须添加WXCCLive微信小程序插件。
 登录微信公众平台 - 设置 - 第三方设置 - 添加插件中搜索 WXCCLive，添加后和客服确认审核即可使用。
-
-
-
-
-
-
-
 
 

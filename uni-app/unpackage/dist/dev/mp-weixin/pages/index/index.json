@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "获得场景视频",
+  "usingComponents": {
+    "drawing-board": "plugin://ccsdk/drawingBoard"
+  }
+}

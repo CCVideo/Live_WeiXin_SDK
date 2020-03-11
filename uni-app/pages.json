@@ -1,0 +1,21 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "获得场景视频",
+				 "usingComponents": {
+					 // #ifdef  MP-WEIXIN
+					 "drawing-board": "plugin://ccsdk/drawingBoard"
+					 // #endif
+				 }
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "获得场景视频",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}

@@ -244,7 +244,9 @@ Component({
             self.data.touchendDelay = setTimeout(function () {
 
                 var s = parseFloat(self.data.percent) * self.data.Duration;
+                cc.replay.pause();
                 cc.replay.seek(s);
+                cc.replay.play();
 
                 self.triggerEvent("progressactive", {}, {});
 

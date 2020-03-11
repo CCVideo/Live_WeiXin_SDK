@@ -8,7 +8,7 @@
   },
   "plugins": {
     "ccsdk": {
-      "version": "1.4.0",
+      "version": "1.4.1",
       "provider": "wxf7200395f7f6b071"
     }
   },

@@ -1,0 +1,20 @@
+{
+  "pages": [
+    "pages/index/index"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "获得场景视频",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "plugins": {
+    "ccsdk": {
+      "version": "1.4.0",
+      "provider": "wxf7200395f7f6b071"
+    }
+  },
+  "usingComponents": {},
+  "sitemapLocation": "sitemap0.json"
+}

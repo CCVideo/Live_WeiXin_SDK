@@ -897,6 +897,22 @@ Page({
             }
         });
 
+        cc.live.on("ban_delete_chat", function (data) {
+            console.log("ban_delete_chat", data);
+            var _data = JSON.parse(data);
+            var viewerId =  _data.viewerId
+            if (viewerId == self.data.viewerId) {
+                return false
+            }
+
+            var message = self.data.message
+            message = message.filter(function (item, index) {
+                return item.userId == viewerId ? false : true
+            });
+            self.setData({
+                message: message
+            })
+        });
 
         //切换视频文档区域
         cc.live.on("on_switch_video_doc", function (data) {
@@ -1094,6 +1110,29 @@ Page({
             }
         });
 
+        // var throttle = (function() {
+        //     var preDate = Date.now()
+        //     return function(callback, interval) {
+        //         var nowDate = Date.now()
+        //         if (nowDate - preDate >= interval) {
+        //             callback && callback()
+        //             preDate = Date.now()
+        //         }
+        //     }
+        // })()
+        // 节流函数
+        var throttle = (function() {
+            var timer = 0
+            return function(callback, interval) {
+                if (!timer) {
+                    timer = setTimeout(function(){
+                        callback && callback()
+                        timer = 0
+                    }, interval)
+                }
+            }
+        })()
+
         //接收公聊
         cc.live.on("chat_message", function (data) {
             var data = JSON.parse(data);
@@ -1114,15 +1153,19 @@ Page({
                 obj.type = 0;
             }
             arr.push(obj);
-            self.setData({
-                message: arr.slice(self.data.chatLengthMax),
-                chatLength: arr.length
-            });
-            if (self.data.toggleChatScroll) {
+
+            // 增加节流函数，防止大量聊天时页面卡死
+            throttle(function() {
                 self.setData({
-                    toChat: "lastChat"
+                    message: arr.slice(self.data.chatLengthMax),
+                    chatLength: arr.length
                 });
-            }
+                if (self.data.toggleChatScroll) {
+                    self.setData({
+                        toChat: "lastChat"
+                    });
+                }
+            }, 1000)
         });
 
         cc.live.on("chat_log_manage", function (data) {
